@@ -1,12 +1,12 @@
-# Configuration file for StatsPE :)
-#
-#
+# Configuration file for StatsPE
+
 # Enabled Stats:
 JoinCount: true
 KillCount: true
 DeathCount: true
 KickCount: true
-OnlineTime: false #Won't be finished soon
+# OnlineTime won't be finish for a long time.
+OnlineTime: false
 BlockBreakCount: true
 BlockPlaceCount: true
 ChatCount: true
@@ -14,13 +14,14 @@ FishCount: true
 BedEnterCount: true
 EatCount: true
 CraftCount: true
-#
-# Available providers:
-# MySQL, JSON (Use this if you want YAML)
+
+# Set default data provider for StatsPE
+# Available Providers: MySQL, JSON (Use this if you want YAML)
 Provider: JSON
-# If you use MySQL:
-address: "example.com"
-port: "3306"
-user: "ExampleUser"
-password: "12345678"
-database: "StatsPE"
+
+# MySQL Settings (Only configure this if you are going to use MySQL data provider)
+  adress: "MySQL.example.net"
+  port: "3306"
+  user: "YourUsernameGoesHere"
+  password: "YourPasswordGoesHere"
+  database: "YourDBNameGoesHere"
