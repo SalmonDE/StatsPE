@@ -28,6 +28,14 @@ class StatsPE extends PluginBase implements Listener{
 	public function onEnable(){
 		@mkdir($this->getDataFolder());
 		$this->saveResource('config.yml');
+		$provider = $this->getConfig()->get('Provider');
+		if($provider === 'JSON'){
+			@mkdir($this->getDataFolder().'Stats');
+		}elseif($provider === 'MySQL'){
+			//Test Connection here and create database
+		}else{
+			$this->getLogger()->critical('Invalid provider: '.$provider.'!');
+		}
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 
@@ -38,16 +46,18 @@ class StatsPE extends PluginBase implements Listener{
 	public function saveData($player, $type, $data){
 		$provider = $this->getConfig()->get('Provider');
 		if($provider === 'JSON'){
-		    if(file_exists($this->getDataFolder().'/Stats/'.$player.'.json')){
+		    if(file_exists($this->getDataFolder().'Stats/'.$player.'.json')){
 			
 		   }else{
 			
 		   }
 	   }elseif($provider === 'MySQL'){
 			
-	   }else{
-			$this->getLogger()->critical("Invalid Provider: $provider");
 	   }
+	}
+
+	public function getStats($player, $type){
+		
 	}
 
 	public function onJoin(PlayerJoinEvent $event){
