@@ -46,27 +46,55 @@ class StatsPE extends PluginBase implements Listener{
 	public function saveData($player, $type, $data){
 		$provider = $this->getConfig()->get('Provider');
 		if($provider === 'JSON'){
-		    if(file_exists($this->getDataFolder().'Stats/'.$player.'.json')){
-			
-		   }else{
-			
-		   }
+            fwrite(fopen($this->getDataFolder().'Stats/'.$player->getName().'.json','w'), json_encode($data));
 	   }elseif($provider === 'MySQL'){
 			
 	   }
 	}
 
 	public function getStats($player, $type){
-		
+		if($type === 'JSON'){
+            return json_decode(file_get_contents($this->getDataFolder().'Stats/'.$player->getName().'.json'), true);			
+		}elseif($type === 'MySQL'){
+			
+		}
 	}
 
 	public function onJoin(PlayerJoinEvent $event){
 		$switch = $this->getConfig()->get('JoinCount');
 		if($switch === true){
 			$player = $event->getPlayer();
-			if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
-				
-			}else{
+			$provider = $this->getConfig()->get('Provider');
+			if($provider === 'JSON'){
+			    if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
+				    $info = $this->getStats($player, 'JSON');
+			   }else{
+				   $pn = $player->getName();
+				   $fp = $player->getFirstPlayed();
+				   $cid = $player->getClientId();
+				   $ip = $player->getAddress();
+				   $data = array(
+				       'PlayerName' => "$pn",
+					   'ClientID' => "$cid",
+					   'LastIP' => "$ip",
+					   'FirstJoin' => "$fp",
+					   'LastJoin' => "$fp",
+					   'JoinCount' => '1',
+					   'KillCount' => '0',
+					   'DeathCount' => '0',
+					   'KickCount' => '0',
+					   'OnlineTime' => '0',
+					   'BlocksBreaked' => '0',
+					   'BlocksPlaced' => '0',
+					   'ChatMessages' => '0',
+					   'FishCount' => '0',
+					   'EnterBedCount' => '0',
+					   'EatCount' => '0',
+					   'CraftCount' => '0'
+				   );
+				   $this->saveData($player, 'JSON',$data);
+			   }
+			}elseif($provider === 'MySQL'){
 				
 			}
 		}
