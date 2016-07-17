@@ -1,5 +1,5 @@
 name: StatsPE
-version: 0.0.1
+version: 0.0.2
 api: 2.0.0
 main: StatsPE\StatsPE
 description: Stats Plugin for your Server!
@@ -19,3 +19,6 @@ permissions:
     children:
      statspe.cmd.stats:
       description: Permission for /stats.
+      children:
+       statspe.cmd.stats.advancedinfo:
+        description: Enables advanced stats about a player for /stats.
