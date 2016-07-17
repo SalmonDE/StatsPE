@@ -2,20 +2,20 @@ name: StatsPE
 version: 0.0.1
 api: 2.0.0
 main: StatsPE\StatsPE
-description: Stats for the players of your server. :)
+description: Stats Plugin for your Server!
 author: SalmonDE
 authors: [SalmonDE, Aericio]
 website: https://salmonde.de/
 commands:
  stats:
-  description: Check the stats of a players
+  description: Checks the Stats of a user.
   permission: statspe.cmd.stats
 permissions:
  statspe:
-  description: Main permission of StatsPE
+  description: Main permission of StatsPE.
   children:
    statspe.cmd:
-    description: Main permission of the StatsPE commands
+    description: Main permission of the StatsPE commands.
     children:
      statspe.cmd.stats:
-      description: Permission for /stats
+      description: Permission for /stats.
