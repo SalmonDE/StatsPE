@@ -1,0 +1,26 @@
+# Configuration file for StatsPE :)
+#
+#
+# Enabled Stats:
+JoinCount: true
+KillCount: true
+DeathCount: true
+KickCount: true
+OnlineTime: false #Won't be finished soon
+BlockBreakCount: true
+BlockPlaceCount: true
+ChatCount: true
+FishCount: true
+BedEnterCount: true
+EatCount: true
+CraftCount: true
+#
+# Available providers:
+# MySQL, JSON (Similiar to YAML, just different :P)
+Provider: YAML
+# If you use MySQL:
+address: "example.com"
+port: "3306"
+user: "ExampleUser"
+password: "12345678"
+database: "StatsPE"
