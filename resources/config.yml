@@ -16,8 +16,8 @@ EatCount: true
 CraftCount: true
 #
 # Available providers:
-# MySQL, JSON (Similiar to YAML, just different :P)
-Provider: YAML
+# MySQL, JSON (Use this if you want YAML)
+Provider: JSON
 # If you use MySQL:
 address: "example.com"
 port: "3306"

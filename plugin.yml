@@ -4,6 +4,7 @@ api: 2.0.0
 main: StatsPE\StatsPE
 description: Stats for the players of your server. :)
 author: SalmonDE
+authors: [SalmonDE, Aericio]
 website: https://salmonde.de/
 commands:
  stats:
