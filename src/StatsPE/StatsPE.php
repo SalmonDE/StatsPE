@@ -30,9 +30,9 @@ class StatsPE extends PluginBase implements Listener{
 		$this->saveResource('config.yml');
 		$this->checkVersion();
 		$provider = $this->getConfig()->get('Provider');
-		if($provider === 'JSON'){
+		if($provider == 'JSON'){
 			@mkdir($this->getDataFolder().'Stats');
-		}elseif($provider === 'MySQL'){
+		}elseif($provider == 'MySQL'){
 			//Test Connection here and create database
 		}else{
 			$this->getLogger()->critical('Invalid provider: '.$provider.'!');
@@ -46,27 +46,27 @@ class StatsPE extends PluginBase implements Listener{
 
 	public function saveData($player, $type, $data){
 		$provider = $this->getConfig()->get('Provider');
-		if($provider === 'JSON'){
+		if($provider == 'JSON'){
             fwrite(fopen($this->getDataFolder().'Stats/'.$player->getName().'.json','w'), json_encode($data));
-	   }elseif($provider === 'MySQL'){
+	   }elseif($provider == 'MySQL'){
 			
 	   }
 	}
 
 	public function getStats($player, $type){
-		if($type === 'JSON'){
+		if($type == 'JSON'){
             return json_decode(file_get_contents($this->getDataFolder().'Stats/'.$player->getName().'.json'), true);			
-		}elseif($type === 'MySQL'){
+		}elseif($type == 'MySQL'){
 			
 		}
 	}
 
 	public function onJoin(PlayerJoinEvent $event){
 		$switch = $this->getConfig()->get('JoinCount');
-		if($switch === true){
+		if($switch == true){
 			$player = $event->getPlayer();
 			$provider = $this->getConfig()->get('Provider');
-			if($provider === 'JSON'){
+			if($provider == 'JSON'){
 			    if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
 				    $info = $this->getStats($player, 'JSON');
 			   }else{
@@ -109,7 +109,7 @@ class StatsPE extends PluginBase implements Listener{
 			$this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
 		}else{
 			$this->getLogger()->info(TF::RED.TF::BOLD.'Update available for '.$this->getDescription()->getName().'!'."\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
-			if($this->getConfig()->get('Auto-Update') === 'true'){
+			if($this->getConfig()->get('Auto-Update') == 'true'){
 				$this->getLogger()->info('Running an update for '.$this->getDescription()->getName()."($cversion)".' to version: '.$nversion);
 				$this->update();
 			}else{
