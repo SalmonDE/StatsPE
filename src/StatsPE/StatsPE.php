@@ -8,6 +8,7 @@ use pocketmine\event\Listener;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat as TF;
+use pocketmine\utils\Utils;
 //Events
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -100,22 +101,25 @@ class StatsPE extends PluginBase implements Listener{
 	}
 
     public function checkVersion(){
+		$urldata = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?check');
+		$nversion = str_replace(' ', '', $urldata);
 		$cversion = $this->getDescription()->getVersion();
-		$nversion = file_get_contents($this->getDescription()->getWebsite().'MCPE-Plugins/StatsPE/Updater.php?check');
-		if($cversion === $nversion){
-			$this->getLogger()->info(TF::GREEN.'Your StatsPE version ('.TF::AQUA.$this->getDescription()->getVersion().TF::GREEN.') is up to date! :)');
+		if($cversion == $nversion){
+			$this->getLogger()->info(TF::GREEN.'Your StatsPE version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
 		}else{
 			$this->getLogger()->info(TF::RED.TF::BOLD."Update available for StatsPE!\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
 			if($this->getConfig()->get('Auto-Update') === 'true'){
 				$this->getLogger()->info('Running an update to version: '.$nversion);
 				$this->update();
+			}else{
+				$this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
 			}
 		}
 	}
 
 	public function update(){
-		$url = file_get_contents($this->getDescription()->getWebsite().'MCPE-Plugins/StatsPE/Updater.php?downloadurl');
-	}	
+		$url = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?downloadurl');
+	}
 
 	public function onDisable(){
 		
