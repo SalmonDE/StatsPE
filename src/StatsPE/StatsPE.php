@@ -20,13 +20,13 @@ use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 //Events
-use StatsPE\Updater;
 
 class StatsPE extends PluginBase implements Listener{
 
 	public function onEnable(){
 		@mkdir($this->getDataFolder());
 		$this->saveResource('config.yml');
+		$this->checkVersion();
 		$provider = $this->getConfig()->get('Provider');
 		if($provider === 'JSON'){
 			@mkdir($this->getDataFolder().'Stats');
@@ -35,7 +35,6 @@ class StatsPE extends PluginBase implements Listener{
 		}else{
 			$this->getLogger()->critical('Invalid provider: '.$provider.'!');
 		}
-		Updater::checkVersion($this->getConfig()->get('Auto-Update'));
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 
@@ -99,6 +98,18 @@ class StatsPE extends PluginBase implements Listener{
 			}
 		}
 	}
+
+    public function checkVersion(){
+		if(file_get_contents($this->getDescription()->getWebsite().'MCPE-Plugins/StatsPE/Updater.php?check') === $this->getDescription()->getVersion()){
+			$this->getLogger()->info(TF::GREEN.'Your StatsPE version ('.TF::AQUA.$this->getDescription()->getVersion().TF::GREEN.') is up to date! :)');
+		}else{
+			$this->getLogger()->info(TF:RED.TF::BOLD."Update available for StatsPE!\n".TF::RED.'Current version: '.$this->getDescription()->getVersion()."\n".TF::GREEN.TF::BOLD.'Newest version: '.file_get_contents($this->getDescription()->getWebsite().'MCPE-Plugins/StatsPE/Updater.php?check'));
+		}
+	}
+
+	public function update(){
+		$this->getDescription()->getWebsite();
+	}	
 
 	public function onDisable(){
 		
