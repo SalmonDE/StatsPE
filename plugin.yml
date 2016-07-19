@@ -9,6 +9,7 @@ website: https://salmonde.de/
 commands:
  stats:
   description: Checks the Stats of a user.
+  usage: /stats [player]
   permission: statspe.cmd.stats
 permissions:
  statspe:

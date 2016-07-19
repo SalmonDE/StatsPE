@@ -4,8 +4,10 @@ namespace StatsPE;
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
 use pocketmine\event\Listener;
+use pocketmine\Player;
+use pocketmine\plugin\PluginBase;
+use pocketmine\utils\TextFormat as TF;
 //Events
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -18,10 +20,7 @@ use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 //Events
-use pocketmine\Player;
-use pocketmine\plugin\Plugin;
-use pocketmine\plugin\PluginBase;
-use pocketmine\utils\TextFormat as TF;
+use StatsPE\Updater;
 
 class StatsPE extends PluginBase implements Listener{
 
@@ -36,6 +35,7 @@ class StatsPE extends PluginBase implements Listener{
 		}else{
 			$this->getLogger()->critical('Invalid provider: '.$provider.'!');
 		}
+		Updater::checkVersion($this->getConfig()->get('Auto-Update'));
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 

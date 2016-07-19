@@ -15,13 +15,15 @@ BedEnterCount: true
 EatCount: true
 CraftCount: true
 
+# Enable or disable auto updating for this plugin
+Auto-Update: true
 # Set default data provider for StatsPE
 # Available Providers: MySQL, JSON (Use this if you want YAML)
 Provider: JSON
 
 # MySQL Settings (Only configure this if you are going to use MySQL data provider)
   address: "MySQL.example.net"
-  port: "3306"
-  user: "YourUsernameGoesHere"
-  password: "YourPasswordGoesHere"
-  database: "YourDBNameGoesHere"
+  port: 3306
+  user: "ExampleUser"
+  password: "12345678"
+  database: "StatsPE"
