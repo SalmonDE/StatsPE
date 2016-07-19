@@ -22,8 +22,8 @@ Auto-Update: true
 Provider: JSON
 
 # MySQL Settings (Only configure this if you are going to use MySQL data provider)
-  address: "MySQL.example.net"
-  port: 3306
-  user: "ExampleUser"
-  password: "12345678"
-  database: "StatsPE"
+address: "MySQL.example.net"
+port: 3306
+user: "ExampleUser"
+password: "12345678"
+database: "StatsPE"
