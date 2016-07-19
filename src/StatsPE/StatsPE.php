@@ -100,15 +100,21 @@ class StatsPE extends PluginBase implements Listener{
 	}
 
     public function checkVersion(){
-		if(file_get_contents($this->getDescription()->getWebsite().'MCPE-Plugins/StatsPE/Updater.php?check') === $this->getDescription()->getVersion()){
+		$cversion = $this->getDescription()->getVersion();
+		$nversion = file_get_contents($this->getDescription()->getWebsite().'MCPE-Plugins/StatsPE/Updater.php?check');
+		if($cversion === $nversion){
 			$this->getLogger()->info(TF::GREEN.'Your StatsPE version ('.TF::AQUA.$this->getDescription()->getVersion().TF::GREEN.') is up to date! :)');
 		}else{
-			$this->getLogger()->info(TF:RED.TF::BOLD."Update available for StatsPE!\n".TF::RED.'Current version: '.$this->getDescription()->getVersion()."\n".TF::GREEN.TF::BOLD.'Newest version: '.file_get_contents($this->getDescription()->getWebsite().'MCPE-Plugins/StatsPE/Updater.php?check'));
+			$this->getLogger()->info(TF::RED.TF::BOLD."Update available for StatsPE!\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
+			if($this->getConfig()->get('Auto-Update') === 'true'){
+				$this->getLogger()->info('Running an update to version: '.$nversion);
+				$this->update();
+			}
 		}
 	}
 
 	public function update(){
-		$this->getDescription()->getWebsite();
+		$url = file_get_contents($this->getDescription()->getWebsite().'MCPE-Plugins/StatsPE/Updater.php?downloadurl');
 	}	
 
 	public function onDisable(){
