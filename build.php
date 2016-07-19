@@ -17,7 +17,8 @@ if(count(glob("plugins/DevTools/StatsPE*.phar")) === 0){
 	echo "Failed to create StatsPE.phar!\n";
 	exit(1);
 }else{
-	rename(glob("plugins/DevTools/StatsPE*.phar"), 'plugins/DevTools/StatsPE.phar');
+	$fn = glob("plugins/DevTools/StatsPE*");
+	rename($fn[0], 'plugins/DevTools/StatsPE.phar');
 	echo "StatsPE.phar created!\n";
 	exit(0);
 }
