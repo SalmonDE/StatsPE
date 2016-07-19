@@ -121,6 +121,7 @@ class StatsPE extends PluginBase implements Listener{
 	public function update(){
 		$url = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?downloadurl');
 		$md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?md5');
+		$this->getLogger()->info(TF::AQUA.'MD5 Hash of the phar: '.TF::GOLD.TF::BOLD.$md5);
 		$this->server->getScheduler()->scheduleAsyncTask(new Upgrader($url, $md5, $this->getDataFolder()));
 	}
 
