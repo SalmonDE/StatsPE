@@ -113,7 +113,11 @@ class StatsPE extends PluginBase implements Listener{
 				$this->getLogger()->info('Running an update for '.$this->getDescription()->getName()."($cversion)".' to version: '.$nversion);
 				$this->update($nversion);
 			}else{
-				$this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
+				if($this->isPhar()){
+				    $this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
+				}else{
+					$this->getLogger()->info(TF::AQUA.TF::BOLD.'Looks like you do not use a phar file of this plugin. You can still use the Auto Updater but it will not delete the source code. Please delete it by yourself if you update. :)');
+				}
 			}
 		}
 	}
