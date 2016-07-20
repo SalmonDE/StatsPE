@@ -1,9 +1,10 @@
 <?php
 namespace StatsPE;
 
-use pocketmine\scheduler\AsyncTask;
-use pocketmine\utils\Utils;
 use pocketmine\plugin\PharPluginLoader;
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
+use pocketmine\utils\Utils;
 
 class UpdaterTask extends AsyncTask{
 
