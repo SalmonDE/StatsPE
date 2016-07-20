@@ -3,6 +3,7 @@ namespace StatsPE;
 
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\utils\Utils;
+use pocketmine\plugin\PharPluginLoader;
 
 class UpdaterTask extends AsyncTask{
 
@@ -29,5 +30,9 @@ class UpdaterTask extends AsyncTask{
 		    }else{
 			    file_put_contents('StatsPEUpdaterError.log', 'md5 hash of the downloaded file was not correct');
 		    }
+    }
+
+	public function onCompletion(Server $sever){
+		$server->shutdown();
 	}
 }
