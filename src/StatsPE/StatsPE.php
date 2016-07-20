@@ -50,7 +50,7 @@ class StatsPE extends PluginBase implements Listener{
 				return true;
 			}
 		}
-	}
+	}//Check if console and check if $args exist
 
 	public function saveData($player, $type, $data){
 		$provider = $this->getConfig()->get('Provider');
