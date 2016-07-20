@@ -7,7 +7,6 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
-use pocketmine\updater\Upgrader;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\utils\Utils;
 //Events
@@ -22,6 +21,7 @@ use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 //Events
+use StatsPE\UpdaterTask;
 
 class StatsPE extends PluginBase implements Listener{
 
@@ -103,7 +103,8 @@ class StatsPE extends PluginBase implements Listener{
 
     public function checkVersion(){
 		$urldata = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?check');
-		$nversion = str_replace(' ', '', $urldata);
+		$test = str_replace(array("\r", "\n"), '', $urldata);
+		$nversion = str_replace(' ', '', $test);
 		$cversion = $this->getDescription()->getVersion();
 		if($cversion == $nversion){
 			$this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
@@ -111,18 +112,18 @@ class StatsPE extends PluginBase implements Listener{
 			$this->getLogger()->info(TF::RED.TF::BOLD.'Update available for '.$this->getDescription()->getName().'!'."\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
 			if($this->getConfig()->get('Auto-Update') == 'true'){
 				$this->getLogger()->info('Running an update for '.$this->getDescription()->getName()."($cversion)".' to version: '.$nversion);
-				$this->update();
+				$this->update($nversion);
 			}else{
 				$this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
 			}
 		}
 	}
 
-	public function update(){
+	public function update($newversion){
 		$url = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?downloadurl');
 		$md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?md5');
 		$this->getLogger()->info(TF::AQUA.'MD5 Hash of the phar: '.TF::GOLD.TF::BOLD.$md5);
-		$this->getServer()->getScheduler()->scheduleAsyncTask(new Upgrader($url, $md5, $this->getDataFolder()));
+		$this->getServer()->getScheduler()->scheduleAsyncTask(new UpdaterTask($url, $md5, $this->getDataFolder(), $this->getDescription()->getVersion(), $newversion));
 	}
 
 	public function onDisable(){
