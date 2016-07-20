@@ -41,7 +41,7 @@ class StatsPE extends PluginBase implements Listener{
 	}
 
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
-		
+		$sender->sendMessage(TF::GOLD.'Currently work in progress! ;('."\n".TF::AQUA.'Version: '.$this->getDescription()->getVersion(););
 	}
 
 	public function saveData($player, $type, $data){
