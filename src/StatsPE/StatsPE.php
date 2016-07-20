@@ -103,8 +103,7 @@ class StatsPE extends PluginBase implements Listener{
 
     public function checkVersion(){
 		$urldata = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?check');
-		$test = str_replace(array("\r", "\n"), '', $urldata);
-		$nversion = str_replace(' ', '', $test);
+		$nversion = str_replace(array(" ", "\r", "\n"), '', $urldata);
 		$cversion = $this->getDescription()->getVersion();
 		if($cversion == $nversion){
 			$this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
