@@ -1,5 +1,5 @@
 name: StatsPE
-version: 0.0.6
+version: 0.0.7
 api: 2.0.0
 main: StatsPE\StatsPE
 description: Stats Plugin for your Server!
