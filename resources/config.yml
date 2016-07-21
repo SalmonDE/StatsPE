@@ -17,8 +17,16 @@ CraftCount: true
 
 # Enable or disable auto updating for this plugin
 Auto-Update: true
+
+# Time Format used for Stats like last and first Join
+# Further information about this on this page:
+# http://php.net/manual/de/function.date.php
+#
+# Default: "H:i:s d.m.Y" = Hour:Minute:Seconds Day.Month.Year
+# Example: 12:00:63 22.07.2016
+TimeFormat: "H:i:s d.m.Y"
 # Set default data provider for StatsPE
-# Available Providers: MySQL, JSON (Use this if you want YAML)
+# Available Providers: MySQL, JSON (Use this if you search for YAML)
 Provider: JSON
 
 # MySQL Settings (Only configure this if you are going to use MySQL data provider)

@@ -52,58 +52,81 @@ class StatsPE extends PluginBase implements Listener{
 		}
 	}//Check if console and check if $args exist
 
-	public function saveData($player, $type, $data){
-		$provider = $this->getConfig()->get('Provider');
-		if($provider == 'JSON'){
-            fwrite(fopen($this->getDataFolder().'Stats/'.$player->getName().'.json','w'), json_encode($data));
-	   }elseif($provider == 'MySQL'){
+	public function saveData($player, $data){
+		if($this->getConfig()->get('Provider') == 'JSON'){
+            fwrite(fopen($this->getDataFolder().'Stats/'.strtolower($player->getName()).'.json','w'), json_encode($data));
+	   }elseif($this->getConfig()->get('Provider') == 'MySQL'){
 			
 	   }
 	}
 
-	public function getStats($player, $type){
+	public function getStats($player, $type, $data){
 		if($type == 'JSON'){
-            return json_decode(file_get_contents($this->getDataFolder().'Stats/'.$player->getName().'.json'), true);			
+            return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player->getName()).'.json'), true);			
 		}elseif($type == 'MySQL'){
 			
 		}
 	}
 
 	public function onJoin(PlayerJoinEvent $event){
-		$switch = $this->getConfig()->get('JoinCount');
-		if($switch == true){
+		if($this->getConfig()->get('JoinCount')){
 			$player = $event->getPlayer();
 			$provider = $this->getConfig()->get('Provider');
 			if($provider == 'JSON'){
 			    if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
-				    $info = $this->getStats($player, 'JSON');
-			   }else{
-				   $pn = $player->getName();
-				   $fp = $player->getFirstPlayed();
-				   $cid = $player->getClientId();
-				   $ip = $player->getAddress();
-				   $data = array(
-				       'PlayerName' => "$pn",
-					   'ClientID' => "$cid",
-					   'LastIP' => "$ip",
-					   'FirstJoin' => "$fp",
-					   'LastJoin' => "$fp",
-					   'JoinCount' => '1',
-					   'KillCount' => '0',
-					   'DeathCount' => '0',
-					   'KickCount' => '0',
-					   'OnlineTime' => '0',
-					   'BlocksBreaked' => '0',
-					   'BlocksPlaced' => '0',
-					   'ChatMessages' => '0',
-					   'FishCount' => '0',
-					   'EnterBedCount' => '0',
-					   'EatCount' => '0',
-					   'CraftCount' => '0'
-				   );
-				   $this->saveData($player, 'JSON',$data);
-			   }
-			}elseif($provider === 'MySQL'){
+					$pn = $player->getName();
+				    $info = $this->getStats($player, 'JSON', 'all');
+				    $cid = $player->getClientId();
+				    $ip = $player->getAddress();
+					$ls = date($this->getConfig()->get('TimeFormat'));
+					$jc = $info[5] + 1;
+				    $data = array(
+				        'PlayerName' => "$pn",
+					    'ClientID' => "$cid",
+					    'LastIP' => "$ip",
+					    'FirstJoin' => "$info[3]",
+					    'LastJoin' => "$ls",
+					    'JoinCount' => "$jc",
+					    'KillCount' => "$info[6]",
+					    'DeathCount' => "$info[7]",
+					    'KickCount' => "$info[8]",
+					    'OnlineTime' => "$info[9]",
+					    'BlocksBreaked' => "$info[10]",
+					    'BlocksPlaced' => "$info[11]",
+					    'ChatMessages' => "$info[12]",
+					    'FishCount' => "$info[13]",
+					    'EnterBedCount' => "$info[14]",
+					    'EatCount' => "$info[15]",
+					    'CraftCount' => "$info[16]"
+				    );
+				    $this->saveData($player, $data);
+			    }else{
+				    $pn = $player->getName();
+				    $fp = date($this->getConfig()->get('TimeFormat'));
+				    $cid = $player->getClientId();
+				    $ip = $player->getAddress();
+				    $data = array(
+				        'PlayerName' => "$pn",
+					    'ClientID' => "$cid",
+					    'LastIP' => "$ip",
+					    'FirstJoin' => "$fp",
+					    'LastJoin' => "$fp",
+					    'JoinCount' => '1',
+					    'KillCount' => '0',
+					    'DeathCount' => '0',
+					    'KickCount' => '0',
+					    'OnlineTime' => '0',
+					    'BlocksBreaked' => '0',
+					    'BlocksPlaced' => '0',
+					    'ChatMessages' => '0',
+					    'FishCount' => '0',
+					    'EnterBedCount' => '0',
+					    'EatCount' => '0',
+					    'CraftCount' => '0'
+				    );
+				    $this->saveData($player, $data);
+			    }
+		    }elseif($provider === 'MySQL'){
 				
 			}
 		}
