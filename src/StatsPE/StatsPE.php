@@ -43,7 +43,7 @@ class StatsPE extends PluginBase implements Listener{
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
 		if($cmd == 'stats' || $cmd == 'Stats'){
 			if($sender->hasPermission('statspe.cmd.stats')){
-		        $sender->sendMessage(TF::GOLD.'Currently work in progress! ;('."\n".TF::AQUA.'Version: '.$this->getDescription()->getVersion()."\n".TF::GREEN.'Player: '.$sender->getName()."\n".TF::RED.'First Join: '.$sender->getFirstPlayed());
+		        $sender->sendMessage(TF::GOLD.'Currently work in progress! ;('."\n".TF::AQUA.'Version: '.$this->getDescription()->getVersion()."\n".TF::GREEN.'Player: '.$sender->getName());
 				return true;
 		    }else{
 				$sender->sendMessage(TF::RED.'You are not allowed to use this command!');
