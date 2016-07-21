@@ -3,7 +3,7 @@
 ### Information
 Note: This plugin is not complete yet, there is a lot more coding to do!
 This is the GitHub repository for developing a stats plugin, which works with JSON/YAML and MySQL.
-> NOTE FOR AERICIO: REDO README, IT LUKS UNPRUFESHIONUL
+> NOTE FOR AERICIO: REDO README, IT LUKS UNPRUFESHIONUL (aka just rewrite it, maybe using tables instead.)
 
 ### Installation Process (Adding the Plugin, without MySQL)
 
@@ -12,9 +12,10 @@ This is the GitHub repository for developing a stats plugin, which works with JS
 3. Start the server, and StatsPE has been added to your server!
 4. If you want to disable a module from showing on `/stats [player]`, go to the configuration and replace `StatCount: True` with `StatCount: False`
 
-##### Installation after this *should only* be setup if want to use MySQL with this plugin.
+##### If you would like to use MySQL, do this!
 
 5. Put in your MySQL Database information in this area:
+
 ```
 # MySQL Settings (Only configure this if you are going to use MySQL data provider)
 address: "MySQL.example.net"
@@ -24,6 +25,7 @@ password: "12345678"
 database: "StatsPE"
 ```
 6. Go into the configuration file of the Plugin, and replace JSON with MySQL
+
 ```
 # Set default data provider for StatsPE
 # Available Providers: MySQL, JSON (Use this if you want YAML)
