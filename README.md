@@ -26,17 +26,17 @@ Step 5 | Change the data providers from JSON to MySQL in [this](https://github.c
 ***Statistic*** | ***Description*** | ***Example*** | ***Type***
 -----------|-----------|-----------|-----------|
 PlayerName | Name of the player (case sensitive)| Aericio | Normal
-ClientID | ClientID of the MCPE installation | -3504414010354 | Advanced
-LastIP | Last used IP from the player | 192.168.178.42 | Advanced
+ClientID | ClientID of the MCPE installation | -8655314918531 | Advanced
+LastIP | Last used IP from the player | 192.168.1.1 | Advanced
 FirstJoin | First time the player joined | 04:19:51 22.07.2016 (Configurable)| Normal
-LastJoin | Last time the player joined | 04:23:01 22.07.2013 (Configurable)| Normal
-JoinCount | How many times the player joined the server | 7 | Normal
-KillCount | How often the player killed another player | 22 | Normal
+LastJoin | Last time the player joined | 04:23:01 22.07.2016 (Configurable)| Normal
+JoinCount | How many times the player joined the server | 10 | Normal
+KillCount | How often the player killed another player | 69 | Normal
 DeathCount | How often the player died | 9 | Normal
 KickCount | How often the player got kicked | 1 | Normal
 OnlineTime | How long the player played on the server | WIP | To-Download
 BlocksBreaked | How many blocks the player broke | 3 | Normal
-BlocksPlaced | How many blocks the placer placed | 0 | Normal
+BlocksPlaced | How many blocks the placer placed | 4 | Normal
 ChatMessages | How many chat messages the player sent | 78 | Normal
 FishCount | How many fishes the player catched | 1 | Normal
 EnterBedCount | How often the player used a bed | 2 | Normal
