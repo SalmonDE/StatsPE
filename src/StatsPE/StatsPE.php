@@ -234,6 +234,161 @@ class StatsPE extends PluginBase implements Listener{
 		}
 	}
 
+	public function onKick(PlayerKickEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$k = $info['KickCount'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $info['DeathCount'],
+			    'KickCount' => $k,
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $info['BlocksBreaked'],
+				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'ChatMessages' => $info['ChatMessages'],
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $info['EatCount'],
+			    'CraftCount' => $info['CraftCount']
+		    );
+			$this->saveData($player, $data);
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
+ 	public function onBlockBreak(BlockBreakEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$br = $info['BlocksBreaked'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $info['DeathCount'],
+		        'KickCount' => $info['KickCount'],
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $br,
+				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'ChatMessages' => $info['ChatMessages'],
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $info['EatCount'],
+			    'CraftCount' => $info['CraftCount']
+		    );
+			$this->saveData($player, $data);
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
+ 	public function onBlockPlace(BlockPlaceEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$bp = $info['BlocksPlaced'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $info['DeathCount'],
+		        'KickCount' => $info['KickCount'],
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $info['BlocksBreaked'],
+				'BlocksPlaced' => $bp,
+			    'ChatMessages' => $info['ChatMessages'],
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $info['EatCount'],
+			    'CraftCount' => $info['CraftCount']
+		    );
+			$this->saveData($player, $data);
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
+ 	public function onChat(PlayerChatEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$cm = $info['ChatMessages'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $info['DeathCount'],
+		        'KickCount' => $info['KickCount'],
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $info['BlocksBreaked'],
+				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'ChatMessages' => $cm,
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $info['EatCount'],
+			    'CraftCount' => $info['CraftCount']
+		    );
+			$this->saveData($player, $data);
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
+ 	public function onFish(PlayerFishEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$fc = $info['FishCount'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $info['DeathCount'],
+		        'KickCount' => $info['KickCount'],
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $info['BlocksBreaked'],
+				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'ChatMessages' => $info['ChatMessages'],
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $info['EatCount'],
+			    'CraftCount' => $info['CraftCount']
+		    );
+			$this->saveData($player, $data);
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
     public function checkVersion(){
 		$urldata = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?check');
 		$nversion = str_replace(array(" ", "\r", "\n"), '', $urldata);

@@ -11,7 +11,7 @@ before_script:
  - phpenv config-rm xdebug.ini
  - pecl install channel://pecl.php.net/pthreads-3.1.6
  - pecl install channel://pecl.php.net/weakref-0.3.2
- - echo | pecl install channel://pecl.php.net/yaml-2.0.0RC7
+ - echo | pecl install channel://pecl.php.net/yaml-2.0.0RC8
  - git clone --depth=50 --branch=php7 https://github.com/ClearSkyTeam/ClearSky.git
  - mkdir -p ClearSky/plugins/StatsPE
  - cp -rf SalmonGER/StatsPE/src ClearSky/plugins/StatsPE
