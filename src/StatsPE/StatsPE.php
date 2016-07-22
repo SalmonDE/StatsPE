@@ -175,6 +175,65 @@ class StatsPE extends PluginBase implements Listener{
 		}
 	}
 
+	public function onDeath(PlayerDeathEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$d = $info['DeathCount'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $d,
+			    'KickCount' => $info['KickCount'],
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $info['BlocksBreaked'],
+				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'ChatMessages' => $info['ChatMessages'],
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $info['EatCount'],
+			    'CraftCount' => $info['CraftCount']
+		    );
+			$this->saveData($player, $data);
+			$damagecause = $player->getLastDamageCause();
+			if(method_exists($damagecause, 'getDamager')){
+			    if($damagecause->getDamager() instanceof Player){
+				    $killer = $player->getLastDamageCause()->getDamager();
+				    $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
+			        $k = $info['KillCount'] + 1;
+		            $kdata = array(
+		                'PlayerName' => $kinfo['PlayerName'],
+			            'ClientID' => $kinfo['ClientID'],
+			            'LastIP' => $kinfo['LastIP'],
+			            'FirstJoin' => $kinfo['FirstJoin'],
+			            'LastJoin' => $kinfo['LastJoin'],
+			            'JoinCount' => $kinfo['JoinCount'],
+			            'KillCount' => $k,
+			            'DeathCount' => $d,
+			            'KickCount' => $kinfo['KickCount'],
+			            'OnlineTime' => $kinfo['OnlineTime'],
+			            'BlocksBreaked' => $kinfo['BlocksBreaked'],
+				        'BlocksPlaced' => $kinfo['BlocksPlaced'],
+			            'ChatMessages' => $kinfo['ChatMessages'],
+			            'FishCount' => $kinfo['FishCount'],
+			            'EnterBedCount' => $kinfo['EnterBedCount'],
+		                'EatCount' => $kinfo['EatCount'],
+			            'CraftCount' => $kinfo['CraftCount']
+		            );
+					$this->saveData($killer, $kdata);
+			    }
+			}
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
     public function checkVersion(){
 		$urldata = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?check');
 		$nversion = str_replace(array(" ", "\r", "\n"), '', $urldata);
