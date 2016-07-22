@@ -24,7 +24,7 @@ Step 5 | Change the data providers from JSON to MySQL in [this](https://github.c
 /stats [player] | Shows the player's stats along with advanced info, such as their ClientID and IP addresses | statspe.cmd.stats.advancedinfo
 ---
 ***Statistic*** | ***Description*** | ***Example*** | ***Type***
------------|-----------|-----------|
+-----------|-----------|-----------|-----------|
 PlayerName | Name of the player (case sensitive)| Aericio | Normal
 ClientID | ClientID of the MCPE installation | -3504414010354 | Advanced
 LastIP | Last used IP from the player | 192.168.178.42 | Advanced
