@@ -360,6 +360,7 @@ class StatsPE extends PluginBase implements Listener{
 
  	public function onFish(PlayerFishEvent $event){
 		$player = $event->getPlayer();
+		var_dump($player);
 		$provider = $this->getConfig()->get('Provider');
 		if($provider == 'JSON'){
 			$info = $this->getStats($player->getName(), 'JSON', 'all');
@@ -378,8 +379,39 @@ class StatsPE extends PluginBase implements Listener{
 			    'BlocksBreaked' => $info['BlocksBreaked'],
 				'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $info['ChatMessages'],
-			    'FishCount' => $info['FishCount'],
+			    'FishCount' => $fc,
 			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $info['EatCount'],
+			    'CraftCount' => $info['CraftCount']
+		    );
+			$this->saveData($player, $data);
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
+ 	public function onBedEnter(PlayerBedEnterEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$ebc = $info['EnterBedCount'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $info['DeathCount'],
+		        'KickCount' => $info['KickCount'],
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $info['BlocksBreaked'],
+				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'ChatMessages' => $info['ChatMessages'],
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $ebc,
 		        'EatCount' => $info['EatCount'],
 			    'CraftCount' => $info['CraftCount']
 		    );
