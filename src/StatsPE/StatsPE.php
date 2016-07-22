@@ -421,6 +421,68 @@ class StatsPE extends PluginBase implements Listener{
 		}
 	}
 
+ 	public function onConsumeItem(PlayerItemConsumeEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$ec = $info['EatCount'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $info['DeathCount'],
+		        'KickCount' => $info['KickCount'],
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $info['BlocksBreaked'],
+				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'ChatMessages' => $info['ChatMessages'],
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $ec,
+			    'CraftCount' => $info['CraftCount']
+		    );
+			$this->saveData($player, $data);
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
+ 	public function onCraft(CraftItemEvent $event){
+		$player = $event->getPlayer();
+		$provider = $this->getConfig()->get('Provider');
+		if($provider == 'JSON'){
+			$info = $this->getStats($player->getName(), 'JSON', 'all');
+			$cc = $info['CraftCount'] + 1;
+		    $data = array(
+		        'PlayerName' => $info['PlayerName'],
+			    'ClientID' => $info['ClientID'],
+			    'LastIP' => $info['LastIP'],
+			    'FirstJoin' => $info['FirstJoin'],
+			    'LastJoin' => $info['LastJoin'],
+			    'JoinCount' => $info['JoinCount'],
+			    'KillCount' => $info['KillCount'],
+			    'DeathCount' => $info['DeathCount'],
+		        'KickCount' => $info['KickCount'],
+			    'OnlineTime' => $info['OnlineTime'],
+			    'BlocksBreaked' => $info['BlocksBreaked'],
+				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'ChatMessages' => $info['ChatMessages'],
+			    'FishCount' => $info['FishCount'],
+			    'EnterBedCount' => $info['EnterBedCount'],
+		        'EatCount' => $info['EatCount'],
+			    'CraftCount' => $cc
+		    );
+			$this->saveData($player, $data);
+		}elseif($provider == 'MySQL'){
+			
+		}
+	}
+
     public function checkVersion(){
 		$urldata = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?check');
 		$nversion = str_replace(array(" ", "\r", "\n"), '', $urldata);
@@ -447,9 +509,5 @@ class StatsPE extends PluginBase implements Listener{
 		$md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?md5');
 		$this->getLogger()->info(TF::AQUA.'MD5 Hash: '.TF::GOLD.TF::BOLD.$md5);
 		$this->getServer()->getScheduler()->scheduleAsyncTask(new UpdaterTask($url, $md5, $this->getDataFolder(), $this->getDescription()->getVersion(), $newversion));
-	}
-
-	public function onDisable(){
-		
 	}
 }
