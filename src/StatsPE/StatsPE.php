@@ -78,7 +78,7 @@ class StatsPE extends PluginBase implements Listener{
 
 	public function showStats($requestor, $target){
 		if($target == 'CONSOLE'){
-			$requestor->sendMessage(TF::RED.'You can not get the statistics of the Console!');
+			$requestor->sendMessage(TF::RED.'Please use this command in-game!');
 		}else{
 		    if($this->getConfig()->get('Provider') == 'JSON'){
 		        if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
@@ -103,7 +103,7 @@ class StatsPE extends PluginBase implements Listener{
 			    	$requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info['EatCount'].TF::AQUA.' times');
 			    	$requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info['CraftCount'].TF::AQUA.' times');
 		        }else{
-			        $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target."\n".TF::AQUA.'Please check your spelling.');//Aericio please make this message nicer
+			        $requestor->sendMessage(TF::RED.'Error: Player does not exist!');
 		        }
 		    }elseif($this->getConfig()->get('Provider') == 'MySQL'){
 				
@@ -190,7 +190,7 @@ class StatsPE extends PluginBase implements Listener{
 				if($this->isPhar()){
 				    $this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
 				}else{
-					$this->getLogger()->info(TF::AQUA.TF::BOLD.'Looks like you do not use a phar file of this plugin. You can still use the Auto Updater but it will not delete the source code. Please delete it by yourself if you update.');
+					$this->getLogger()->info(TF::AQUA.TF::BOLD.'Looks like your not using a phar of StatsPE. You can still use the Auto Updater but it will not delete the source code. Please delete it by yourself to update.');
 				}
 			}
 		}
@@ -199,7 +199,7 @@ class StatsPE extends PluginBase implements Listener{
 	public function update($newversion){
 		$url = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?downloadurl');
 		$md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?md5');
-		$this->getLogger()->info(TF::AQUA.'MD5 Hash of the phar: '.TF::GOLD.TF::BOLD.$md5);
+		$this->getLogger()->info(TF::AQUA.'MD5 Hash: '.TF::GOLD.TF::BOLD.$md5);
 		$this->getServer()->getScheduler()->scheduleAsyncTask(new UpdaterTask($url, $md5, $this->getDataFolder(), $this->getDescription()->getVersion(), $newversion));
 	}
 
