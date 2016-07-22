@@ -62,7 +62,7 @@ class StatsPE extends PluginBase implements Listener{
 
 	public function saveData($player, $data){
 		if($this->getConfig()->get('Provider') == 'JSON'){
-            fwrite(fopen($this->getDataFolder().'Stats/'.strtolower($player->getName()).'.json','w'), json_encode($data));
+            fwrite(fopen($this->getDataFolder().'Stats/'.strtolower($player->getName()).'.json','w'), json_encode($data, JSON_PRETTY_PRINT));
 	   }elseif($this->getConfig()->get('Provider') == 'MySQL'){
 			
 	   }
@@ -70,7 +70,7 @@ class StatsPE extends PluginBase implements Listener{
 
 	public function getStats($player, $type, $data){
 		if($type == 'JSON'){
-            return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true);		
+            return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true);
 		}elseif($type == 'MySQL'){
 			
 		}
@@ -101,7 +101,7 @@ class StatsPE extends PluginBase implements Listener{
 			    	$requestor->sendMessage(TF::AQUA.'Catched Fishes: '.TF::LIGHT_PURPLE.$info[FishCount]);
 			    	$requestor->sendMessage(TF::AQUA.'Went to bed for: '.TF::LIGHT_PURPLE.$info[EnterBedCount].TF::AQUA.' times');
 			    	$requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info[EatCount].TF::AQUA.' times');
-			    	$requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info[OnlineTime].TF::AQUA.' times');
+			    	$requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info[CraftCount].TF::AQUA.' times');
 		        }else{
 			        $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target."\n".TF::AQUA.'Please check your spelling.');//Aericio please make this message nicer
 		        }
