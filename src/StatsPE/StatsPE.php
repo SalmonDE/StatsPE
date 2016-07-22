@@ -78,7 +78,7 @@ class StatsPE extends PluginBase implements Listener{
 
 	public function showStats($requestor, $target){
 		if($target == 'CONSOLE'){
-			$requestor->sendMessage(TF::RED.'Please use this command in-game!');
+			$requestor->sendMessage(TF::RED.'You can not get the statistics of the Console!');
 		}else{
 		    if($this->getConfig()->get('Provider') == 'JSON'){
 		        if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
@@ -103,7 +103,7 @@ class StatsPE extends PluginBase implements Listener{
 			    	$requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info['EatCount'].TF::AQUA.' times');
 			    	$requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info['CraftCount'].TF::AQUA.' times');
 		        }else{
-			        $requestor->sendMessage(TF::RED.'Error: Player does not exist!');
+			        $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target."\n".TF::RED.'Please check your spelling.');
 		        }
 		    }elseif($this->getConfig()->get('Provider') == 'MySQL'){
 				
@@ -158,7 +158,7 @@ class StatsPE extends PluginBase implements Listener{
 					    'KillCount' => '0',
 					    'DeathCount' => '0',
 					    'KickCount' => '0',
-					    'OnlineTime' => 'WIP',
+					    'OnlineTime' => '0',
 					    'BlocksBreaked' => '0',
 					    'BlocksPlaced' => '0',
 					    'ChatMessages' => '0',
@@ -215,7 +215,7 @@ class StatsPE extends PluginBase implements Listener{
 			            'LastJoin' => $kinfo['LastJoin'],
 			            'JoinCount' => $kinfo['JoinCount'],
 			            'KillCount' => $k,
-			            'DeathCount' => $d,
+			            'DeathCount' => $kinfo['DeathCount'],
 			            'KickCount' => $kinfo['KickCount'],
 			            'OnlineTime' => $kinfo['OnlineTime'],
 			            'BlocksBreaked' => $kinfo['BlocksBreaked'],
@@ -239,7 +239,7 @@ class StatsPE extends PluginBase implements Listener{
 		$provider = $this->getConfig()->get('Provider');
 		if($provider == 'JSON'){
 			$info = $this->getStats($player->getName(), 'JSON', 'all');
-			$k = $info['KickCount'] + 1;
+			$kc = $info['KickCount'] + 1;
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
@@ -249,7 +249,7 @@ class StatsPE extends PluginBase implements Listener{
 			    'JoinCount' => $info['JoinCount'],
 			    'KillCount' => $info['KillCount'],
 			    'DeathCount' => $info['DeathCount'],
-			    'KickCount' => $k,
+			    'KickCount' => $kc,
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
 				'BlocksPlaced' => $info['BlocksPlaced'],
@@ -498,7 +498,7 @@ class StatsPE extends PluginBase implements Listener{
 				if($this->isPhar()){
 				    $this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
 				}else{
-					$this->getLogger()->info(TF::AQUA.TF::BOLD.'Looks like your not using a phar of StatsPE. You can still use the Auto Updater but it will not delete the source code. Please delete it by yourself to update.');
+					$this->getLogger()->info(TF::AQUA.TF::BOLD.'Looks like you are not using a phar version of StatsPE. You can still use the Auto Updater but it will not delete the source code. Please delete it by yourself to prevent errors.');
 				}
 			}
 		}
