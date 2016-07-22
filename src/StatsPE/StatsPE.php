@@ -43,14 +43,22 @@ class StatsPE extends PluginBase implements Listener{
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
 		if($cmd == 'stats' || $cmd == 'Stats'){
 			if($sender->hasPermission('statspe.cmd.stats')){
-		        $sender->sendMessage(TF::GOLD.'Currently work in progress! ;('."\n".TF::AQUA.'Version: '.$this->getDescription()->getVersion()."\n".TF::GREEN.'Player: '.$sender->getName());
-				return true;
+				if(count($args) == 0){
+					$this->showStats($sender, $sender->getName());
+					return true;
+				}elseif(count($args) == 1){
+					$this->showStats($sender, $args[0]);
+					return true;
+				}else{
+					$sender->sendMessage(TF::RED.'Too many arguments!');
+					return false;
+				}
 		    }else{
 				$sender->sendMessage(TF::RED.'You are not allowed to use this command!');
 				return true;
 			}
 		}
-	}//Check if console and check if $args exist
+	}
 
 	public function saveData($player, $data){
 		if($this->getConfig()->get('Provider') == 'JSON'){
@@ -62,9 +70,44 @@ class StatsPE extends PluginBase implements Listener{
 
 	public function getStats($player, $type, $data){
 		if($type == 'JSON'){
-            return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player->getName()).'.json'), true);			
+            return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true);		
 		}elseif($type == 'MySQL'){
 			
+		}
+	}
+
+	public function showStats($requestor, $target){
+		if($target == 'CONSOLE'){
+			$requestor->sendMessage(TF::RED.'You can not get the statistics of the Console!');
+		}else{
+		    if($this->getConfig()->get('Provider') == 'JSON'){
+		        if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
+			        $info = $this->getStats($target, 'JSON', 'all');
+				    $requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$info[PlayerName].TF::GOLD.'---');
+				    if($requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
+					    $requestor->sendMessage(TF::AQUA.'Last ClientID: '.TF::LIGHT_PURPLE.$info[ClientID]);
+					    $requestor->sendMessage(TF::AQUA.'Last IP: '.TF::LIGHT_PURPLE.$info[LastIP]);
+				    }
+				    $requestor->sendMessage(TF::AQUA.'First Join: '.TF::LIGHT_PURPLE.$info[FirstJoin]);
+				    $requestor->sendMessage(TF::AQUA.'Last Join: '.TF::LIGHT_PURPLE.$info[LastJoin]);
+				    $requestor->sendMessage(TF::AQUA.'Total Joins: '.TF::LIGHT_PURPLE.$info[JoinCount]);
+			    	$requestor->sendMessage(TF::AQUA.'Kills: '.TF::LIGHT_PURPLE.$info[KillCount]);
+			    	$requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$info[DeathCount]);
+			    	$requestor->sendMessage(TF::AQUA.'Kicks: '.TF::LIGHT_PURPLE.$info[KickCount]);
+			    	$requestor->sendMessage(TF::AQUA.'Online Time: '.TF::LIGHT_PURPLE.$info[OnlineTime]);
+			    	$requestor->sendMessage(TF::AQUA.'Breaked Blocks: '.TF::LIGHT_PURPLE.$info[BlocksBreaked]);
+			    	$requestor->sendMessage(TF::AQUA.'Placed Blocks: '.TF::LIGHT_PURPLE.$info[BlocksPlaced]);
+			    	$requestor->sendMessage(TF::AQUA.'Chat Messages: '.TF::LIGHT_PURPLE.$info[ChatMessages]);
+			    	$requestor->sendMessage(TF::AQUA.'Catched Fishes: '.TF::LIGHT_PURPLE.$info[FishCount]);
+			    	$requestor->sendMessage(TF::AQUA.'Went to bed for: '.TF::LIGHT_PURPLE.$info[EnterBedCount].TF::AQUA.' times');
+			    	$requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info[EatCount].TF::AQUA.' times');
+			    	$requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info[OnlineTime].TF::AQUA.' times');
+		        }else{
+			        $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target."\n".TF::AQUA.'Please check your spelling.');//Aericio please make this message nicer
+		        }
+		    }elseif($this->getConfig()->get('Provider') == 'MySQL'){
+				
+			}
 		}
 	}
 
@@ -75,29 +118,29 @@ class StatsPE extends PluginBase implements Listener{
 			if($provider == 'JSON'){
 			    if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
 					$pn = $player->getName();
-				    $info = $this->getStats($player, 'JSON', 'all');
+				    $info = $this->getStats($player->getName(), 'JSON', 'all');
 				    $cid = $player->getClientId();
 				    $ip = $player->getAddress();
 					$ls = date($this->getConfig()->get('TimeFormat'));
-					$jc = $info[5] + 1;
+					$jc = $info[JoinCount] + 1;
 				    $data = array(
 				        'PlayerName' => "$pn",
 					    'ClientID' => "$cid",
 					    'LastIP' => "$ip",
-					    'FirstJoin' => "$info[3]",
+					    'FirstJoin' => "$info[FirstJoin]",
 					    'LastJoin' => "$ls",
 					    'JoinCount' => "$jc",
-					    'KillCount' => "$info[6]",
-					    'DeathCount' => "$info[7]",
-					    'KickCount' => "$info[8]",
-					    'OnlineTime' => "$info[9]",
-					    'BlocksBreaked' => "$info[10]",
-					    'BlocksPlaced' => "$info[11]",
-					    'ChatMessages' => "$info[12]",
-					    'FishCount' => "$info[13]",
-					    'EnterBedCount' => "$info[14]",
-					    'EatCount' => "$info[15]",
-					    'CraftCount' => "$info[16]"
+					    'KillCount' => "$info[KillCount]",
+					    'DeathCount' => "$info[DeathCount]",
+					    'KickCount' => "$info[KickCount]",
+					    'OnlineTime' => "$info[OnlineTime]",
+					    'BlocksBreaked' => "$info[BlocksBreaked]",
+					    'BlocksPlaced' => "$info[BlocksPlaced]",
+					    'ChatMessages' => "$info[ChatMessages]",
+					    'FishCount' => "$info[FishCount]",
+					    'EnterBedCount' => "$info[EnterBedCount]",
+					    'EatCount' => "$info[EatCount]",
+					    'CraftCount' => "$info[CraftCount]"
 				    );
 				    $this->saveData($player, $data);
 			    }else{
@@ -115,7 +158,7 @@ class StatsPE extends PluginBase implements Listener{
 					    'KillCount' => '0',
 					    'DeathCount' => '0',
 					    'KickCount' => '0',
-					    'OnlineTime' => '0',
+					    'OnlineTime' => 'WIP',
 					    'BlocksBreaked' => '0',
 					    'BlocksPlaced' => '0',
 					    'ChatMessages' => '0',
