@@ -83,25 +83,25 @@ class StatsPE extends PluginBase implements Listener{
 		    if($this->getConfig()->get('Provider') == 'JSON'){
 		        if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
 			        $info = $this->getStats($target, 'JSON', 'all');
-				    $requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$info[PlayerName].TF::GOLD.'---');
+				    $requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$info['PlayerName'].TF::GOLD.'---');
 				    if($requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
-					    $requestor->sendMessage(TF::AQUA.'Last ClientID: '.TF::LIGHT_PURPLE.$info[ClientID]);
-					    $requestor->sendMessage(TF::AQUA.'Last IP: '.TF::LIGHT_PURPLE.$info[LastIP]);
+					    $requestor->sendMessage(TF::AQUA.'Last ClientID: '.TF::LIGHT_PURPLE.$info['ClientID']);
+					    $requestor->sendMessage(TF::AQUA.'Last IP: '.TF::LIGHT_PURPLE.$info['LastIP']);
 				    }
-				    $requestor->sendMessage(TF::AQUA.'First Join: '.TF::LIGHT_PURPLE.$info[FirstJoin]);
-				    $requestor->sendMessage(TF::AQUA.'Last Join: '.TF::LIGHT_PURPLE.$info[LastJoin]);
-				    $requestor->sendMessage(TF::AQUA.'Total Joins: '.TF::LIGHT_PURPLE.$info[JoinCount]);
-			    	$requestor->sendMessage(TF::AQUA.'Kills: '.TF::LIGHT_PURPLE.$info[KillCount]);
-			    	$requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$info[DeathCount]);
-			    	$requestor->sendMessage(TF::AQUA.'Kicks: '.TF::LIGHT_PURPLE.$info[KickCount]);
-			    	$requestor->sendMessage(TF::AQUA.'Online Time: '.TF::LIGHT_PURPLE.$info[OnlineTime]);
-			    	$requestor->sendMessage(TF::AQUA.'Breaked Blocks: '.TF::LIGHT_PURPLE.$info[BlocksBreaked]);
-			    	$requestor->sendMessage(TF::AQUA.'Placed Blocks: '.TF::LIGHT_PURPLE.$info[BlocksPlaced]);
-			    	$requestor->sendMessage(TF::AQUA.'Chat Messages: '.TF::LIGHT_PURPLE.$info[ChatMessages]);
-			    	$requestor->sendMessage(TF::AQUA.'Catched Fishes: '.TF::LIGHT_PURPLE.$info[FishCount]);
-			    	$requestor->sendMessage(TF::AQUA.'Went to bed for: '.TF::LIGHT_PURPLE.$info[EnterBedCount].TF::AQUA.' times');
-			    	$requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info[EatCount].TF::AQUA.' times');
-			    	$requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info[CraftCount].TF::AQUA.' times');
+				    $requestor->sendMessage(TF::AQUA.'First Join: '.TF::LIGHT_PURPLE.$info['FirstJoin']);
+				    $requestor->sendMessage(TF::AQUA.'Last Join: '.TF::LIGHT_PURPLE.$info['LastJoin']);
+				    $requestor->sendMessage(TF::AQUA.'Total Joins: '.TF::LIGHT_PURPLE.$info['JoinCount']);
+			    	$requestor->sendMessage(TF::AQUA.'Kills: '.TF::LIGHT_PURPLE.$info['KillCount']);
+			    	$requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$info['DeathCount']);
+			    	$requestor->sendMessage(TF::AQUA.'Kicks: '.TF::LIGHT_PURPLE.$info['KickCount']);
+			    	$requestor->sendMessage(TF::AQUA.'Online Time: '.TF::LIGHT_PURPLE.$info['OnlineTime']);
+			    	$requestor->sendMessage(TF::AQUA.'Breaked Blocks: '.TF::LIGHT_PURPLE.$info['BlocksBreaked']);
+			    	$requestor->sendMessage(TF::AQUA.'Placed Blocks: '.TF::LIGHT_PURPLE.$info['BlocksPlaced']);
+			    	$requestor->sendMessage(TF::AQUA.'Chat Messages: '.TF::LIGHT_PURPLE.$info['ChatMessages']);
+			    	$requestor->sendMessage(TF::AQUA.'Catched Fishes: '.TF::LIGHT_PURPLE.$info['FishCount']);
+			    	$requestor->sendMessage(TF::AQUA.'Went to bed for: '.TF::LIGHT_PURPLE.$info['EnterBedCount'].TF::AQUA.' times');
+			    	$requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info['EatCount'].TF::AQUA.' times');
+			    	$requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info['CraftCount'].TF::AQUA.' times');
 		        }else{
 			        $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target."\n".TF::AQUA.'Please check your spelling.');//Aericio please make this message nicer
 		        }
@@ -122,25 +122,25 @@ class StatsPE extends PluginBase implements Listener{
 				    $cid = $player->getClientId();
 				    $ip = $player->getAddress();
 					$ls = date($this->getConfig()->get('TimeFormat'));
-					$jc = $info[JoinCount] + 1;
+					$jc = $info['JoinCount'] + 1;
 				    $data = array(
-				        'PlayerName' => "$pn",
-					    'ClientID' => "$cid",
-					    'LastIP' => "$ip",
-					    'FirstJoin' => "$info[FirstJoin]",
-					    'LastJoin' => "$ls",
-					    'JoinCount' => "$jc",
-					    'KillCount' => "$info[KillCount]",
-					    'DeathCount' => "$info[DeathCount]",
-					    'KickCount' => "$info[KickCount]",
-					    'OnlineTime' => "$info[OnlineTime]",
-					    'BlocksBreaked' => "$info[BlocksBreaked]",
-					    'BlocksPlaced' => "$info[BlocksPlaced]",
-					    'ChatMessages' => "$info[ChatMessages]",
-					    'FishCount' => "$info[FishCount]",
-					    'EnterBedCount' => "$info[EnterBedCount]",
-					    'EatCount' => "$info[EatCount]",
-					    'CraftCount' => "$info[CraftCount]"
+				        'PlayerName' => $pn,
+					    'ClientID' => $cid,
+					    'LastIP' => $ip,
+					    'FirstJoin' => $info['FirstJoin'],
+					    'LastJoin' => $ls,
+					    'JoinCount' => $jc,
+					    'KillCount' => $info['KillCount'],
+					    'DeathCount' => $info['DeathCount'],
+					    'KickCount' => $info['KickCount'],
+					    'OnlineTime' => $info['OnlineTime'],
+					    'BlocksBreaked' => $info['BlocksBreaked'],
+					    'BlocksPlaced' => $info['BlocksPlaced'],
+					    'ChatMessages' => $info['ChatMessages'],
+					    'FishCount' => $info['FishCount'],
+					    'EnterBedCount' => $info['EnterBedCount'],
+					    'EatCount' => $info['EatCount'],
+					    'CraftCount' => $info['CraftCount']
 				    );
 				    $this->saveData($player, $data);
 			    }else{
