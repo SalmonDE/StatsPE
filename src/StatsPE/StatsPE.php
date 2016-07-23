@@ -487,20 +487,24 @@ class StatsPE extends PluginBase implements Listener{
 		$urldata = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?check');
 		$nversion = str_replace(array(" ", "\r", "\n"), '', $urldata);
 		$cversion = $this->getDescription()->getVersion();
-		if($cversion == $nversion){
-			$this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
+		if($nversion == ''){
+			$this->getLogger()->info(TF::RED.'Checking for update failed: Empty Response');
 		}else{
-			$this->getLogger()->info(TF::RED.TF::BOLD.'Update available for '.$this->getDescription()->getName().'!'."\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
-			if($this->getConfig()->get('Auto-Update') == 'true'){
-				$this->getLogger()->info('Running an update for '.$this->getDescription()->getName()."($cversion)".' to version: '.$nversion);
-				$this->update($nversion);
-			}else{
-				if($this->isPhar()){
-				    $this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
-				}else{
-					$this->getLogger()->info(TF::AQUA.TF::BOLD.'Looks like you are not using a phar version of StatsPE. You can still use the Auto Updater but it will not delete the source code. Please delete it by yourself to prevent errors.');
-				}
-			}
+		    if($cversion == $nversion){
+			    $this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
+		    }else{
+			    $this->getLogger()->info(TF::RED.TF::BOLD.'Update available for '.$this->getDescription()->getName().'!'."\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
+			    if($this->getConfig()->get('Auto-Update') == 'true'){
+				    $this->getLogger()->info('Running an update for '.$this->getDescription()->getName()."($cversion)".' to version: '.$nversion);
+				    $this->update($nversion);
+			    }else{
+				    if($this->isPhar()){
+				        $this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
+				    }else{
+					    $this->getLogger()->info(TF::AQUA.TF::BOLD.'Looks like you are not using a phar version of StatsPE. You can still use the Auto Updater but it will not delete the source code. Please delete it by yourself to prevent errors.');
+				    }
+			    }
+		    }
 		}
 	}
 
