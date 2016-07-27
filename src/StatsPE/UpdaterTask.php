@@ -33,7 +33,7 @@ class UpdaterTask extends AsyncTask{
 		    }
     }
 
-	public function onCompletion(Server $sever){
+	public function onCompletion(Server $server){
 		$server->shutdown();
 	}
 }
