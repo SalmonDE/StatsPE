@@ -24,7 +24,7 @@ class UpdaterTask extends AsyncTask{
 			    }else{
 					file_put_contents('StatsPEUpdaterError.log', 'Old StatsPE phar not found! Please make sure to name the StatsPE phar file like this: StatsPE_v'.$this->version.'.phar or if you use the source code disable the Auto Updater to prevent errors');
 				}
-				file_put_contents("plugins\StatsPE_v".$this->newversion.''.phar', $dfile);
+				file_put_contents("plugins\StatsPE_v".$this->newversion.'.phar', $dfile);
 			    if(!file_exists("plugins\StatsPE_v".$this->newversion.'.phar')){
 					file_put_contents('StatsPEUpdaterError.log', 'Could not download new phar file!');
 			    }
