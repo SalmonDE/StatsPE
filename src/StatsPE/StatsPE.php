@@ -193,11 +193,11 @@ class StatsPE extends PluginBase implements Listener{
 			    'KickCount' => $info['KickCount'],
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
-				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $info['ChatMessages'],
 			    'FishCount' => $info['FishCount'],
 			    'EnterBedCount' => $info['EnterBedCount'],
-		        'EatCount' => $info['EatCount'],
+		            'EatCount' => $info['EatCount'],
 			    'CraftCount' => $info['CraftCount']
 		    );
 			$this->saveData($player, $data);
@@ -219,11 +219,11 @@ class StatsPE extends PluginBase implements Listener{
 			            'KickCount' => $kinfo['KickCount'],
 			            'OnlineTime' => $kinfo['OnlineTime'],
 			            'BlocksBreaked' => $kinfo['BlocksBreaked'],
-				        'BlocksPlaced' => $kinfo['BlocksPlaced'],
+				    'BlocksPlaced' => $kinfo['BlocksPlaced'],
 			            'ChatMessages' => $kinfo['ChatMessages'],
 			            'FishCount' => $kinfo['FishCount'],
 			            'EnterBedCount' => $kinfo['EnterBedCount'],
-		                'EatCount' => $kinfo['EatCount'],
+		                    'EatCount' => $kinfo['EatCount'],
 			            'CraftCount' => $kinfo['CraftCount']
 		            );
 					$this->saveData($killer, $kdata);
@@ -252,11 +252,11 @@ class StatsPE extends PluginBase implements Listener{
 			    'KickCount' => $kc,
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
-				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $info['ChatMessages'],
 			    'FishCount' => $info['FishCount'],
 			    'EnterBedCount' => $info['EnterBedCount'],
-		        'EatCount' => $info['EatCount'],
+		            'EatCount' => $info['EatCount'],
 			    'CraftCount' => $info['CraftCount']
 		    );
 			$this->saveData($player, $data);
@@ -280,14 +280,14 @@ class StatsPE extends PluginBase implements Listener{
 			    'JoinCount' => $info['JoinCount'],
 			    'KillCount' => $info['KillCount'],
 			    'DeathCount' => $info['DeathCount'],
-		        'KickCount' => $info['KickCount'],
+		            'KickCount' => $info['KickCount'],
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $br,
-				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $info['ChatMessages'],
 			    'FishCount' => $info['FishCount'],
 			    'EnterBedCount' => $info['EnterBedCount'],
-		        'EatCount' => $info['EatCount'],
+		            'EatCount' => $info['EatCount'],
 			    'CraftCount' => $info['CraftCount']
 		    );
 			$this->saveData($player, $data);
@@ -311,14 +311,14 @@ class StatsPE extends PluginBase implements Listener{
 			    'JoinCount' => $info['JoinCount'],
 			    'KillCount' => $info['KillCount'],
 			    'DeathCount' => $info['DeathCount'],
-		        'KickCount' => $info['KickCount'],
+		            'KickCount' => $info['KickCount'],
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
-				'BlocksPlaced' => $bp,
+	   	            'BlocksPlaced' => $bp,
 			    'ChatMessages' => $info['ChatMessages'],
 			    'FishCount' => $info['FishCount'],
 			    'EnterBedCount' => $info['EnterBedCount'],
-		        'EatCount' => $info['EatCount'],
+		            'EatCount' => $info['EatCount'],
 			    'CraftCount' => $info['CraftCount']
 		    );
 			$this->saveData($player, $data);
@@ -342,14 +342,14 @@ class StatsPE extends PluginBase implements Listener{
 			    'JoinCount' => $info['JoinCount'],
 			    'KillCount' => $info['KillCount'],
 			    'DeathCount' => $info['DeathCount'],
-		        'KickCount' => $info['KickCount'],
+		            'KickCount' => $info['KickCount'],
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
-				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $cm,
 			    'FishCount' => $info['FishCount'],
 			    'EnterBedCount' => $info['EnterBedCount'],
-		        'EatCount' => $info['EatCount'],
+		            'EatCount' => $info['EatCount'],
 			    'CraftCount' => $info['CraftCount']
 		    );
 			$this->saveData($player, $data);
@@ -374,14 +374,14 @@ class StatsPE extends PluginBase implements Listener{
 			    'JoinCount' => $info['JoinCount'],
 			    'KillCount' => $info['KillCount'],
 			    'DeathCount' => $info['DeathCount'],
-		        'KickCount' => $info['KickCount'],
+		            'KickCount' => $info['KickCount'],
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
-				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $info['ChatMessages'],
 			    'FishCount' => $fc,
 			    'EnterBedCount' => $info['EnterBedCount'],
-		        'EatCount' => $info['EatCount'],
+		            'EatCount' => $info['EatCount'],
 			    'CraftCount' => $info['CraftCount']
 		    );
 			$this->saveData($player, $data);
@@ -405,14 +405,14 @@ class StatsPE extends PluginBase implements Listener{
 			    'JoinCount' => $info['JoinCount'],
 			    'KillCount' => $info['KillCount'],
 			    'DeathCount' => $info['DeathCount'],
-		        'KickCount' => $info['KickCount'],
+		            'KickCount' => $info['KickCount'],
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
-				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $info['ChatMessages'],
 			    'FishCount' => $info['FishCount'],
 			    'EnterBedCount' => $ebc,
-		        'EatCount' => $info['EatCount'],
+		            'EatCount' => $info['EatCount'],
 			    'CraftCount' => $info['CraftCount']
 		    );
 			$this->saveData($player, $data);
@@ -436,14 +436,14 @@ class StatsPE extends PluginBase implements Listener{
 			    'JoinCount' => $info['JoinCount'],
 			    'KillCount' => $info['KillCount'],
 			    'DeathCount' => $info['DeathCount'],
-		        'KickCount' => $info['KickCount'],
+		            'KickCount' => $info['KickCount'],
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
-				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $info['ChatMessages'],
 			    'FishCount' => $info['FishCount'],
 			    'EnterBedCount' => $info['EnterBedCount'],
-		        'EatCount' => $ec,
+		            'EatCount' => $ec,
 			    'CraftCount' => $info['CraftCount']
 		    );
 			$this->saveData($player, $data);
@@ -467,14 +467,14 @@ class StatsPE extends PluginBase implements Listener{
 			    'JoinCount' => $info['JoinCount'],
 			    'KillCount' => $info['KillCount'],
 			    'DeathCount' => $info['DeathCount'],
-		        'KickCount' => $info['KickCount'],
+		            'KickCount' => $info['KickCount'],
 			    'OnlineTime' => $info['OnlineTime'],
 			    'BlocksBreaked' => $info['BlocksBreaked'],
-				'BlocksPlaced' => $info['BlocksPlaced'],
+			    'BlocksPlaced' => $info['BlocksPlaced'],
 			    'ChatMessages' => $info['ChatMessages'],
 			    'FishCount' => $info['FishCount'],
 			    'EnterBedCount' => $info['EnterBedCount'],
-		        'EatCount' => $info['EatCount'],
+		            'EatCount' => $info['EatCount'],
 			    'CraftCount' => $cc
 		    );
 			$this->saveData($player, $data);
