@@ -1,7 +1,7 @@
 # StatsPE - Advanced Stats Plugin [![Travis-CI](https://travis-ci.org/SalmonGER/StatsPE.svg?branch=master)](https://travis-ci.org/SalmonGER/StatsPE)
 
 ### Information
-**Note:** MySQL support is not complete yet, there is some more coding to do!</br>
+**Note:** MySQL support is not complete yet, there is some more coding to do!
 This is the GitHub repository for developing a stats plugin, which uses JSON and MySQL to save it's data.
 The plugin also contains an auto updater which checks if an update is available and downloads it if enabled in the config file.
 
@@ -25,7 +25,7 @@ Step 5 | Change the data providers from JSON to MySQL in [this](https://github.c
 ---
 ***Statistic*** | ***Description*** | ***Example*** | ***Type***
 -----------|-----------|-----------|-----------|
-PlayerName | Name of the player (case sensitive)| Aericio | Normal
+PlayerName | Name of the player (case sensitive)| SalericioDE | Normal
 ClientID | ClientID of the MCPE installation | -8655314918531 | Advanced
 LastIP | Last used IP from the player | 192.168.1.1 | Advanced
 FirstJoin | First time the player joined | 04:19:51 22.07.2016 (Configurable)| Normal
