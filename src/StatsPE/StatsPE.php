@@ -9,7 +9,6 @@ use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\utils\Utils;
-//Events
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\inventory\CraftItemEvent;
@@ -20,10 +19,10 @@ use pocketmine\event\player\PlayerFishEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
-//Events
 use StatsPE\UpdaterTask;
 
-class StatsPE extends PluginBase implements Listener{
+class StatsPE extends PluginBase implements Listener
+{
 
 	public function onEnable(){
 		@mkdir($this->getDataFolder());
