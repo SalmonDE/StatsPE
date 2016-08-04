@@ -6,7 +6,8 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
 
-class UpdaterTask extends AsyncTask{
+class UpdaterTask extends AsyncTask
+{
 
 	public function __construct($url, $hash, $path, $version, $newversion){
 		$this->url = $url;
