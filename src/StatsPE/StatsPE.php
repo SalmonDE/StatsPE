@@ -20,7 +20,7 @@ use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use StatsPE\UpdaterTask;
-use pocketmine\math\Vector3
+use pocketmine\math\Vector3;
 
 class StatsPE extends PluginBase implements Listener
 {
