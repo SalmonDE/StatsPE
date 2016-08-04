@@ -6,6 +6,7 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
 use pocketmine\math\Vector3
+
 class UpdaterTask extends AsyncTask
 {
 
