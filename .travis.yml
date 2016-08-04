@@ -5,7 +5,7 @@ php:
  
 branches:
  - master
- - testing-end-optimise 
+  
 before_script:
  - cd /home/travis/build/
  - phpenv config-rm xdebug.ini
