@@ -5,7 +5,7 @@ JoinCount: true
 KillCount: true
 DeathCount: true
 KickCount: true
-# OnlineTime is not added yet.
+# OnlineTime has not been implemented
 OnlineTime: false
 BlockBreakCount: true
 BlockPlaceCount: true
