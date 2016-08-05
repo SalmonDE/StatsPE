@@ -490,8 +490,8 @@ class StatsPE extends PluginBase implements Listener
 			$this->getLogger()->info(TF::RED.'Checking for Update Failed: Empty Response');
 		}else{
 		    if($cversion == $nversion){
--			    $this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
--		    }else{
+			    $this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
+		    }else{
 			    $this->getLogger()->info(TF::RED.TF::BOLD.'Update available for '.$this->getDescription()->getName().'!'."\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
 			    if($this->getConfig()->get('Auto-Update') == 'true'){
 				    $this->getLogger()->info('Running an update for '.$this->getDescription()->getName()."($cversion)".' to version: '.$nversion);
