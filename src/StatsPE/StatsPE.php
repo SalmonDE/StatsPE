@@ -20,7 +20,6 @@ use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use StatsPE\UpdaterTask;
-use pocketmine\math\Vector3;
 
 class StatsPE extends PluginBase implements Listener
 {
@@ -488,20 +487,20 @@ class StatsPE extends PluginBase implements Listener
 		$nversion = str_replace(array(" ", "\r", "\n"), '', $urldata);
 		$cversion = $this->getDescription()->getVersion();
 		if($nversion == ''){
-			$this->getLogger()->info(TF::RED.'Checking for update failed: Empty Response');
+			$this->getLogger()->info(TF::RED.'Checking for Update Failed: Empty Response');
 		}else{
 		    if($cversion == $nversion){
-			    $this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
-		    }else{
+-			    $this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
+-		    }else{
 			    $this->getLogger()->info(TF::RED.TF::BOLD.'Update available for '.$this->getDescription()->getName().'!'."\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
 			    if($this->getConfig()->get('Auto-Update') == 'true'){
 				    $this->getLogger()->info('Running an update for '.$this->getDescription()->getName()."($cversion)".' to version: '.$nversion);
 				    $this->update($nversion);
 			    }else{
 				    if($this->isPhar()){
-				        $this->getLogger()->info(TF::AQUA.'Please enable "Auto-Update" inside the config file to let the plugin automatically update itself!');
+				        $this->getLogger()->info(TF::AQUA.'Please set "Auto-Update" to "true" to automatically update the plugin!');
 				    }else{
-					    $this->getLogger()->info(TF::AQUA.TF::BOLD.'Looks like you are not using a phar version of StatsPE. You can still use the Auto Updater but it will not delete the source code. Please delete it by yourself to prevent errors.');
+					    $this->getLogger()->info(TF::AQUA.TF::BOLD.'It seems that you are not using a StatsPE phar. It still updates, but the source folder will not be removed. Please delete the file manually to prevent errors.');
 				    }
 			    }
 		    }
