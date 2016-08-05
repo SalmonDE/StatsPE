@@ -1,11 +1,11 @@
 # Configuration file for StatsPE
 
-# Enabled Stats:
+# Enabled Stats: true/false
 JoinCount: true
 KillCount: true
 DeathCount: true
 KickCount: true
-# OnlineTime won't be finish for a long time.
+# OnlineTime is not added yet.
 OnlineTime: false
 BlockBreakCount: true
 BlockPlaceCount: true
@@ -15,18 +15,18 @@ BedEnterCount: true
 EatCount: true
 CraftCount: true
 
-# Enable or disable auto updating for this plugin
+# Enable/Disable the Auto-Updater Feature.
 Auto-Update: true
 
 # Time Format used for Stats like last and first Join
 # Further information about this on this page:
 # http://php.net/manual/de/function.date.php
-#
 # Default: "H:i:s d.m.Y" = Hour:Minute:Seconds Day.Month.Year
 # Example: 12:00:63 22.07.2016
 TimeFormat: "H:i:s d.m.Y"
+
 # Set default data provider for StatsPE
-# Available Providers: MySQL, JSON (Use this if you search for YAML)
+# Available Providers: MySQL, JSON (YAML)
 Provider: JSON
 
 # MySQL Settings (Only configure this if you are going to use MySQL data provider)
