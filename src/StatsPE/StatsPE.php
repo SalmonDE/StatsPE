@@ -30,7 +30,7 @@ class StatsPE extends PluginBase implements Listener
                 if($this->getConfig()->get('Auto-Update')){
 		    $this->checkVersion();
                 }else{
-                    $this->getLogger()->notice('Checking for update cancelled, make sure to always check the version of the plugin!');
+                    $this->getLogger()->notice('Update Checking Cancelled, Make sure to check the latest version once in a while!');
                 }
 		$provider = $this->getConfig()->get('Provider');
 		if($provider == 'JSON'){
