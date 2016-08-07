@@ -27,7 +27,11 @@ class StatsPE extends PluginBase implements Listener
 	public function onEnable(){
 		@mkdir($this->getDataFolder());
 		$this->saveResource('config.yml');
-		$this->checkVersion();
+                if($this->getConfig()->get('Auto-Update')){
+		    $this->checkVersion();
+                }else{
+                    $this->getLogger()->notice('Checking for update cancelled, make sure to always check the version of the plugin!');
+                }
 		$provider = $this->getConfig()->get('Provider');
 		if($provider == 'JSON'){
 			@mkdir($this->getDataFolder().'Stats');
