@@ -30,7 +30,7 @@ class StatsPE extends PluginBase implements Listener
                 if($this->getConfig()->get('Auto-Update')){
 		    $this->checkVersion();
                 }else{
-                    $this->getLogger()->notice('Update Checking Cancelled, Make sure to check the latest version once in a while!');
+                    $this->getLogger()->notice('Update Checking Cancelled, make sure to check the latest version once in a while!');
                 }
 		$provider = $this->getConfig()->get('Provider');
 		if($provider == 'JSON'){
@@ -81,7 +81,7 @@ class StatsPE extends PluginBase implements Listener
 
 	public function showStats($requestor, $target){
 		if($target == 'CONSOLE'){
-			$requestor->sendMessage(TF::RED.'You can not get the statistics of the Console!');
+			$requestor->sendMessage(TF::RED.'You don't have permission to view Console's stats!);
 		}else{
 		    if($this->getConfig()->get('Provider') == 'JSON'){
 		        if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
@@ -494,7 +494,7 @@ class StatsPE extends PluginBase implements Listener
 			$this->getLogger()->info(TF::RED.'Checking for Update Failed: Empty Response');
 		}else{
 		    if($cversion == $nversion){
-			    $this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
+			    $this->getLogger()->info(TF::GREEN.'Your StatsPE version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
 		    }else{
 			    $this->getLogger()->info(TF::RED.TF::BOLD.'Update available for '.$this->getDescription()->getName().'!'."\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
 			    if($this->getConfig()->get('Auto-Update') == 'true'){
