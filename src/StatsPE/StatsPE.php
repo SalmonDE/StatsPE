@@ -81,7 +81,7 @@ class StatsPE extends PluginBase implements Listener
 
 	public function showStats($requestor, $target){
 		if($target == 'CONSOLE'){
-			$requestor->sendMessage(TF::RED.'You do not have permission to view Console stats!);
+			$requestor->sendMessage(TF::RED.'You do not have permission to view Console stats!');
 		}else{
 		    if($this->getConfig()->get('Provider') == 'JSON'){
 		        if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
