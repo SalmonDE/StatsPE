@@ -125,8 +125,13 @@ class StatsPE extends PluginBase implements Listener
 			$player = $event->getPlayer();
 			$provider = $this->getConfig()->get('Provider');
 			if($provider == 'JSON'){
+			if($player->isXboxAuthenticated()){
+				$xa = 'true';
+			}else{
+				$xa = 'false';
+			}
+			$pn = $player->getName();
 			    if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
-					$pn = $player->getName();
 				    $info = $this->getStats($player->getName(), 'JSON', 'all');
 				    $cid = $player->getClientId();
 				    $ip = $player->getAddress();
@@ -136,7 +141,7 @@ class StatsPE extends PluginBase implements Listener
 				        'PlayerName' => $pn,
 					    'ClientID' => $cid,
 						'ClientSecret' => $player->getClientSecret(),
-						'XBoxAuthenticated' => $player->isXboxAuthenticated(),
+						'XBoxAuthenticated' => $xa,
 					    'LastIP' => $ip,
 					    'FirstJoin' => $info['FirstJoin'],
 					    'LastJoin' => $ls,
@@ -155,7 +160,6 @@ class StatsPE extends PluginBase implements Listener
 				    );
 				    $this->saveData($player, $data);
 			    }else{
-				    $pn = $player->getName();
 				    $fp = date($this->getConfig()->get('TimeFormat'));
 				    $cid = $player->getClientId();
 				    $ip = $player->getAddress();
@@ -163,7 +167,7 @@ class StatsPE extends PluginBase implements Listener
 				        'PlayerName' => $pn,
 					    'ClientID' => $cid,
 						'ClientSecret' => $player->getClientSecret(),
-						'XBoxAuthenticated' => $player->isXboxAuthenticated(),
+						'XBoxAuthenticated' => $xa,
 					    'LastIP' => $ip,
 					    'FirstJoin' => $fp,
 					    'LastJoin' => $fp,

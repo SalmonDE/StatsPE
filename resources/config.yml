@@ -3,6 +3,7 @@
 # Enabled Stats: true/false
 JoinCount: true
 KillCount: true
+KD: true
 DeathCount: true
 KickCount: true
 # OnlineTime has not been implemented
@@ -26,7 +27,7 @@ Auto-Update: true
 TimeFormat: "H:i:s d.m.Y"
 
 # Set default data provider for StatsPE
-# Available Providers: MySQL, JSON (YAML)
+# Available Providers: MySQL, JSON
 Provider: JSON
 
 # MySQL Settings (Only configure this if you are going to use MySQL data provider)
