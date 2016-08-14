@@ -25,6 +25,9 @@ class StatsPE extends PluginBase implements Listener
 {
 
 	public function onEnable(){
+		if(!$this->getServer()->getName() === 'ClearSky'){
+			$this->getLogger()->warning(TF::RED.'You are running this plugin on a not officially supported server software. Use with caution!');
+		}
 		@mkdir($this->getDataFolder());
 		$this->saveResource('config.yml');
                 if($this->getConfig()->get('Auto-Update')){
@@ -89,13 +92,16 @@ class StatsPE extends PluginBase implements Listener
 				    $requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$info['PlayerName'].TF::GOLD.'---');
 				    if($requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
 					    $requestor->sendMessage(TF::AQUA.'Last ClientID: '.TF::LIGHT_PURPLE.$info['ClientID']);
-					    $requestor->sendMessage(TF::AQUA.'Last IP: '.TF::LIGHT_PURPLE.$info['LastIP']);
+						$requestor->sendMessage(TF::AQUA.'Last ClientSecret: '.TF::LIGHT_PURPLE.$info['ClientSecret']);
+					    $requestor->sendMessage(TF::AQUA.'XBoxAuthenticated: '.TF::LIGHT_PURPLE.$info['XBoxAuthenticated']);
+						$requestor->sendMessage(TF::AQUA.'Last IP: '.TF::LIGHT_PURPLE.$info['LastIP']);
 				    }
 				    $requestor->sendMessage(TF::AQUA.'First Join: '.TF::LIGHT_PURPLE.$info['FirstJoin']);
 				    $requestor->sendMessage(TF::AQUA.'Last Join: '.TF::LIGHT_PURPLE.$info['LastJoin']);
 				    $requestor->sendMessage(TF::AQUA.'Total Joins: '.TF::LIGHT_PURPLE.$info['JoinCount']);
 			    	$requestor->sendMessage(TF::AQUA.'Kills: '.TF::LIGHT_PURPLE.$info['KillCount']);
 			    	$requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$info['DeathCount']);
+					$requestor->sendMessage(TF::AQUA.'K/D: '.TF::LIGHT_PURPLE.$info['KillCount'] / $info['DeathCount']);
 			    	$requestor->sendMessage(TF::AQUA.'Kicks: '.TF::LIGHT_PURPLE.$info['KickCount']);
 			    	$requestor->sendMessage(TF::AQUA.'Online Time: '.TF::LIGHT_PURPLE.$info['OnlineTime']);
 			    	$requestor->sendMessage(TF::AQUA.'Breaked Blocks: '.TF::LIGHT_PURPLE.$info['BlocksBreaked']);
@@ -129,6 +135,8 @@ class StatsPE extends PluginBase implements Listener
 				    $data = array(
 				        'PlayerName' => $pn,
 					    'ClientID' => $cid,
+						'ClientSecret' => $player->getClientSecret(),
+						'XBoxAuthenticated' => $player->isXboxAuthenticated(),
 					    'LastIP' => $ip,
 					    'FirstJoin' => $info['FirstJoin'],
 					    'LastJoin' => $ls,
@@ -152,11 +160,13 @@ class StatsPE extends PluginBase implements Listener
 				    $cid = $player->getClientId();
 				    $ip = $player->getAddress();
 				    $data = array(
-				        'PlayerName' => "$pn",
-					    'ClientID' => "$cid",
-					    'LastIP' => "$ip",
-					    'FirstJoin' => "$fp",
-					    'LastJoin' => "$fp",
+				        'PlayerName' => $pn,
+					    'ClientID' => $cid,
+						'ClientSecret' => $player->getClientSecret(),
+						'XBoxAuthenticated' => $player->isXboxAuthenticated(),
+					    'LastIP' => $ip,
+					    'FirstJoin' => $fp,
+					    'LastJoin' => $fp,
 					    'JoinCount' => '1',
 					    'KillCount' => '0',
 					    'DeathCount' => '0',
@@ -213,6 +223,8 @@ class StatsPE extends PluginBase implements Listener
 		            $kdata = array(
 		                'PlayerName' => $kinfo['PlayerName'],
 			            'ClientID' => $kinfo['ClientID'],
+						'ClientSecret' => $kinfo['ClientSecret'],
+						'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
 			            'LastIP' => $kinfo['LastIP'],
 			            'FirstJoin' => $kinfo['FirstJoin'],
 			            'LastJoin' => $kinfo['LastJoin'],
@@ -246,6 +258,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+			    'ClientSecret' => $info['ClientSecret'],
+				'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -277,6 +291,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+				'ClientSecret' => $info['ClientSecret'],
+				'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -308,6 +324,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+				'ClientSecret' => $kinfo['ClientSecret'],
+				'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -339,6 +357,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+				'ClientSecret' => $kinfo['ClientSecret'],
+				'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -371,6 +391,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+				'ClientSecret' => $kinfo['ClientSecret'],
+				'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -402,6 +424,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+				'ClientSecret' => $kinfo['ClientSecret'],
+			    'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -433,6 +457,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+				'ClientSecret' => $kinfo['ClientSecret'],
+				'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -464,6 +490,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+				'ClientSecret' => $kinfo['ClientSecret'],
+				'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
