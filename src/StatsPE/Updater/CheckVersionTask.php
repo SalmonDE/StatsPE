@@ -1,37 +1,29 @@
 <?php
+
 namespace StatsPE\Updater;
 
 use pocketmine\scheduler\AsyncTask;
-use pocketmine\Server;
-use pocketmine\utils\TextFormat as TF;
 use pocketmine\utils\Utils;
-use StatsPE\StatsPE;
 
 class CheckVersionTask extends AsyncTask
 {
+    public function __construct($owner)
+    {
+        $this->name = $owner->getDescription()->getName();
+        $this->cversion = $owner->getDescription()->getVersion();
+        $this->website = $owner->getDescription()->getWebsite();
+        $this->autoupdate = $owner->getConfig()->get('Auto-Update');
+        $this->path = $owner->getDataFolder();
+    }
 
-	public function __construct(StatsPE $owner){
-		$this->name = $owner->getDescription()->getName();
-		$this->cversion = $owner->getDescription()->getVersion();
-		$this->website = $owner->getDescription()->getWebsite();
-		$this->autoupdate = $owner->getConfig()->get('Auto-Update');
-	}
-
-	public function onRun(){
-		$nversion = Utils::getURL($this->website.'MCPE-Plugins/'.$this->name.'/Updater.php?check');
-		$nversion = str_replace(array(" ", "\r", "\n"), '', $nversion);
-		$cversion = $this->cversion;
-		if(!$nversion){
-			//$this->getLogger()->warning(TF::RED.'Checking for Update Failed: Empty Response');
-		}else{
-        $this->setResult($nversion);
-		}
-	}
-
-	public function onCompletion(Server $server){
-		if(!$this->cversion == $this->getResult()){
-			$server->broadcastMessage(TF::GREEN.'Running an update for '.$this->name." ($this->cversion)".' to version: '.$this->nversion);
-			StatsPE::update($this->nversion);
-		}
-	}
+    public function onRun()
+    {
+        $nversion = str_replace(array(' ', "\r", "\n"), '', Utils::getURL($this->website.'MCPE-Plugins/'.$this->name.'/Updater.php?check'));
+        $cversion = $this->cversion;
+        if (!$nversion) {
+            file_put_contents($this->path.'version', 'NULL');
+        } else {
+            file_put_contents($this->path.'version', $nversion);
+        }
+    }
 }
