@@ -19,8 +19,9 @@ use pocketmine\event\player\PlayerFishEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
-use StatsPE\Updater\UpdaterTask;
 use StatsPE\Updater\CheckVersionTask;
+use StatsPE\Updater\DelayTask;
+use StatsPE\Updater\UpdaterTask;
 
 class StatsPE extends PluginBase implements Listener
 {
@@ -49,7 +50,7 @@ class StatsPE extends PluginBase implements Listener
              Please make a PR or contact me if you know a solution!
            */
           if($this->getServer()->isRunning()){
-              $this->getServer()->getScheduler()->scheduleAsyncTask(new CheckVersionTask($this));
+              $this->getServer()->getScheduler()->scheduleDelayedTask(new DelayTask(), 400);
           }
         }while(!$this->getServer()->isRunning());
     }
