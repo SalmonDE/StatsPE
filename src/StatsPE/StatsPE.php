@@ -50,7 +50,7 @@ class StatsPE extends PluginBase implements Listener
              Please make a PR or contact me if you know a solution!
            */
           if($this->getServer()->isRunning()){
-              $this->getServer()->getScheduler()->scheduleDelayedTask(new DelayTask(), 400);
+              $this->getServer()->getScheduler()->scheduleDelayedTask(new DelayTask($this), 400);
           }
         }while(!$this->getServer()->isRunning());
     }
