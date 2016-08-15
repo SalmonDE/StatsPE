@@ -1,5 +1,4 @@
 <?php
-
 namespace StatsPE\Updater;
 
 use pocketmine\scheduler\AsyncTask;
@@ -9,8 +8,7 @@ use pocketmine\utils\Utils;
 
 class CheckVersionTask extends AsyncTask
 {
-    public function __construct($owner)
-    {
+    public function __construct($owner){
         $this->name = $owner->getDescription()->getName();
         $this->cversion = $owner->getDescription()->getVersion();
         $this->website = $owner->getDescription()->getWebsite();
