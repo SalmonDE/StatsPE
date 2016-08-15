@@ -201,6 +201,8 @@ class StatsPE extends PluginBase implements Listener
 		  $data = array(
 		      'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
+					'ClientSecret' => $info['ClientSecret'],
+					'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -328,8 +330,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		       'PlayerName' => $info['PlayerName'],
 			     'ClientID' => $info['ClientID'],
-				   'ClientSecret' => $kinfo['ClientSecret'],
-				   'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
+				   'ClientSecret' => $info['ClientSecret'],
+				   'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			     'LastIP' => $info['LastIP'],
 			     'FirstJoin' => $info['FirstJoin'],
 			     'LastJoin' => $info['LastJoin'],
@@ -361,8 +363,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			      'ClientID' => $info['ClientID'],
-				    'ClientSecret' => $kinfo['ClientSecret'],
-				    'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
+				    'ClientSecret' => $info['ClientSecret'],
+				    'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			      'LastIP' => $info['LastIP'],
 			      'FirstJoin' => $info['FirstJoin'],
 			      'LastJoin' => $info['LastJoin'],
@@ -394,8 +396,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
-				'ClientSecret' => $kinfo['ClientSecret'],
-				'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
+				'ClientSecret' => $info['ClientSecret'],
+				'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -427,8 +429,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
-				'ClientSecret' => $kinfo['ClientSecret'],
-			    'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
+				'ClientSecret' => $info['ClientSecret'],
+			    'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -460,8 +462,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
-				'ClientSecret' => $kinfo['ClientSecret'],
-				'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
+				'ClientSecret' => $info['ClientSecret'],
+				'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -493,8 +495,8 @@ class StatsPE extends PluginBase implements Listener
 		    $data = array(
 		        'PlayerName' => $info['PlayerName'],
 			    'ClientID' => $info['ClientID'],
-				'ClientSecret' => $kinfo['ClientSecret'],
-				'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
+				'ClientSecret' => $info['ClientSecret'],
+				'XBoxAuthenticated' => $info['XBoxAuthenticated'],
 			    'LastIP' => $info['LastIP'],
 			    'FirstJoin' => $info['FirstJoin'],
 			    'LastJoin' => $info['LastJoin'],
@@ -514,31 +516,6 @@ class StatsPE extends PluginBase implements Listener
 			$this->saveData($player, $data);
 		}elseif($provider == 'mysql'){
 
-		}
-	}
-
-    public function checkVersion(){
-		$urldata = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?check');
-		$nversion = str_replace(array(" ", "\r", "\n"), '', $urldata);
-		$cversion = $this->getDescription()->getVersion();
-		if($nversion == ''){
-			$this->getLogger()->warning(TF::RED.'Checking for Update Failed: Empty Response');
-		}else{
-		    if($cversion == $nversion){
-			    $this->getLogger()->info(TF::GREEN.'Your '.$this->getDescription()->getName().' version ('.TF::AQUA.$cversion.TF::GREEN.') is up to date! :)');
-		    }else{
-			    $this->getLogger()->notice(TF::RED.TF::BOLD.'Update available for '.$this->getDescription()->getName().'!'."\n".TF::RED.'Current version: '.$cversion."\n".TF::GREEN.TF::BOLD.'Newest version: '.$nversion);
-			    if($this->getConfig()->get('Auto-Update') == 'true'){
-				    $this->getLogger()->notice('Running an update for '.$this->getDescription()->getName()."($cversion)".' to version: '.$nversion);
-				    $this->update($nversion);
-			    }else{
-				    if($this->isPhar()){
-				        $this->getLogger()->info(TF::AQUA.'Please set "Auto-Update" to "true" to automatically update the plugin!');
-				    }else{
-					    $this->getLogger()->info(TF::AQUA.TF::BOLD.'It seems that you are not using a StatsPE phar. It still updates, but the source folder will not be removed. Please delete the file manually to prevent errors.');
-				    }
-			    }
-		    }
 		}
 	}
 
