@@ -44,7 +44,7 @@ class CheckVersionTask extends AsyncTask
 
 	public function onCompletion(Server $server){
 		if($this->getResult()){
-			$this->owner->getLogger()->warning(TF::GREEN.'Will run an update for '.$this->owner->getDescription()->getName()." ($cversion)".' to version: '.$nversion);
+			$server->broadcastTip(TF::GREEN.'Running an update for '.$this->owner->getDescription()->getName()." ($cversion)".' to version: '.$nversion);
 			$this->owner->update($nversion);
 		}
 	}
