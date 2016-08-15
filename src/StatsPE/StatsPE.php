@@ -19,8 +19,8 @@ use pocketmine\event\player\PlayerFishEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
-use StatsPE\Updater\CheckVersionTask;
-use StatsPE\Updater\UpdateTask;
+use StatsPE\Updater\HackTask;
+use StatsPE\Updater\UpdaterTask;
 
 class StatsPE extends PluginBase implements Listener
 {
@@ -31,7 +31,7 @@ class StatsPE extends PluginBase implements Listener
         }
         @mkdir($this->getDataFolder());
         $this->saveResource('config.yml');
-        $this->getServer()->getScheduler()->scheduleAsyncTask(new CheckVersionTask($this));
+        $this->getServer()->getScheduler()->scheduleTask(new HackTask(0));
         $provider = strtolower($this->getConfig()->get('Provider'));
         if ($provider == 'json') {
             @mkdir($this->getDataFolder().'Stats');
@@ -521,11 +521,14 @@ class StatsPE extends PluginBase implements Listener
         }
     }
 
-    public function update($newversion)
+    public function update($nversion)
     {
         $url = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?downloadurl');
         $md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?md5');
-        $this->getLogger()->notice(TF::AQUA.'MD5 Hash: '.TF::GOLD.TF::BOLD.$md5);
-        $this->getServer()->getScheduler()->scheduleAsyncTask(new UpdateTask($url, $md5, $this->getDataFolder(), $this->getDescription()->getVersion()));
+        $this->getServer()->getScheduler()->scheduleDelayedTask(new UpdaterTask($url, $md5, $this->getDataFolder(), $this->getDescription()->getVersion(), $nversion, $this), 400);
+    }
+
+    public function updaterHack(){
+      $this->getServer()->getScheduler()->scheduleDelayedTask(new HackTask(1), 400);
     }
 }
