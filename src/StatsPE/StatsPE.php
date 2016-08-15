@@ -42,6 +42,12 @@ class StatsPE extends PluginBase implements Listener
         }
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         do{
+          /*
+             This will not work as it should work. isRunning() returns
+             already true before the server has finished starting
+             which is what the plugin needs to know.
+             Please make a PR or contact me if you know a solution!
+           */
           if($this->getServer()->isRunning()){
               $this->getServer()->getScheduler()->scheduleAsyncTask(new CheckVersionTask($this));
           }
