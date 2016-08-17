@@ -1,5 +1,4 @@
 <?php
-
 namespace StatsPE;
 
 use pocketmine\command\Command;
