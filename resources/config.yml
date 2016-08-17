@@ -18,7 +18,7 @@ CraftCount: true
 
 # Enable/Disable the Auto-Updater Feature.
 Auto-Update: true
-
+Shutdown-Message: "Restarting Server due to a software update!"
 # Time Format used for Stats like last and first Join
 # Further information about this on this page:
 # http://php.net/manual/de/function.date.php

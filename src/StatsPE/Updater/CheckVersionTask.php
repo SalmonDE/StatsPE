@@ -21,13 +21,13 @@ class CheckVersionTask extends AsyncTask
         $nversion = str_replace(array(' ', "\r", "\n"), '', $url);
         if($nversion){
             if(!$this->cversion == $nversion){
-                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::GOLD.'Update available for '.$this->name.'!');
-                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::RED.'Current version: '.$this->cversion);
-                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::GREEN.'New Version: '.$nversion);
+                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::GOLD.'Update available for '.$this->name.'!');
+                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::RED.'Current version: '.$this->cversion);
+                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::GREEN.'New Version: '.$nversion);
                 $this->setResult($nversion);
             }
         }else{
-            $this->getOwner()->getLogger()->warning(TF::RED.'Could not check for Update: "Empty Response" !');
+            $this->getOwner()->getLogger()->error(TF::RED.'Could not check for Update: "Empty Response" !');
             $this->setResult(false);
         }
    }
@@ -36,7 +36,7 @@ class CheckVersionTask extends AsyncTask
         if($this->getResult()){
             $server->getPluginManager()->getPlugin($this->name)->update($this->getResult());
         }else{
-            $server->getPluginManager()->getPlugin($this->name)->getLogger()->notice('Auto Updater failed!');
+            $server->getPluginManager()->getPlugin($this->name)->getLogger()->error('Auto Updater failed!');
         }
     }
 }
