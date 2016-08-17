@@ -27,7 +27,7 @@ class CheckVersionTask extends AsyncTask
                 $this->setResult($nversion);
             }
         }else{
-            $this->getOwner()->getLogger()->error(TF::RED.'Could not check for Update: "Empty Response" !');
+            Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->error(TF::RED.'Could not check for Update: "Empty Response" !');
             $this->setResult(false);
         }
    }
