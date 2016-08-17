@@ -26,88 +26,74 @@ use StatsPE\Updater\UpdaterTask;
 class StatsPE extends PluginBase implements Listener
 {
 
-    public function onEnable()
-    {
-        if (!$this->getServer()->getName() === 'ClearSky') {
+    public function onEnable(){
+        if(!$this->getServer()->getName() === 'ClearSky'){
             $this->getLogger()->warning(TF::RED.'You are running this plugin on a not officially supported server software. Use with caution!');
         }
         @mkdir($this->getDataFolder());
         $this->saveResource('config.yml');
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             @mkdir($this->getDataFolder().'Stats');
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql') {
             //Test Connection here and create database
-        } else {
+        }else{
             $this->getLogger()->critical('Invalid provider: '.$provider.'!');
         }
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        do{
-          /*
-             This will not work as it should work. isRunning() returns
-             already true before the server has finished starting
-             which is what the plugin needs to know.
-             Please make a PR or contact me if you know a solution!
-           */
-          if($this->getServer()->isRunning()){
-              $this->getServer()->getScheduler()->scheduleDelayedTask(new DelayTask($this), 400);
-          }
-        }while(!$this->getServer()->isRunning());
+        $this->getServer()->getScheduler()->scheduleAsyncTask(new CheckVersionTask($this));
     }
 
-    public function onCommand(CommandSender $sender, Command $cmd, $label, array $args)
-    {
-        if (strtolower($cmd) == 'stats') {
-            if (count($args) == 0) {
+    public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
+        if(strtolower($cmd) == 'stats'){
+            if(count($args) == 0){
                 $this->showStats($sender, $sender->getName());
-
                 return true;
-            } elseif (count($args) == 1) {
+            }elseif(count($args) == 1) {
                 $this->showStats($sender, $args[0]);
-
                 return true;
-            } else {
+            }else{
                 $sender->sendMessage(TF::RED.'Too many arguments!');
 
                 return false;
             }
-        } elseif (strtolower($cmd) == 'floatingstats') {
+        }elseif(strtolower($cmd) == 'floatingstats'){
+          //To-Do
         }
     }
 
-    public function saveData($player, $data)
-    {
-        if (strtolower($this->getConfig()->get('Provider')) == 'json') {
+    public function saveData($player, $data){
+        if(strtolower($this->getConfig()->get('Provider')) == 'json'){
             fwrite(fopen($this->getDataFolder().'Stats/'.strtolower($player->getName()).'.json', 'w'), json_encode($data, JSON_PRETTY_PRINT));
-        } elseif (strtolower($this->getConfig()->get('Provider')) == 'mysql') {
+        }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
+
         }
     }
 
-    public function getStats($player, $type, $data)
-    {
-        if ($player instanceof Player) {
+    public function getStats($player, $type, $data){
+        if($player instanceof Player){
             $player = $player->getName();
         }
-        if (strtolower($type) == 'json') {
-            if ($data == 'all') {
+        if(strtolower($type) == 'json'){
+            if($data == 'all'){
                 return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true);
-            } else {
+            }else{
                 return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true)["$data"];
             }
-        } elseif (strtolower($type) == 'mysql') {
+        }elseif(strtolower($type) == 'mysql'){
+
         }
     }
 
-    public function showStats($requestor, $target)
-    {
-        if ($target == 'CONSOLE') {
+    public function showStats($requestor, $target){
+        if($target == 'CONSOLE'){
             $requestor->sendMessage(TF::RED.'You do not have permission to view Console stats!');
-        } else {
-            if (strtolower($this->getConfig()->get('Provider')) == 'json') {
-                if (file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')) {
+        }else{
+            if(strtolower($this->getConfig()->get('Provider')) == 'json'){
+                if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
                     $info = $this->getStats($target, 'json', 'all');
                     $requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$info['PlayerName'].TF::GOLD.'---');
-                    if ($requestor->hasPermission('statspe.cmd.stats.advancedinfo')) {
+                    if($requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
                         $requestor->sendMessage(TF::AQUA.'Last ClientID: '.TF::LIGHT_PURPLE.$info['ClientID']);
                         $requestor->sendMessage(TF::AQUA.'Last ClientSecret: '.TF::LIGHT_PURPLE.$info['ClientSecret']);
                         $requestor->sendMessage(TF::AQUA.'XBoxAuthenticated: '.TF::LIGHT_PURPLE.$info['XBoxAuthenticated']);
@@ -128,26 +114,26 @@ class StatsPE extends PluginBase implements Listener
                     $requestor->sendMessage(TF::AQUA.'Went to bed for: '.TF::LIGHT_PURPLE.$info['EnterBedCount'].TF::AQUA.' times');
                     $requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info['EatCount'].TF::AQUA.' times');
                     $requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info['CraftCount'].TF::AQUA.' times');
-                } else {
+                }else{
                     $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target."\n".TF::RED.'Please check your spelling.');
                 }
-            } elseif (strtolower($this->getConfig()->get('Provider')) == 'mysql') {
+            }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
+
             }
         }
     }
 
-    public function onJoin(PlayerJoinEvent $event)
-    {
+    public function onJoin(PlayerJoinEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
-            if ($player->isXboxAuthenticated()) {
+        if($provider == 'json'){
+            if($player->isXboxAuthenticated()){
                 $xa = 'true';
-            } else {
+            }else{
                 $xa = 'false';
             }
             $pn = $player->getName();
-            if (file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')) {
+            if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
                 $cid = $player->getClientId();
                 $ip = $player->getAddress();
@@ -175,7 +161,7 @@ class StatsPE extends PluginBase implements Listener
                       'CraftCount' => $info['CraftCount'],
                 );
                 $this->saveData($player, $data);
-            } else {
+            }else{
                 $fp = date($this->getConfig()->get('TimeFormat'));
                 $cid = $player->getClientId();
                 $ip = $player->getAddress();
@@ -202,15 +188,15 @@ class StatsPE extends PluginBase implements Listener
                 );
                 $this->saveData($player, $data);
             }
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onDeath(PlayerDeathEvent $event)
-    {
+    public function onDeath(PlayerDeathEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $d = $info['DeathCount'] + 1;
             $data = array(
@@ -236,8 +222,8 @@ class StatsPE extends PluginBase implements Listener
           );
             $this->saveData($player, $data);
             $damagecause = $player->getLastDamageCause();
-            if (method_exists($damagecause, 'getDamager')) {
-                if ($damagecause->getDamager() instanceof Player) {
+            if(method_exists($damagecause, 'getDamager')){
+                if($damagecause->getDamager() instanceof Player){
                     $killer = $player->getLastDamageCause()->getDamager();
                     $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
                     $k = $info['KillCount'] + 1;
@@ -265,15 +251,15 @@ class StatsPE extends PluginBase implements Listener
                     $this->saveData($killer, $kdata);
                 }
             }
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onKick(PlayerKickEvent $event)
-    {
+    public function onKick(PlayerKickEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'JSON') {
+        if($provider == 'JSON'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $kc = $info['KickCount'] + 1;
             $data = array(
@@ -298,15 +284,15 @@ class StatsPE extends PluginBase implements Listener
                 'CraftCount' => $info['CraftCount'],
           );
             $this->saveData($player, $data);
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onBlockBreak(BlockBreakEvent $event)
-    {
+    public function onBlockBreak(BlockBreakEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $br = $info['BlocksBreaked'] + 1;
             $data = array(
@@ -331,15 +317,15 @@ class StatsPE extends PluginBase implements Listener
                 'CraftCount' => $info['CraftCount'],
           );
             $this->saveData($player, $data);
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onBlockPlace(BlockPlaceEvent $event)
-    {
+    public function onBlockPlace(BlockPlaceEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $bp = $info['BlocksPlaced'] + 1;
             $data = array(
@@ -364,15 +350,15 @@ class StatsPE extends PluginBase implements Listener
                  'CraftCount' => $info['CraftCount'],
             );
             $this->saveData($player, $data);
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onChat(PlayerChatEvent $event)
-    {
+    public function onChat(PlayerChatEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $cm = $info['ChatMessages'] + 1;
             $data = array(
@@ -397,15 +383,15 @@ class StatsPE extends PluginBase implements Listener
                   'CraftCount' => $info['CraftCount'],
             );
             $this->saveData($player, $data);
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onFish(PlayerFishEvent $event)
-    {
+    public function onFish(PlayerFishEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $fc = $info['FishCount'] + 1;
             $data = array(
@@ -430,15 +416,15 @@ class StatsPE extends PluginBase implements Listener
                 'CraftCount' => $info['CraftCount'],
             );
             $this->saveData($player, $data);
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onBedEnter(PlayerBedEnterEvent $event)
-    {
+    public function onBedEnter(PlayerBedEnterEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $ebc = $info['EnterBedCount'] + 1;
             $data = array(
@@ -463,15 +449,15 @@ class StatsPE extends PluginBase implements Listener
                 'CraftCount' => $info['CraftCount'],
             );
             $this->saveData($player, $data);
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onConsumeItem(PlayerItemConsumeEvent $event)
-    {
+    public function onConsumeItem(PlayerItemConsumeEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $ec = $info['EatCount'] + 1;
             $data = array(
@@ -496,15 +482,15 @@ class StatsPE extends PluginBase implements Listener
                 'CraftCount' => $info['CraftCount'],
             );
             $this->saveData($player, $data);
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function onCraft(CraftItemEvent $event)
-    {
+    public function onCraft(CraftItemEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if ($provider == 'json') {
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $cc = $info['CraftCount'] + 1;
             $data = array(
@@ -529,14 +515,14 @@ class StatsPE extends PluginBase implements Listener
                 'CraftCount' => $cc,
             );
             $this->saveData($player, $data);
-        } elseif ($provider == 'mysql') {
+        }elseif($provider == 'mysql'){
+
         }
     }
 
-    public function update($nversion)
-    {
-        $url = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?downloadurl');
-        $md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?md5');
+    public function update($nversion){
+        $url = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/Updater/Updater.php?plugin='.$this->getDescription()->getName().'&type=downloadurl');
+        $md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?plugin='.$this->getDescription()->getName().'&type=md5');
         $this->getServer()->getScheduler()->scheduleDelayedTask(new UpdaterTask($url, $md5, $this->getDataFolder(), $this->getDescription()->getVersion(), $nversion, $this), 400);
     }
 }

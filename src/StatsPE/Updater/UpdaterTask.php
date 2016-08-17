@@ -41,11 +41,7 @@ class UpdaterTask extends PluginTask
         }
     }
 
-    public function onCompletion(Server $server)
-    {
-        if (file_exists($this->path.'version')) {
-            unlink($this->path.'version');
-        }
+    public function onCompletion(Server $server){
         if ($this->getResult) {
             $server->broadcastMessage(TF::RED.RF::BOLD.'Restarting Server due to a software update!');
             $server->broadcastTip(TF::RED.RF::BOLD.'Restarting Server due to a software update!');

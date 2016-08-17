@@ -16,29 +16,27 @@ class CheckVersionTask extends AsyncTask
         $this->path = $owner->getDataFolder();
     }
 
-    public function onRun()
-    {
-        $nversion = str_replace(array(' ', "\r", "\n"), '', Utils::getURL($this->website.'MCPE-Plugins/'.$this->name.'/Updater.php?check'));
-        $cversion = $this->cversion;
-        if (!$nversion) {
-            $this->getOwner()->getLogger()->warning(TF::RED.'Could not check for Update: "Empty Response" !');
-            $this->setResult(false);
-        } else {
-            if (!$this->cversion == $nversion) {
-                $server->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::GOLD.'Update available for '.$this->name.'!');
-                $server->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::RED.'Current version: '.$this->cversion);
-                $server->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::GREEN.'New Version: '.$nversion);
+    public function onRun(){
+        $url = Utils::getURL($this->website.'MCPE-Plugins/Updater/Updater.php?plugin='.$this->name.'&type=version', 20);
+        $nversion = str_replace(array(' ', "\r", "\n"), '', $url);
+        if($nversion){
+            if(!$this->cversion == $nversion){
+                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::GOLD.'Update available for '.$this->name.'!');
+                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::RED.'Current version: '.$this->cversion);
+                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::GREEN.'New Version: '.$nversion);
                 $this->setResult($nversion);
             }
+        }else{
+            $this->getOwner()->getLogger()->warning(TF::RED.'Could not check for Update: "Empty Response" !');
+            $this->setResult(false);
         }
-    }
+   }
 
-    public function onCompletion(Server $server)
-    {
-        if (!$this->getResult()) {
-            $server->getPluginManager()->getPlugin($this->name)->getLogger()->notice('Make sure to check the version on your own. Perhaps the Updater has an issue.');
-        } else {
+    public function onCompletion(Server $server){
+        if($this->getResult()){
             $server->getPluginManager()->getPlugin($this->name)->update($this->getResult());
+        }else{
+            $server->getPluginManager()->getPlugin($this->name)->getLogger()->notice('Auto Updater failed!');
         }
     }
 }
