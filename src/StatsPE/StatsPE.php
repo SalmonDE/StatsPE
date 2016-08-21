@@ -39,12 +39,44 @@ class StatsPE extends PluginBase implements Listener
             $connection = @mysqli_connect($mysql['host'], $mysql['user'], $mysql['password']);
             if($connection){
                 $this->getLogger()->notice(TF::GREEN.'Successfully connected to MySQL Database!');
+                $table = "CREATE TABLE Stats (
+                PlayerName VARCHAR(16) NOT NULL,
+                ClientID VARCHAR(30) NOT NULL,
+                ClientSecret VARCHAR(30),
+                XBoxAuthenticated CHAR(5) NOT NULL DEFAULT 'false',
+                LastIP VARCHAR(15) NOT NULL,
+                FirstJoin VARCHAR(30) NOT NULL,
+                LastJoin VARCHAR(30) NOT NULL,
+                JoinCount INT(255) NOT NULL DEFAULT 1,
+                KillCount INT(255) UNSIGNED DEFAULT 0,
+                DeathCount INT(255) UNSIGNED DEFAULT 0,
+                KickCount INT(255) UNSIGNED DEFAULT 0,
+                OnlineTime INT(255) UNSIGNED DEFAULT 0,
+                BlocksBreaked INT(255) UNSIGNED DEFAULT 0,
+                BlocksPlaced INT(255) UNSIGNED DEFAULT 0,
+                ChatMessages INT(255) UNSIGNED DEFAULT 0,
+                FishCount INT(255) UNSIGNED DEFAULT 0,
+                EnterBedCount INT(255) UNSIGNED DEFAULT 0,
+                EatCount INT(255) UNSIGNED DEFAULT 0,
+                CraftCount INT(255) UNSIGNED DEFAULT 0
+                )";
                 if(mysqli_select_db($connection, $mysql['database'])){
-                
+                    if(!mysqli_query($connection, "SELECT * FROM Stats")){
+                        if(mysqli_query($connection, $table)){
+                            $this->getLogger()->notice('Successfully created table Stats in Database: '.$mysql['database']);
+                        }else{
+                            $this->getLogger()->critical('Could not create table: '.mysqli_error($connection));
+                        }
+                    }
                 }else{
                     $this->getLogger()->notice('Database not found, creating new ...');
                     if(mysqli_query($connection, 'CREATE DATABASE '.$mysql['database'])){
                         $this->getLogger()->notice('Database '.$mysql['database'].' created!');
+                        if(mysqli_query($connection, $table)){
+                            $this->getLogger()->info('Successfully created table Stats in Database: '.$mysql['database']);
+                        }else{
+                            $this->getLogger()->critical('Could not create table: '.mysqli_error($connection));
+                        }
                     }else{
                         $this->getLogger()->critical('Could not create database: '.mysqli_error($connection));
                     }
