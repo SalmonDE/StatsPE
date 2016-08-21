@@ -126,11 +126,11 @@ class StatsPE extends PluginBase implements Listener
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
-            if($player->isXboxAuthenticated()){
-                $xa = 'true';
-            }else{
+            //if($player->isXboxAuthenticated()){
+            //    $xa = 'true';
+            //}else{
                 $xa = 'false';
-            }
+            //}
             $pn = $player->getName();
             if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
