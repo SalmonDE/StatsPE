@@ -35,7 +35,18 @@ class StatsPE extends PluginBase implements Listener
         if($provider == 'json'){
             @mkdir($this->getDataFolder().'Stats');
         }elseif($provider == 'mysql') {
-            //Test Connection here and create database
+            $mysql = $this->getConfig()->get('MySQL');
+            $connection = mysqli_connect($mysql['host']:$mysql['port'], $mysql['user'], $mysql['password']);
+            if($connection){
+                if(mysqli_select_db($mysql['database'])){
+
+                }else{
+                    mysqli_create_db($mysql['database']);
+                }
+            }else{
+                $this->getLogger()->critical(TF::RED.'Could not connect to MySQL Server!');
+                $this->getServer()->getPluginManager()->disablePlugin($this);
+            }
         }else{
             $this->getLogger()->critical('Invalid provider: '.$provider.'!');
         }

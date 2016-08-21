@@ -42,7 +42,7 @@ JoinCount       | How many times the player joined the server | 10              
 KillCount       | How often the player killed another player  | 69                                 | Normal
 DeathCount      | How often the player died                   | 9                                  | Normal
 KickCount       | How often the player got kicked             | 1                                  | Normal
-OnlineTime      | How long the player played on the server    | WIP                                | To-Download
+OnlineTime      | How long the player played on the server    | WIP                                | To-Do
 BlocksBreaked   | How many blocks the player broke            | 3                                  | Normal
 BlocksPlaced    | How many blocks the placer placed           | 4                                  | Normal
 ChatMessages    | How many chat messages the player sent      | 78                                 | Normal

@@ -26,13 +26,14 @@ Shutdown-Message: "Restarting Server due to a software update!"
 # Example: 12:00:63 22.07.2016
 TimeFormat: "H:i:s d.m.Y"
 
-# Set default data provider for StatsPE
+# Set data provider for StatsPE
 # Available Providers: MySQL, JSON
 Provider: JSON
 
 # MySQL Settings (Only configure this if you are going to use MySQL data provider)
-address: "MySQL.example.net"
-port: 3306
-user: "ExampleUser"
-password: "12345678"
-database: "StatsPE"
+MySQL:
+  address: "MySQL.example.net"
+  port: 3306
+  user: "ExampleUser"
+  password: "12345678"
+  database: "StatsPE"
