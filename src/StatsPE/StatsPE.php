@@ -36,15 +36,15 @@ class StatsPE extends PluginBase implements Listener
             @mkdir($this->getDataFolder().'Stats');
         }elseif($provider == 'mysql') {
             $mysql = $this->getConfig()->get('MySQL');
-            $connection = mysqli_connect($mysql['host']:$mysql['port'], $mysql['user'], $mysql['password']);
+            $connection = mysqli_connect($mysql['host'], $mysql['user'], $mysql['password']);
             if($connection){
-                if(mysqli_select_db($mysql['database'])){
+                if(mysqli_select_db($mysql['database'], $connection)){
 
                 }else{
-                    mysqli_create_db($mysql['database']);
+                    mysqli_create_db($mysql['database'], $connection);
                 }
             }else{
-                $this->getLogger()->critical(TF::RED.'Could not connect to MySQL Server!');
+                $this->getLogger()->critical(TF::RED.'Could not connect to MySQL Server: '.mysqli_connect_error());
                 $this->getServer()->getPluginManager()->disablePlugin($this);
             }
         }else{

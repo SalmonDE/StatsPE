@@ -32,8 +32,7 @@ Provider: JSON
 
 # MySQL Settings (Only configure this if you are going to use MySQL data provider)
 MySQL:
-  address: "MySQL.example.net"
-  port: 3306
+  host: "MySQL.example.net:3306"
   user: "ExampleUser"
   password: "12345678"
   database: "StatsPE"
