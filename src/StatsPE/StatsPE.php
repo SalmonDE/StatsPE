@@ -36,8 +36,9 @@ class StatsPE extends PluginBase implements Listener
             @mkdir($this->getDataFolder().'Stats');
         }elseif($provider == 'mysql') {
             $mysql = $this->getConfig()->get('MySQL');
-            $connection = mysqli_connect($mysql['host'], $mysql['user'], $mysql['password']);
+            $connection = @mysqli_connect($mysql['host'], $mysql['user'], $mysql['password']);
             if($connection){
+                $this->getLogger()->info('Successfully connected to MySQL Database!');
                 if(mysqli_select_db($mysql['database'], $connection)){
 
                 }else{
@@ -45,7 +46,6 @@ class StatsPE extends PluginBase implements Listener
                 }
             }else{
                 $this->getLogger()->critical(TF::RED.'Could not connect to MySQL Server: '.mysqli_connect_error());
-                $this->getServer()->getPluginManager()->disablePlugin($this);
             }
         }else{
             $this->getLogger()->critical('Invalid provider: '.$provider.'!');
