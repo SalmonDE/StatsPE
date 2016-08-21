@@ -38,14 +38,19 @@ class StatsPE extends PluginBase implements Listener
             $mysql = $this->getConfig()->get('MySQL');
             $connection = @mysqli_connect($mysql['host'], $mysql['user'], $mysql['password']);
             if($connection){
-                $this->getLogger()->info('Successfully connected to MySQL Database!');
-                if(mysqli_select_db($mysql['database'], $connection)){
-
+                $this->getLogger()->notice(TF::GREEN.'Successfully connected to MySQL Database!');
+                if(mysqli_select_db($connection, $mysql['database'])){
+                
                 }else{
-                    mysqli_create_db($mysql['database'], $connection);
+                    $this->getLogger()->notice('Database not found, creating new ...');
+                    if(mysqli_query($connection, 'CREATE DATABASE '.$mysql['database'])){
+                        $this->getLogger()->notice('Database '.$mysql['database'].' created!');
+                    }else{
+                        $this->getLogger()->critical('Could not create database: '.mysqli_error($connection));
+                    }
                 }
             }else{
-                $this->getLogger()->critical(TF::RED.'Could not connect to MySQL Server: '.mysqli_connect_error());
+                $this->getLogger()->critical(TF::RED.TF::BOLD.'Could not connect to MySQL Server: '.mysqli_connect_error());
             }
         }else{
             $this->getLogger()->critical('Invalid provider: '.$provider.'!');
