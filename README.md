@@ -37,6 +37,7 @@ PlayerName      | Name of the player (case sensitive)         | SalericioDE     
 ClientID        | ClientID of the MCPE installation           | -8655314918531                     | Advanced
 XBoxAuthenticated | If the user is authenticated with Xbox or not | true                           | Advanced
 LastIP          | Last used IP from the player                | 192.168.1.1                        | Advanced
+UUID            | Player's UUID                               | i dont know.                       | Advanced
 FirstJoin       | First time the player joined                | 04:19:51 22.07.2016 (Configurable) | Normal
 LastJoin        | Last time the player joined                 | 04:23:01 22.07.2016 (Configurable) | Normal
 JoinCount       | How many times the player joined the server | 10                                 | Normal
