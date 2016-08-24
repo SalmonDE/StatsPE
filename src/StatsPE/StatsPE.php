@@ -48,7 +48,7 @@ class StatsPE extends PluginBase implements Listener
                 LastIP VARCHAR(15) NOT NULL,
                 FirstJoin VARCHAR(30) NOT NULL,
                 LastJoin VARCHAR(30) NOT NULL,
-                JoinCount INT(255) NOT NULL DEFAULT 1,
+                JoinCount INT(255) NOT NULL DEFAULT 0,
                 KillCount INT(255) UNSIGNED DEFAULT 0,
                 DeathCount INT(255) UNSIGNED DEFAULT 0,
                 KickCount INT(255) UNSIGNED DEFAULT 0,
@@ -82,6 +82,7 @@ class StatsPE extends PluginBase implements Listener
                         $this->getLogger()->critical('Could not create database: '.mysqli_error($connection));
                     }
                 }
+                mysqli_close($connection);
             }else{
                 $this->getLogger()->critical(TF::RED.TF::BOLD.'Could not connect to MySQL Server: '.mysqli_connect_error());
             }
@@ -240,37 +241,49 @@ class StatsPE extends PluginBase implements Listener
             $stats = array(
                 '1' => [
                     'Stat' => 'PlayerName',
+                    'Type' => 'Normal',
                     'Data' => $player->getName()
                 ],
                 '2' => [
                     'Stat' => 'ClientID',
+                    'Type' => 'Normal',
                     'Data' => $player->getClientId()
                 ],
                 '3' => [
                     'Stat' => 'UUID',
+                    'Type' => 'Normal',
                     'Data' => $player->getUniqueId()
                 ],
                 '4' => [
                     'Stat' => 'XBoxAuthenticated',
+                    'Type' => 'Normal',
                     'Data' => $xa
                 ],
                 '5' => [
                     'Stat' => 'LastIP',
+                    'Type' => 'Normal',
                     'Data' => $player->getAddress()
                 ],
                 '6' => [
                     'Stat' => 'LastJoin',
+                    'Type' => 'Normal',
                     'Data' => date($this->getConfig()->get('TimeFormat'))
+                ],
+                '7' => [
+                    'Stat' => 'JoinCount',
+                    'Type' => 'Count',
+                    'Data' => 1
                 ]
             );
             foreach($stats as $stat){
-                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, $stat['Stat'], $stat['Data']));
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, $stat['Stat'], $stat['Type'], $stat['Data']));
             }
         }
     }
 
     public function onDeath(PlayerDeathEvent $event){
         $player = $event->getPlayer();
+        $damagecause = $player->getLastDamageCause();
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
@@ -297,7 +310,6 @@ class StatsPE extends PluginBase implements Listener
                 'CraftCount' => $info['CraftCount'],
           );
             $this->saveData($player, $data);
-            $damagecause = $player->getLastDamageCause();
             if(method_exists($damagecause, 'getDamager')){
                 if($damagecause->getDamager() instanceof Player){
                     $killer = $player->getLastDamageCause()->getDamager();
@@ -328,7 +340,12 @@ class StatsPE extends PluginBase implements Listener
                 }
             }
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DeathCount', 'Count', '1'));
+            if(method_exists($damagecause, 'getDamager')){
+                if($damagecause->getDamager() instanceof Player){
+                    $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($damagecause->getDamager(), $this, 'KillCount', 'Count', '1'));
+                }
+            }
         }
     }
 
@@ -361,7 +378,7 @@ class StatsPE extends PluginBase implements Listener
           );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'KickCount', 'Count', '1'));
         }
     }
 
@@ -394,7 +411,7 @@ class StatsPE extends PluginBase implements Listener
           );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksBreaked', 'Count', '1'));
         }
     }
 
@@ -427,7 +444,7 @@ class StatsPE extends PluginBase implements Listener
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksPlaced', 'Count', '1'));
         }
     }
 
@@ -460,7 +477,7 @@ class StatsPE extends PluginBase implements Listener
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'ChatMessages', 'Count', '1'));
         }
     }
 
@@ -493,7 +510,7 @@ class StatsPE extends PluginBase implements Listener
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'FishCount', 'Count', '1'));
         }
     }
 
@@ -526,7 +543,7 @@ class StatsPE extends PluginBase implements Listener
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EnterBedCount', 'Count', '1'));
         }
     }
 
@@ -559,7 +576,7 @@ class StatsPE extends PluginBase implements Listener
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EatCount', 'Count', '1'));
         }
     }
 
@@ -592,7 +609,7 @@ class StatsPE extends PluginBase implements Listener
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'CraftCount', 'Count', '1'));
         }
     }
 

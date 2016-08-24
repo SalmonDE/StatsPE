@@ -7,9 +7,10 @@ use pocketmine\Server;
 
 class SaveDataTask extends AsyncTask
 {
-  public function __construct($player, $owner, $stat, $data){
+  public function __construct($player, $owner, $stat, $type, $data){
       $this->mysql = $owner->getConfig()->get('MySQL');
       $this->stat = $stat;
+      $this->type = $type;
       $this->data = $data;
       $this->timeformat = $owner->getConfig()->get('TimeFormat');
       if($player instanceof Player){
@@ -20,16 +21,22 @@ class SaveDataTask extends AsyncTask
   }
 
   public function onRun(){
-      $connection = mysqli_connect($this->mysql['host'], $this->mysql['user'], $this->mysql['password'], $this->mysql['database']);
+      $connection = @mysqli_connect($this->mysql['host'], $this->mysql['user'], $this->mysql['password'], $this->mysql['database']);
       if($connection){
           $poccurence = mysqli_num_rows(mysqli_query($connection, "SELECT * FROM Stats WHERE PlayerName = '$this->player'"));
           $date = date($this->timeformat);
           if($poccurence == 1){
-              mysqli_query($connection, "UPDATE Stats SET $this->stat = '".$this->data."' WHERE PlayerName = '".$this->player."'");
+              if($this->type == 'Count'){
+                  $data = mysqli_query($connection, "SELECT * FROM Stats WHERE PlayerName = '$this->player'");
+                  $data = mysqli_fetch_assoc($data);
+                  $this->data = $this->data + $data[$this->stat];
+              }
+              mysqli_query($connection, "UPDATE Stats SET $this->stat = '$this->data' WHERE PlayerName = '$this->player'");
           }elseif($poccurence > 1){
               $this->setResult('Player '.$this->player.' is occuring more than once in Table Stats of the Database '.$this->mysql['database']);
           }else{
-              mysqli_query($connection, "INSERT INTO Stats (PlayerName, XBoxAuthenticated, FirstJoin, LastJoin, JoinCount, KillCount, DeathCount, KickCount, OnlineTime, BlocksBreaked, BlocksPlaced, ChatMessages, FishCount, EnterBedCount, EatCount, CraftCount) VALUES ('$this->player', 'false', '$date', '$date', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+              mysqli_query($connection, "INSERT INTO Stats (PlayerName, XBoxAuthenticated, FirstJoin, LastJoin, JoinCount, KillCount, DeathCount, KickCount, OnlineTime, BlocksBreaked, BlocksPlaced, ChatMessages, FishCount, EnterBedCount, EatCount, CraftCount) VALUES ('$this->player', 'false', '$date', '$date', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+              mysqli_query($connection, "UPDATE Stats SET $this->stat = '$this->data' WHERE PlayerName = '$this->player'");
           }
           if(mysqli_error($connection)){
               $this->setResult(mysqli_error($connection));
