@@ -1,6 +1,7 @@
 <?php
 namespace StatsPE\Tasks;
 
+use pocketmine\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat as TF;
@@ -9,10 +10,12 @@ class ShowStatsTask extends AsyncTask
 {
   public function __construct($owner, $requestor, $target){
       $this->target = strtolower($target);
-      if(!$requestor->getName() == 'CONSOLE'){
+      if($requestor->getName() == 'CONSOLE'){
+          $this->requestor = $requestor;
+      }elseif($requestor instanceof Player){
           $this->requestor = $requestor->getName();
       }else{
-          $this->requestor = $requestor;
+          $this->cancelRun();
       }
       $this->mysql = $owner->getConfig()->get('MySQL');
   }
@@ -36,8 +39,8 @@ class ShowStatsTask extends AsyncTask
   public function onCompletion(Server $server){
       if(is_array($this->getResult())){
           $data = $this->getResult();
-          if(!is_object($this->requestor)){
-              $this->requestor = $server->getPlayerExact($this->player);
+          if(is_string($this->requestor)){
+              $this->requestor = $server->getPlayerExact($this->requestor);
           }
           $this->requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$data['PlayerName'].TF::GOLD.'---');
           if($this->requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
