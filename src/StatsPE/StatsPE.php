@@ -167,7 +167,8 @@ class StatsPE extends PluginBase implements Listener
                     $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target."\n".TF::RED.'Please check your spelling.');
                 }
             }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
-
+                $requestor->sendMessage(TF::GREEN.'Connecting to Database ...'); //To-Do Language file!
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new ShowStatsTask($this, $requestor, $target));
             }
         }
     }
