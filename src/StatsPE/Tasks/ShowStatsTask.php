@@ -9,7 +9,11 @@ class ShowStatsTask extends AsyncTask
 {
   public function __construct($owner, $requestor, $target){
       $this->target = strtolower($target);
-      $this->requestor = $requestor;
+      if(!$requestor->getName() == 'CONSOLE'){
+          $this->requestor = $requestor->getName();
+      }else{
+          $this->requestor = $requestor;
+      }
       $this->mysql = $owner->getConfig()->get('MySQL');
   }
 
@@ -32,6 +36,10 @@ class ShowStatsTask extends AsyncTask
   public function onCompletion(Server $server){
       if(is_array($this->getResult())){
           $data = $this->getResult();
+          if(!is_object($this->requestor)){
+              $this->requestor = $server->getPlayer($this->player);
+          }
+          $this->requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$data['PlayerName'].TF::GOLD.'---');
           if($this->requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
               $this->requestor->sendMessage(TF::AQUA.'Last ClientID: '.TF::LIGHT_PURPLE.$data['ClientID']);
               $this->requestor->sendMessage(TF::AQUA.'Last UUID: '.TF::LIGHT_PURPLE.$data['UUID']);
@@ -43,7 +51,9 @@ class ShowStatsTask extends AsyncTask
           $this->requestor->sendMessage(TF::AQUA.'Total Joins: '.TF::LIGHT_PURPLE.$data['JoinCount']);
           $this->requestor->sendMessage(TF::AQUA.'Kills: '.TF::LIGHT_PURPLE.$data['KillCount']);
           $this->requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$data['DeathCount']);
-          $this->requestor->sendMessage(TF::AQUA.'K/D: '.TF::LIGHT_PURPLE.$data['KillCount'] / $data['DeathCount']);
+          if(!$data['DeathCount'] == 0){
+              $this->requestor->sendMessage(TF::AQUA.'K/D: '.TF::LIGHT_PURPLE.$data['KillCount'] / $data['DeathCount']);
+          }
           $this->requestor->sendMessage(TF::AQUA.'Kicks: '.TF::LIGHT_PURPLE.$data['KickCount']);
           $this->requestor->sendMessage(TF::AQUA.'Online Time: '.TF::LIGHT_PURPLE.$data['OnlineTime']);
           $this->requestor->sendMessage(TF::AQUA.'Breaked Blocks: '.TF::LIGHT_PURPLE.$data['BlocksBreaked']);
