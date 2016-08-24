@@ -1,6 +1,7 @@
 <?php
 namespace StatsPE\Tasks;
 
+use pocketmine\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat as TF;
@@ -9,7 +10,7 @@ class ShowStatsTask extends AsyncTask
 {
   public function __construct($owner, $requestor, $target){
       $this->target = strtolower($target);
-      if(!$requestor->getName() == 'CONSOLE'){
+      if($requestor instanceof Player){
           $this->requestor = $requestor->getName();
       }else{
           $this->requestor = $requestor;
