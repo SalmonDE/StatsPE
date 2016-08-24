@@ -18,8 +18,9 @@ use pocketmine\event\player\PlayerFishEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
+use StatsPE\Tasks\SaveDataTask;
+use StatsPE\Tasks\ShowStatsTask;
 use StatsPE\Updater\CheckVersionTask;
-use StatsPE\Updater\DelayTask;
 use StatsPE\Updater\UpdaterTask;
 
 class StatsPE extends PluginBase implements Listener
@@ -173,13 +174,13 @@ class StatsPE extends PluginBase implements Listener
     public function onJoin(PlayerJoinEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
+        //if($player->isXboxAuthenticated()){
+        //    $xa = 'true';
+        //}else{
+            $xa = 'false';
+        //}
+        $pn = $player->getName();
         if($provider == 'json'){
-            //if($player->isXboxAuthenticated()){
-            //    $xa = 'true';
-            //}else{
-                $xa = 'false';
-            //}
-            $pn = $player->getName();
             if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
                 $cid = $player->getClientId();
@@ -236,20 +237,35 @@ class StatsPE extends PluginBase implements Listener
                 $this->saveData($player, $data);
             }
         }elseif($provider == 'mysql'){
-        $data = array(
-            '1' => [
-                'Stat' => 'PlayerName',
-                'Data' => $player->getName()
-            ],
-            '2' => [
-                'Stat' => 'ClientID',
-                'Data' => $player->getClientId()
-            ],
-            '3' => [
-                'Stat' => 'UUID',
-                'Data' => ''
-            ],
-        );
+            $stats = array(
+                '1' => [
+                    'Stat' => 'PlayerName',
+                    'Data' => $player->getName()
+                ],
+                '2' => [
+                    'Stat' => 'ClientID',
+                    'Data' => $player->getClientId()
+                ],
+                '3' => [
+                    'Stat' => 'UUID',
+                    'Data' => $player->getUniqueId()
+                ],
+                '4' => [
+                    'Stat' => 'XBoxAuthenticated',
+                    'Data' => $xa
+                ],
+                '5' => [
+                    'Stat' => 'LastIP',
+                    'Data' => $player->getAddress()
+                ],
+                '6' => [
+                    'Stat' => 'LastJoin',
+                    'Data' => date($this->getConfig()->get('TimeFormat'))
+                ]
+            );
+            foreach($stats as $stat){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, $stat['Stat'], $stat['Data']));
+            }
         }
     }
 
