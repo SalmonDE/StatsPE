@@ -93,6 +93,19 @@ class StatsPE extends PluginBase implements Listener
         $this->getServer()->getScheduler()->scheduleAsyncTask(new CheckVersionTask($this));
     }
 
+    public function getMessage(){
+        if(file_exists($this->getDataFolder().'messages.ini')){
+            $lines = parse_ini_file($this->getDataFolder().'messages.ini', true);
+            if(is_array($lines)){
+                return $lines;
+            }else{
+                return 'Error: Can not return array';
+            }
+        }else{
+            $this->saveResource(strtolower($this->getConfig()->get('Language')).'.ini');
+        }
+    }
+
     public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
         if(strtolower($cmd) == 'stats'){
             if(count($args) == 0){

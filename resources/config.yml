@@ -1,6 +1,10 @@
 # Configuration file for StatsPE
 
-# Enabled Stats: true/false
+# Supported Languages:
+# English (English) = eng,
+# German (Deutsch) = deu
+Language: eng
+# Enable Stats: true/false
 JoinCount: true
 KillCount: true
 KD: true
