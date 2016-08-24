@@ -37,7 +37,7 @@ class ShowStatsTask extends AsyncTask
       if(is_array($this->getResult())){
           $data = $this->getResult();
           if(!is_object($this->requestor)){
-              $this->requestor = $server->getPlayer($this->player);
+              $this->requestor = $server->getPlayerExact($this->player);
           }
           $this->requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$data['PlayerName'].TF::GOLD.'---');
           if($this->requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
