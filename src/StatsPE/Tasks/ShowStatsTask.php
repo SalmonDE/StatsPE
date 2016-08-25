@@ -18,6 +18,7 @@ class ShowStatsTask extends AsyncTask
           $this->cancelRun();
       }
       $this->mysql = $owner->getConfig()->get('MySQL');
+      $this->switch = $owner->getConfig()->get('Stats');
       $this->lang = $owner->getMessages();
   }
 
@@ -44,52 +45,108 @@ class ShowStatsTask extends AsyncTask
             $server->getPlayerExact($this->requestor)->sendMessage(TF::GOLD.str_ireplace('{value}', $data['PlayerName'], $this->lang['Player']['StatsFor']));
             if($server->getPlayerExact($this->requestor)->hasPermission('statspe.cmd.stats.advancedinfo')){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ClientID'], $this->lang['Player']['StatClientID']));
-                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['UUID'], $this->lang['Player']['StatUUID']));
+                @$server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['UUID'], $this->lang['Player']['StatUUID']));
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['XBoxAuthenticated'], $this->lang['Player']['StatXBoxAuthenticated']));
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['LastIP'], $this->lang['Player']['StatLastIP']));
             }
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['FirstJoin'], $this->lang['Player']['StatFirstJoin']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['LastJoin'], $this->lang['Player']['StatLastJoin']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['JoinCount'], $this->lang['Player']['StatJoinCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KillCount'], $this->lang['Player']['StatKillCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$data['DeathCount']);
-            if(!$data['DeathCount'] == 0){
-                $this->requestor->sendMessage(str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['K/D']));
+            if($this->switch['FirstJoin']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['FirstJoin'], $this->lang['Player']['StatFirstJoin']));
             }
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['OnlineTime'], $this->lang['Player']['StatOnlineTime']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksBreaked'], $this->lang['Player']['StatBlocksBreakCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksPlaced'], $this->lang['Player']['StatBlocksPlaceCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ChatMessages'], $this->lang['Player']['StatChatMessageCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['FishCount'], $this->lang['Player']['StatFishCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EnterBedCount'], $this->lang['Player']['StatBedEnterCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EatCount'], $this->lang['Player']['StatEatCount']));
-            $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['CraftCount'], $this->lang['Player']['StatCraftCount']));
+            if($this->switch['LastJoin']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['LastJoin'], $this->lang['Player']['StatLastJoin']));
+            }
+            if($this->switch['JoinCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['JoinCount'], $this->lang['Player']['StatJoinCount']));
+            }
+            if($this->switch['KillCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KillCount'], $this->lang['Player']['StatKillCount']));
+            }
+            if($this->switch['DeathCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$data['DeathCount']);
+            }
+            if($data['DeathCount'] > 0 && $this->switch['K/D']){
+                $server->getPlayerExact($this->requestor)->sendMessage(str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['K/D']));
+            }
+            if($this->switch['KickCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
+            }
+            if($this->switch['OnlineTime']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['OnlineTime'], $this->lang['Player']['StatOnlineTime']));
+            }
+            if($this->switch['BlockBreakCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksBreaked'], $this->lang['Player']['StatBlocksBreakCount']));
+            }
+            if($this->switch['BlockPlaceCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksPlaced'], $this->lang['Player']['StatBlocksPlaceCount']));
+            }
+            if($this->switch['ChatCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ChatMessages'], $this->lang['Player']['StatChatMessageCount']));
+            }
+            if($this->switch['FishCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['FishCount'], $this->lang['Player']['StatFishCount']));
+            }
+            if($this->switch['BedEnterCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EnterBedCount'], $this->lang['Player']['StatBedEnterCount']));
+            }
+            if($this->switch['EatCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EatCount'], $this->lang['Player']['StatEatCount']));
+            }
+            if($this->switch['CraftCount']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['CraftCount'], $this->lang['Player']['StatCraftCount']));
+            }
           }elseif(method_exists($this->requestor, 'getName')){
             $this->requestor->sendMessage(TF::GOLD.str_ireplace('{value}', $data['PlayerName'], $this->lang['Player']['StatsFor']));
             if($this->requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ClientID'], $this->lang['Player']['StatClientID']));
-                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['UUID'], $this->lang['Player']['StatUUID']));
+                @$this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['UUID'], $this->lang['Player']['StatUUID']));
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['XBoxAuthenticated'], $this->lang['Player']['StatXBoxAuthenticated']));
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['LastIP'], $this->lang['Player']['StatLastIP']));
             }
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['FirstJoin'], $this->lang['Player']['StatFirstJoin']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['LastJoin'], $this->lang['Player']['StatLastJoin']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['JoinCount'], $this->lang['Player']['StatJoinCount']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KillCount'], $this->lang['Player']['StatKillCount']));
-            $this->requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$data['DeathCount']);
-            if(!$data['DeathCount'] == 0){
+            if($this->switch['FirstJoin']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['FirstJoin'], $this->lang['Player']['StatFirstJoin']));
+            }
+            if($this->switch['LastJoin']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['LastJoin'], $this->lang['Player']['StatLastJoin']));
+            }
+            if($this->switch['JoinCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['JoinCount'], $this->lang['Player']['StatJoinCount']));
+            }
+            if($this->switch['KillCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KillCount'], $this->lang['Player']['StatKillCount']));
+            }
+            if($this->switch['DeathCount']){
+                $this->requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$data['DeathCount']);
+            }
+            if($data['DeathCount'] > 0 && $this->switch['K/D']){
                 $this->requestor->sendMessage(str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['K/D']));
             }
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['OnlineTime'], $this->lang['Player']['StatOnlineTime']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksBreaked'], $this->lang['Player']['StatBlocksBreakedCount']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksPlaced'], $this->lang['Player']['StatBlocksPlacedCount']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ChatMessages'], $this->lang['Player']['StatChatMessageCount']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['FishCount'], $this->lang['Player']['StatFishCount']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EnterBedCount'], $this->lang['Player']['StatBedEnterCount']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EatCount'], $this->lang['Player']['StatEatCount']));
-            $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['CraftCount'], $this->lang['Player']['StatCraftCount']));
+            if($this->switch['KickCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
+            }
+            if($this->switch['OnlineTime']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['OnlineTime'], $this->lang['Player']['StatOnlineTime']));
+            }
+            if($this->switch['BlockBreakCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksBreaked'], $this->lang['Player']['StatBlocksBreakCount']));
+            }
+            if($this->switch['BlockPlaceCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksPlaced'], $this->lang['Player']['StatBlocksPlaceCount']));
+            }
+            if($this->switch['ChatCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ChatMessages'], $this->lang['Player']['StatChatMessageCount']));
+            }
+            if($this->switch['FishCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['FishCount'], $this->lang['Player']['StatFishCount']));
+            }
+            if($this->switch['BedEnterCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EnterBedCount'], $this->lang['Player']['StatBedEnterCount']));
+            }
+            if($this->switch['EatCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EatCount'], $this->lang['Player']['StatEatCount']));
+            }
+            if($this->switch['CraftCount']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['CraftCount'], $this->lang['Player']['StatCraftCount']));
+            }
           }
       }else{
           if(is_string($this->requestor)){
