@@ -75,10 +75,10 @@ class ShowStatsTask extends AsyncTask
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['OnlineTime'], $this->lang['Player']['StatOnlineTime']));
             }
             if($this->switch['BlockBreakCount']){
-                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksBreaked'], $this->lang['Player']['StatBlocksBreakCount']));
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksBreaked'], $this->lang['Player']['StatBlockBreakCount']));
             }
             if($this->switch['BlockPlaceCount']){
-                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksPlaced'], $this->lang['Player']['StatBlocksPlaceCount']));
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksPlaced'], $this->lang['Player']['StatBlockPlaceCount']));
             }
             if($this->switch['ChatCount']){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ChatMessages'], $this->lang['Player']['StatChatMessageCount']));
