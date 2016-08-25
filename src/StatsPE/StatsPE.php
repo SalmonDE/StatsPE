@@ -43,7 +43,7 @@ class StatsPE extends PluginBase implements Listener
             if($connection){
                 $this->getLogger()->notice(TF::GREEN.$this->getMessages('MySQL')['ConnectSuccess']);
                 $table = "CREATE TABLE Stats (
-                PlayerName VARCHAR(16) NOT NULL,
+                PlayerName VARCHAR(16) NOT NULL UNIQUE,
                 ClientID VARCHAR(30) NOT NULL,
                 UUID VARCHAR(30),
                 XBoxAuthenticated CHAR(5) NOT NULL DEFAULT 'false',
