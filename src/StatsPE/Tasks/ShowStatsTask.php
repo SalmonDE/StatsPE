@@ -65,7 +65,7 @@ class ShowStatsTask extends AsyncTask
             $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EnterBedCount'], $this->lang['Player']['StatBedEnterCount']));
             $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['EatCount'], $this->lang['Player']['StatEatCount']));
             $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['CraftCount'], $this->lang['Player']['StatCraftCount']));
-          }elseif(method_exists($this->requestor, 'getName'){
+          }elseif(method_exists($this->requestor, 'getName')){
             $this->requestor->sendMessage(TF::GOLD.str_ireplace('{value}', $data['PlayerName'], $this->lang['Player']['StatsFor']));
             if($this->requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ClientID'], $this->lang['Player']['StatClientID']));
