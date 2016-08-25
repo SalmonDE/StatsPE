@@ -141,7 +141,7 @@ class StatsPE extends PluginBase implements Listener
                                 'Enabled' => true,
                                 'Position' => [
                                     'X' => $sender->getX(),
-                                    'Y' => $sender->getY(),
+                                    'Y' => $sender->getY() + 1,
                                     'Z' => $sender->getZ(),
                                     'Level' => $sender->getLevel()->getName()
                                 ],
@@ -338,7 +338,7 @@ class StatsPE extends PluginBase implements Listener
             if(!$stat){
                 foreach($fstats as $fstat){
                     if($fstat['Enabled']){
-                        $text = '';
+                        $text = 'T';
                         if($this->getServer()->isLevelLoaded($fstat['Position']['Level'])){
                             $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
                         }
