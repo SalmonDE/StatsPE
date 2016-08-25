@@ -22,6 +22,7 @@ use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\math\Vector3;
 use StatsPE\Tasks\SaveDataTask;
 use StatsPE\Tasks\ShowStatsTask;
+use StatsPE\Tasks\SpawnFloatStatTask;
 use StatsPE\Updater\CheckVersionTask;
 use StatsPE\Updater\UpdaterTask;
 
@@ -417,7 +418,7 @@ class StatsPE extends PluginBase implements Listener
                                 $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
                             }
                         }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
-                        //To-DO
+                            $this->getServer()->getScheduler()->scheduleAsyncTask(new SpawnFloatStatTask($this, $fstat, $player));
                         }
                     }
                 }
@@ -443,7 +444,7 @@ class StatsPE extends PluginBase implements Listener
                             $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
                         }
                     }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
-                    //To-DO
+                        $this->getServer()->getScheduler()->scheduleAsyncTask(new SpawnFloatStatTask($this, $fstat, $player));
                     }
                 }
             }

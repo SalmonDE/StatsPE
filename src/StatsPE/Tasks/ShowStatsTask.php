@@ -8,6 +8,7 @@ use pocketmine\utils\TextFormat as TF;
 
 class ShowStatsTask extends AsyncTask
 {
+
   public function __construct($owner, $requestor, $target){
       $this->target = strtolower($target);
       if($requestor->getName() == 'CONSOLE'){

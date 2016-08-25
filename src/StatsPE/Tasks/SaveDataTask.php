@@ -6,6 +6,7 @@ use pocketmine\Server;
 
 class SaveDataTask extends AsyncTask
 {
+
   public function __construct($player, $owner, $stat, $type, $data){
       $this->mysql = $owner->getConfig()->get('MySQL');
       $this->stat = $stat;
