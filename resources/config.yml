@@ -5,20 +5,23 @@
 # German (Deutsch) = deu
 Language: eng
 # Enable Stats: true/false
-JoinCount: true
-KillCount: true
-KD: true
-DeathCount: true
-KickCount: true
-# OnlineTime has not been implemented
-OnlineTime: false
-BlockBreakCount: true
-BlockPlaceCount: true
-ChatCount: true
-FishCount: true
-BedEnterCount: true
-EatCount: true
-CraftCount: true
+Stats:
+  FirstJoin: true
+  LastJoin: true
+  JoinCount: true
+  KillCount: true
+  K/D: true
+  DeathCount: true
+  KickCount: true
+  # OnlineTime has not been implemented
+  OnlineTime: false
+  BlockBreakCount: true
+  BlockPlaceCount: true
+  ChatCount: true
+  FishCount: true
+  BedEnterCount: true
+  EatCount: true
+  CraftCount: true
 
 # Enable/Disable the Auto-Updater Feature.
 Auto-Update: true
