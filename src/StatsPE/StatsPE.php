@@ -146,21 +146,81 @@ class StatsPE extends PluginBase implements Listener
                                     'Level' => $sender->getLevel()->getName()
                                 ],
                                 'Stats' => [
-                                    'FirstJoin' => true,
-                                    'LastJoin' => true,
-                                    'JoinCount' => true,
-                                    'KillCount' => true,
-                                    'K/D' => true,
-                                    'DeathCount' => true,
-                                    'KickCount' => true,
-                                    'OnlineTime' => false,
-                                    'BlockBreakCount' => true,
-                                    'BlockPlaceCount' => true,
-                                    'ChatCount' => true,
-                                    'FishCount' => true,
-                                    'BedEnterCount' => true,
-                                    'EatCount' => true,
-                                    'CraftCount' => true
+                                    'FirstJoin' => [
+                                        'Name' => 'FirstJoin',
+                                        'Lang' => 'StatFirstJoin',
+                                        'Enabled' => true
+                                    ],
+                                    'LastJoin' => [
+                                        'Name' => 'LastJoin',
+                                        'Lang' => 'StatLastJoin',
+                                        'Enabled' => true
+                                    ],
+                                    'JoinCount' => [
+                                        'Name' => 'JoinCount',
+                                        'Lang' => 'StatJoinCount',
+                                        'Enabled' => true
+                                    ],
+                                    'KillCount' => [
+                                        'Name' => 'KillCount',
+                                        'Lang' => 'StatKillCount',
+                                        'Enabled' => true
+                                    ],
+                                    'DeathCount' => [
+                                        'Name' => 'DeathCount',
+                                        'Lang' => 'StatDeathCount',
+                                        'Enabled' => true
+                                    ],
+                                    'K/D' => [
+                                        'Name' => 'K/D',
+                                        'Lang' => 'StatK/D',
+                                        'Enabled' => true
+                                    ],
+                                    'KickCount' => [
+                                        'Name' => 'KickCount',
+                                        'Lang' => 'StatKickCount',
+                                        'Enabled' => true
+                                    ],
+                                    'OnlineTime' => [
+                                        'Name' => 'OnlineTime',
+                                        'Lang' => 'StatOnlineTime',
+                                        'Enabled' => false,
+                                    ],
+                                    'BlockBreakCount' => [
+                                        'Name' => 'BlocksBreaked',
+                                        'Lang' => 'StatBlockBreakCount',
+                                        'Enabled' => true
+                                    ],
+                                    'BlockPlaceCount' => [
+                                        'Name' => 'BlocksPlaced',
+                                        'Lang' => 'StatBlockPlaceCount',
+                                        'Enabled' => true
+                                    ],
+                                    'ChatCount' => [
+                                        'Name' => 'ChatMessages',
+                                        'Lang' => 'StatChatMessageCount',
+                                        'Enabled' => true
+                                    ],
+                                    'FishCount' => [
+                                        'Name' => 'FishCount',
+                                        'Lang' => 'StatFishCount',
+                                        'Enabled' => true
+                                    ],
+                                    'BedEnterCount' => [
+                                        'Name' => 'EnterBedCount',
+                                        'Lang' => 'StatBedEnterCount',
+                                        'Enabled' => true
+                                    ],
+                                    'EatCount' => [
+                                        'Name' => 'EatCount',
+                                        'Lang' => 'StatEatCount',
+                                        'Enabled' => true
+                                    ],
+                                    'CraftCount' => [
+                                        'Name' => 'CraftCount',
+                                        'Lang' => 'StatCraftCount',
+                                        'Enabled' => true
+                                    ]
                                 ]
                             ];
                             if(file_exists($this->getDataFolder().'floatingstats.yml')){
@@ -168,14 +228,14 @@ class StatsPE extends PluginBase implements Listener
                                 if(!in_array(strtolower($args[1]), $fstats)){
                                     $fstats[strtolower($args[1])] = $fstat;
                                     yaml_emit_file($this->getDataFolder().'floatingstats.yml', $fstats);
-                                    $this->spawnFloatingStats(false, $fstat['Name']);
+                                    $this->spawnFloatingStats($fstat['Name'], $sender);
                                     $sender->sendMessage(TF::GREEN.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatCreateSuccess']));
                                 }else{
                                     $sender->sendMessage(TF::RED.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatExists']));
                                 }
                             }else{
                                 yaml_emit_file($this->getDataFolder().'floatingstats.yml', [strtolower($fstat['Name']) => $fstat]);
-                                $this->spawnFloatingStats($fstat['Name']);
+                                $this->spawnFloatingStats($fstat['Name'], $sender);
                                 $sender->sendMessage(TF::GREEN.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatCreateSuccess']));
                             }
                             return true;
@@ -302,10 +362,10 @@ class StatsPE extends PluginBase implements Listener
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['OnlineTime'], $this->getMessages('Player')['StatOnlineTime']));
                     }
                     if($switch['BlockBreakCount']){
-                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksBreaked'], $this->getMessages('Player')['StatBlocksBreakCount']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksBreaked'], $this->getMessages('Player')['StatBlockBreakCount']));
                     }
                     if($switch['BlockPlaceCount']){
-                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksPlaced'], $this->getMessages('Player')['StatBlocksPlaceCount']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksPlaced'], $this->getMessages('Player')['StatBlockPlaceCount']));
                     }
                     if($switch['ChatCount']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['ChatMessages'], $this->getMessages('Player')['StatChatMessageCount']));
@@ -332,20 +392,60 @@ class StatsPE extends PluginBase implements Listener
         }
     }
 
-    public function spawnFloatingStats($stat = false){
+    public function spawnFloatingStats($stat = false, $player){
         if(file_exists($this->getDataFolder().'floatingstats.yml')){
             $fstats = yaml_parse_file($this->getDataFolder().'floatingstats.yml');
             if(!$stat){
                 foreach($fstats as $fstat){
                     if($fstat['Enabled']){
-                        $text = 'T';
-                        if($this->getServer()->isLevelLoaded($fstat['Position']['Level'])){
-                            $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
+                        if(strtolower($this->getConfig()->get('Provider')) == 'json'){
+                            $info = $this->getStats($player->getName(), 'JSON', 'all');
+                            $text['PlayerName'] = TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']);
+                            foreach($fstat['Stats'] as $stat){
+                                if($stat['Enabled']){
+                                    if($stat['Name'] == 'K/D'){
+                                        if($info['DeathCount'] > 0){
+                                            $text['K/D'] = TF::AQUA.str_ireplace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['StatK/D']);
+                                        }
+                                    }else{
+                                        $text[$stat['Name']] = TF::AQUA.str_ireplace('{value}', $info[$stat['Name']], $this->getMessages('Player')[$stat['Lang']]);
+                                    }
+                                }
+                            }
+                            $text = implode("\n", $text);
+                            if($this->getServer()->isLevelLoaded($fstat['Position']['Level'])){
+                                $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
+                            }
+                        }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
+                        //To-DO
                         }
                     }
                 }
             }else{
                 $fstat = $fstats[strtolower($stat)];
+                if($fstat['Enabled']){
+                    if(strtolower($this->getConfig()->get('Provider')) == 'json'){
+                        $info = $this->getStats($player->getName(), 'JSON', 'all');
+                        $text['PlayerName'] = TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']);
+                        foreach($fstat['Stats'] as $stat){
+                            if($stat['Enabled']){
+                                if($stat['Name'] == 'K/D'){
+                                    if($info['DeathCount'] > 0){
+                                        $text['K/D'] = TF::AQUA.str_ireplace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['StatK/D']);
+                                    }
+                                }else{
+                                    $text[$stat['Name']] = TF::AQUA.str_ireplace('{value}', $info[$stat['Name']], $this->getMessages('Player')[$stat['Lang']]);
+                                }
+                            }
+                        }
+                        $text = implode("\n", $text);
+                        if($this->getServer()->isLevelLoaded($fstat['Position']['Level'])){
+                            $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
+                        }
+                    }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
+                    //To-DO
+                    }
+                }
             }
         }
     }
@@ -360,7 +460,7 @@ class StatsPE extends PluginBase implements Listener
         //}
         $pn = $player->getName();
         if($provider == 'json'){
-            $this->spawnFloatingStats();
+            $this->spawnFloatingStats(false, $player);
             if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
                 $cid = $player->getClientId();
