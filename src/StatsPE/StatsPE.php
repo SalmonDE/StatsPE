@@ -109,7 +109,7 @@ class StatsPE extends PluginBase implements Listener
                     return $lines;
                 }
             }else{
-                return 'Error: Can not return array';
+                return 'Error: Can not return an array';
             }
         }else{
             $this->saveResource(strtolower($this->getConfig()->get('Language')).'.ini');
@@ -164,35 +164,35 @@ class StatsPE extends PluginBase implements Listener
             if(strtolower($this->getConfig()->get('Provider')) == 'json'){
                 if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
                     $info = $this->getStats($target, 'json', 'all');
-                    $requestor->sendMessage(TF::GOLD.str_replace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']));
+                    $requestor->sendMessage(TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']));
                     if($requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
-                        $requestor->sendMessage(TF::AQUA.str_replace('{value}', $info['ClientID'], $this->getMessages('Player')['StatClientID']));
-                        $requestor->sendMessage(TF::AQUA.str_replace('{value}', $info['UUID'], $this->getMessages('Player')['StatUUID']));
-                        $requestor->sendMessage(TF::AQUA.str_replace('{value}', $info['XBoxAuthenticated'], $this->getMessages('Player')['StatXBoxAuthenticated']));
-                        $requestor->sendMessage(TF::AQUA.str_replace('{value}', $info['LastIP'], $this->getMessages('Player')['StatLastIP']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['ClientID'], $this->getMessages('Player')['StatClientID']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['UUID'], $this->getMessages('Player')['StatUUID']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['XBoxAuthenticated'], $this->getMessages('Player')['StatXBoxAuthenticated']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['LastIP'], $this->getMessages('Player')['StatLastIP']));
                     }
-                    $requestor->sendMessage(TF::AQUA.'First Join: '.TF::LIGHT_PURPLE.$info['FirstJoin']);
-                    $requestor->sendMessage(TF::AQUA.'Last Join: '.TF::LIGHT_PURPLE.$info['LastJoin']);
-                    $requestor->sendMessage(TF::AQUA.'Total Joins: '.TF::LIGHT_PURPLE.$info['JoinCount']);
-                    $requestor->sendMessage(TF::AQUA.'Kills: '.TF::LIGHT_PURPLE.$info['KillCount']);
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['FirstJoin'], $this->getMessages('Player')['StatFirstJoin']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['LastJoin'], $this->getMessages('Player')['StatLastJoin']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['JoinCount'], $this->getMessages('Player')['StatJoinCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KillCount'], $this->getMessages('Player')['StatKillCount']));
                     $requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$info['DeathCount']);
                     if(!$info['DeathCount'] == 0){
-                        $this->requestor->sendMessage(TF::AQUA.'K/D: '.TF::LIGHT_PURPLE.$info['KillCount'] / $info['DeathCount']);
+                        $this->requestor->sendMessage(str_replace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['K/D']));
                     }
-                    $requestor->sendMessage(TF::AQUA.'Kicks: '.TF::LIGHT_PURPLE.$info['KickCount']);
-                    $requestor->sendMessage(TF::AQUA.'Online Time: '.TF::LIGHT_PURPLE.$info['OnlineTime']);
-                    $requestor->sendMessage(TF::AQUA.'Breaked Blocks: '.TF::LIGHT_PURPLE.$info['BlocksBreaked']);
-                    $requestor->sendMessage(TF::AQUA.'Placed Blocks: '.TF::LIGHT_PURPLE.$info['BlocksPlaced']);
-                    $requestor->sendMessage(TF::AQUA.'Chat Messages: '.TF::LIGHT_PURPLE.$info['ChatMessages']);
-                    $requestor->sendMessage(TF::AQUA.'Catched Fishes: '.TF::LIGHT_PURPLE.$info['FishCount']);
-                    $requestor->sendMessage(TF::AQUA.'Went to bed for: '.TF::LIGHT_PURPLE.$info['EnterBedCount'].TF::AQUA.' times');
-                    $requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info['EatCount'].TF::AQUA.' times');
-                    $requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info['CraftCount'].TF::AQUA.' times');
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KickCount'], $this->getMessages('Player')['StatKickCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['OnlineTime'], $this->getMessages('Player')['StatOnlineTime']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksBreaked'], $this->getMessages('Player')['StatBlocksBreakedCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksPlaced'], $this->getMessages('Player')['StatBlocksPlacedCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['ChatMessages'], $this->getMessages('Player')['StatChatMessageCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['FishCount'], $this->getMessages('Player')['StatFishCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['EnterBedCount'], $this->getMessages('Player')['StatBedEnterCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['EatCount'], $this->getMessages('Player')['StatEatCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['CraftCount'], $this->getMessages('Player')['StatCraftCount']));
                 }else{
-                    $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target);
+                    $requestor->sendMessage(TF::RED.str_ireplace('{value}', $target, $this->getMessages('Player')['CommandErrorNoStats']));
                 }
             }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
-                $requestor->sendMessage(TF::GREEN.'Connecting to Database ...'); //To-Do Language file!
+                $requestor->sendMessage(TF::GREEN.$this->getMessages('MySQL')['CommandRunning']);
                 $this->getServer()->getScheduler()->scheduleAsyncTask(new ShowStatsTask($this, $requestor, $target));
             }
         }

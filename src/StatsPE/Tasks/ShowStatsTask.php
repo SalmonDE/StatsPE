@@ -15,6 +15,7 @@ class ShowStatsTask extends AsyncTask
           $this->requestor = $requestor;
       }
       $this->mysql = $owner->getConfig()->get('MySQL');
+      $this->lang = $owner->getMessages();
   }
 
   public function onRun(){
@@ -24,12 +25,12 @@ class ShowStatsTask extends AsyncTask
           if(mysqli_num_rows($data) == 1){
               $this->setResult(mysqli_fetch_assoc($data));
           }elseif(mysqli_num_rows($data) > 1){
-              $this->setResult(TF::RED.'Player: '.$this->target.' is occuring more than once in the database! Please report this to an administrator.');
+              $this->setResult(TF::RED.str_ireplace('{value}', $this->target, $lang['Player']['CommandMultipleOccurences']));
           }else{
-              $this->setResult(TF::RED.'No Stats found for: '.TF::GOLD.$this->target."\n".TF::RED.'Please check your spelling.');
+              $this->setResult(TF::RED.str_ireplace('{value}', $this->target, $lang['Player']['CommandErrorNoStats']));
           }
       }else{
-          $this->setResult(TF::RED.'Connecting to Database failed! Please contact an administrator.');
+          $this->setResult(TF::RED.$lang['MySQL']['CommandConnectionFailed']);
       }
   }
 
