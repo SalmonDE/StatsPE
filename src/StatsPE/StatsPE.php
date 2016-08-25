@@ -27,11 +27,13 @@ class StatsPE extends PluginBase implements Listener
 {
 
     public function onEnable(){
+      @mkdir($this->getDataFolder());
+      $this->saveResource('config.yml');
+      $this->saveResource(strtolower($this->getConfig()->get('Language')).'.ini');
+      rename($this->getDataFolder().strtolower($this->getConfig()->get('Language')).'.ini', $this->getDataFolder().'messages.ini');
         if(!$this->getServer()->getName() === 'ClearSky'){
-            $this->getLogger()->warning(TF::RED.'You are running this plugin on a not officially supported server software. Use with caution!');
+            $this->getLogger()->warning(TF::RED.$this->getMessages('General')['NotSupported']);
         }
-        @mkdir($this->getDataFolder());
-        $this->saveResource('config.yml');
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             @mkdir($this->getDataFolder().'Stats');
@@ -39,7 +41,7 @@ class StatsPE extends PluginBase implements Listener
             $mysql = $this->getConfig()->get('MySQL');
             $connection = @mysqli_connect($mysql['host'], $mysql['user'], $mysql['password']);
             if($connection){
-                $this->getLogger()->notice(TF::GREEN.'Successfully connected to MySQL Database!');
+                $this->getLogger()->notice(TF::GREEN.$this->getMessages('MySQL')['ConnectSuccess']);
                 $table = "CREATE TABLE Stats (
                 PlayerName VARCHAR(16) NOT NULL,
                 ClientID VARCHAR(30) NOT NULL,
@@ -64,33 +66,55 @@ class StatsPE extends PluginBase implements Listener
                 if(mysqli_select_db($connection, $mysql['database'])){
                     if(!mysqli_query($connection, "SELECT * FROM Stats")){
                         if(mysqli_query($connection, $table)){
-                            $this->getLogger()->notice('Successfully created table Stats in Database: '.$mysql['database']);
+                            $this->getLogger()->notice($this->getMessages('MySQL')['CreateTableSuccess'].$mysql['database']);
                         }else{
-                            $this->getLogger()->critical('Could not create table: '.mysqli_error($connection));
+                            $this->getLogger()->critical($this->getMessages('MySQL')['CreateTableFailure'].mysqli_error($connection));
                         }
                     }
                 }else{
-                    $this->getLogger()->notice('Database not found, creating new ...');
+                    $this->getLogger()->notice($this->getMessages('MySQL')['NotFoundDatabase']);
                     if(mysqli_query($connection, 'CREATE DATABASE '.$mysql['database'])){
-                        $this->getLogger()->notice('Database '.$mysql['database'].' created!');
+                        $this->getLogger()->notice($this->getMessages('MySQL')['CreateDatabaseSuccess'].'('.$mysql['database'].')');
                         if(mysqli_query($connection, $table)){
-                            $this->getLogger()->info('Successfully created table Stats in Database: '.$mysql['database']);
+                            $this->getLogger()->info($this->getMessages('MySQL')['CreateTableSuccess'].$mysql['database']);
                         }else{
-                            $this->getLogger()->critical('Could not create table: '.mysqli_error($connection));
+                            $this->getLogger()->critical($this->getMessages('MySQL')['CreateTableFailure'].mysqli_error($connection));
                         }
                     }else{
-                        $this->getLogger()->critical('Could not create database: '.mysqli_error($connection));
+                        $this->getLogger()->critical($this->getMessages('MySQL')['CreateDatabaseFailure'].mysqli_error($connection));
                     }
                 }
                 mysqli_close($connection);
             }else{
-                $this->getLogger()->critical(TF::RED.TF::BOLD.'Could not connect to MySQL Server: '.mysqli_connect_error());
+                $this->getLogger()->critical(TF::RED.TF::BOLD.$this->getMessages('MySQL')['ConnectFailure'].mysqli_connect_error());
             }
         }else{
-            $this->getLogger()->critical('Invalid provider: '.$provider.'!');
+            $this->getLogger()->critical($this->getMessages('MySQL')['ProviderInvalid'].$provider);
         }
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getServer()->getScheduler()->scheduleAsyncTask(new CheckVersionTask($this));
+    }
+
+    public function getMessages($category = false, $line = false){
+        if(file_exists($this->getDataFolder().'messages.ini')){
+            $lines = parse_ini_file($this->getDataFolder().'messages.ini', true);
+            if(is_array($lines)){
+                if($category){
+                    if($line){
+                        return $lines[$category][$line];
+                    }else{
+                        return $lines[$category];
+                    }
+                }else{
+                    return $lines;
+                }
+            }else{
+                return 'Error: Can not return an array';
+            }
+        }else{
+            $this->saveResource(strtolower($this->getConfig()->get('Language')).'.ini');
+            rename($this->getDataFolder().strtolower($this->getConfig()->get('Language')).'.ini', $this->getDataFolder().'messages.ini');
+        }
     }
 
     public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
@@ -102,8 +126,7 @@ class StatsPE extends PluginBase implements Listener
                 $this->showStats($sender, $args[0]);
                 return true;
             }else{
-                $sender->sendMessage(TF::RED.'Too many arguments!');
-
+                $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorTooManyArguments']);
                 return false;
             }
         }elseif(strtolower($cmd) == 'floatingstats'){
@@ -134,40 +157,40 @@ class StatsPE extends PluginBase implements Listener
 
     public function showStats($requestor, $target){
         if($target == 'CONSOLE'){
-            $requestor->sendMessage(TF::RED.'You do not have permission to view Console stats!');
+            $requestor->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorConsoleStats']);
         }else{
             if(strtolower($this->getConfig()->get('Provider')) == 'json'){
                 if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
                     $info = $this->getStats($target, 'json', 'all');
-                    $requestor->sendMessage(TF::GOLD.'---Statistics for: '.TF::GREEN.$info['PlayerName'].TF::GOLD.'---');
+                    $requestor->sendMessage(TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']));
                     if($requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
-                        $requestor->sendMessage(TF::AQUA.'Last ClientID: '.TF::LIGHT_PURPLE.$info['ClientID']);
-                        $requestor->sendMessage(TF::AQUA.'Last UUID: '.TF::LIGHT_PURPLE.$info['UUID']);
-                        $requestor->sendMessage(TF::AQUA.'XBoxAuthenticated: '.TF::LIGHT_PURPLE.$info['XBoxAuthenticated']);
-                        $requestor->sendMessage(TF::AQUA.'Last IP: '.TF::LIGHT_PURPLE.$info['LastIP']);
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['ClientID'], $this->getMessages('Player')['StatClientID']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['UUID'], $this->getMessages('Player')['StatUUID']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['XBoxAuthenticated'], $this->getMessages('Player')['StatXBoxAuthenticated']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['LastIP'], $this->getMessages('Player')['StatLastIP']));
                     }
-                    $requestor->sendMessage(TF::AQUA.'First Join: '.TF::LIGHT_PURPLE.$info['FirstJoin']);
-                    $requestor->sendMessage(TF::AQUA.'Last Join: '.TF::LIGHT_PURPLE.$info['LastJoin']);
-                    $requestor->sendMessage(TF::AQUA.'Total Joins: '.TF::LIGHT_PURPLE.$info['JoinCount']);
-                    $requestor->sendMessage(TF::AQUA.'Kills: '.TF::LIGHT_PURPLE.$info['KillCount']);
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['FirstJoin'], $this->getMessages('Player')['StatFirstJoin']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['LastJoin'], $this->getMessages('Player')['StatLastJoin']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['JoinCount'], $this->getMessages('Player')['StatJoinCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KillCount'], $this->getMessages('Player')['StatKillCount']));
                     $requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$info['DeathCount']);
                     if(!$info['DeathCount'] == 0){
-                        $this->requestor->sendMessage(TF::AQUA.'K/D: '.TF::LIGHT_PURPLE.$info['KillCount'] / $info['DeathCount']);
+                        $this->requestor->sendMessage(str_replace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['K/D']));
                     }
-                    $requestor->sendMessage(TF::AQUA.'Kicks: '.TF::LIGHT_PURPLE.$info['KickCount']);
-                    $requestor->sendMessage(TF::AQUA.'Online Time: '.TF::LIGHT_PURPLE.$info['OnlineTime']);
-                    $requestor->sendMessage(TF::AQUA.'Breaked Blocks: '.TF::LIGHT_PURPLE.$info['BlocksBreaked']);
-                    $requestor->sendMessage(TF::AQUA.'Placed Blocks: '.TF::LIGHT_PURPLE.$info['BlocksPlaced']);
-                    $requestor->sendMessage(TF::AQUA.'Chat Messages: '.TF::LIGHT_PURPLE.$info['ChatMessages']);
-                    $requestor->sendMessage(TF::AQUA.'Catched Fishes: '.TF::LIGHT_PURPLE.$info['FishCount']);
-                    $requestor->sendMessage(TF::AQUA.'Went to bed for: '.TF::LIGHT_PURPLE.$info['EnterBedCount'].TF::AQUA.' times');
-                    $requestor->sendMessage(TF::AQUA.'Ate something for: '.TF::LIGHT_PURPLE.$info['EatCount'].TF::AQUA.' times');
-                    $requestor->sendMessage(TF::AQUA.'Crafted something for: '.TF::LIGHT_PURPLE.$info['CraftCount'].TF::AQUA.' times');
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KickCount'], $this->getMessages('Player')['StatKickCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['OnlineTime'], $this->getMessages('Player')['StatOnlineTime']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksBreaked'], $this->getMessages('Player')['StatBlocksBreakCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksPlaced'], $this->getMessages('Player')['StatBlocksPlaceCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['ChatMessages'], $this->getMessages('Player')['StatChatMessageCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['FishCount'], $this->getMessages('Player')['StatFishCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['EnterBedCount'], $this->getMessages('Player')['StatBedEnterCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['EatCount'], $this->getMessages('Player')['StatEatCount']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['CraftCount'], $this->getMessages('Player')['StatCraftCount']));
                 }else{
-                    $requestor->sendMessage(TF::RED.'No Stats found for: '.TF::GOLD.$target."\n".TF::RED.'Please check your spelling.');
+                    $requestor->sendMessage(TF::RED.str_ireplace('{value}', $target, $this->getMessages('Player')['CommandErrorNoStats']));
                 }
             }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
-                $requestor->sendMessage(TF::GREEN.'Connecting to Database ...'); //To-Do Language file!
+                $requestor->sendMessage(TF::GREEN.$this->getMessages('MySQL')['CommandRunning']);
                 $this->getServer()->getScheduler()->scheduleAsyncTask(new ShowStatsTask($this, $requestor, $target));
             }
         }
