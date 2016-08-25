@@ -18,6 +18,8 @@ use pocketmine\event\player\PlayerFishEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
+use pocketmine\level\particle\FloatingTextParticle;
+use pocketmine\math\Vector3;
 use StatsPE\Tasks\SaveDataTask;
 use StatsPE\Tasks\ShowStatsTask;
 use StatsPE\Updater\CheckVersionTask;
@@ -122,7 +124,7 @@ class StatsPE extends PluginBase implements Listener
             if(count($args) == 0){
                 $this->showStats($sender, $sender->getName());
                 return true;
-            }elseif(count($args) == 1) {
+            }elseif(count($args) == 1){
                 $this->showStats($sender, $args[0]);
                 return true;
             }else{
@@ -130,7 +132,97 @@ class StatsPE extends PluginBase implements Listener
                 return false;
             }
         }elseif(strtolower($cmd) == 'floatingstats'){
-          //To-Do
+            if($args[0] == 'add'){
+                if(count($args) == 2){
+                    return true;
+                    $fstat = [
+                        'Name' => $args[1],
+                        'Enabled' => true,
+                        'Pos' => [
+                            'X' => $sender->getX(),
+                            'Y' => $sender->getY(),
+                            'Z' => $sender->getZ(),
+                            'Level' => $sender->getLevel()->getName();
+                        ],
+                        'Stats' => [
+                            'FirstJoin' => true,
+                            'LastJoin' => true,
+                            'JoinCount' => true,
+                            'KillCount' => true,
+                            'K/D' => true,
+                            'DeathCount' => true,
+                            'KickCount' => true,
+                            'OnlineTime' => false,
+                            'BlockBreakCount' => true,
+                            'BlockPlaceCount' => true,
+                            'ChatCount' => true,
+                            'FishCount' => true,
+                            'BedEnterCount' => true,
+                            'EatCount' => true,
+                            'CraftCount' => true
+                        ]
+                    ];
+                    if(file_exists($this->getDataFolder().'floatingstats.yml')){
+                        $fstats = yaml_parse_file($this->getDataFolder().'floatingstats.yml');
+                        if(!in_array(strtolower($args[1]), $fstats)){
+                            $fstats[strtolower($args[1])] = $fstat;
+                            yaml_emit_file($this->getDataFolder().'floatingstats.yml', $fstats);
+                            $sender->sendMessage(TF::GREEN.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatCreateSuccess']));
+                        }else{
+                            $sender->sendMessage(TF::RED.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatExists']));
+                        }
+                    }else{
+                        yaml_emit_file($this->getDataFolder().'floatingstats.yml', $fstat);
+                        $sender->sendMessage(TF::GREEN.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatCreateSuccess']));
+                    }
+                }elseif(count($args) < 2){
+                    $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorTooLessArguments']);
+                }else{
+                    $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorTooManyArguments']);
+                }
+            }elseif($args[0] == 'list'){
+                if(file_exists($this->getDataFolder().'floatingstats.yml')){
+                    $fstats = yaml_parse_file($this->getDataFolder().'floatingstats.yml');
+                    if(count($fstats) > 0){
+                        foreach($fstats as $fstat){
+                            $sender->sendMessage(TF::GREEN.str_ireplace(['{name}', '{x}', '{y}', '{z}'], [$fstat['Name'], $fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']], $this->getMessages('Player')['FloatingStatList']));
+                        }
+                    }else{
+                        $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorNoFloatingStats']);
+                    }
+                }else{
+                    $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorNoFloatingStats']);
+                }
+            }elseif($args[0] == 'remove'){
+                if(count($args) == 2){
+                    return true;
+                    if(file_exists($this->getDataFolder().'floatingstats.yml')){
+                        $fstats = yaml_parse_file($this->getDataFolder().'floatingstats.yml');
+                        if(count($fstats) > 0){
+                            if(in_array(strtolower($args[1], $fstats))){
+                                unset($fstats[$args[1]]);
+                                yaml_emit_file($this->getDataFolder().'floatingstats.yml');
+                                $sender->sendMessage(TF::RED.str_ireplace('{name}', $args[1],$this->getMessages('Player')['FloatingStatRemoveSuccess']));
+                            }else{
+                                $sender->sendMessage(TF::RED.str_ireplace('{name}', $args[1],$this->getMessages('Player')['FloatingStatNotExists']));
+                            }
+                        }else{
+                            $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorNoFloatingStats']);
+                        }
+                    }else{
+                        $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorNoFloatingStats']);
+                    }
+                }elseif(count($args) < 2){
+                    $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorTooLessArguments']);
+                    return false;
+                }else{
+                    $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorTooManyArguments']);
+                    return false;
+                }
+            }else{
+                $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorTooLessArguments']);
+                return false;
+            }
         }
     }
 
@@ -225,6 +317,17 @@ class StatsPE extends PluginBase implements Listener
         }
     }
 
+    public function spawnFloatingStats($stat = false){
+        if(file_exists($this->getDataFolder().'floatingstats.yml')){
+            $fstats = yaml_parse_file($this->getDataFolder().'floatingstats.yml');
+            foreach($fstats as $fstat){
+                $text = 
+                $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text))
+                //To-Do CHECK IF LEVEL IS LOADED
+            }
+        }
+    }
+
     public function onJoin(PlayerJoinEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
@@ -235,6 +338,7 @@ class StatsPE extends PluginBase implements Listener
         //}
         $pn = $player->getName();
         if($provider == 'json'){
+            $this->spawnFloatingStats();
             if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
                 $cid = $player->getClientId();

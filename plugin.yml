@@ -1,5 +1,5 @@
 name: StatsPE
-version: 2.1.0
+version: 2.2.0
 api: 2.0.0
 main: StatsPE\StatsPE
 description: Stats Plugin for your Server!
@@ -12,8 +12,8 @@ commands:
   usage: /stats [player]
   permission: statspe.cmd.stats
  floatingstats:
-  description: Adds a floating text with stats on the current position
-  usage: /floatingstats [x] [y] [z]
+  description: Adds a floating text with stats on your current position
+  usage: /floatingstats <add|list|remove> [name]
   permission: statspe.cmd.floatingstats
 permissions:
  statspe:
