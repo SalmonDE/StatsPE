@@ -146,6 +146,7 @@ class StatsPE extends PluginBase implements Listener
                                     'Z' => $sender->getZ(),
                                     'Level' => $sender->getLevel()->getName()
                                 ],
+                                'PlayerName' => false,
                                 'Stats' => [
                                     'FirstJoin' => [
                                         'Name' => 'FirstJoin',
@@ -393,14 +394,20 @@ class StatsPE extends PluginBase implements Listener
         }
     }
 
-    public function spawnFloatingStats($stat = false, $player){
+    public function spawnFloatingStats($stat = false, $player = false){
+        if(is_object($player)){
+            $player = $player->getName();
+        }
         if(file_exists($this->getDataFolder().'floatingstats.yml')){
             $fstats = yaml_parse_file($this->getDataFolder().'floatingstats.yml');
             if(!$stat){
                 foreach($fstats as $fstat){
                     if($fstat['Enabled']){
+                        if($fstat['PlayerName']){
+                            $player = $fstat['PlayerName'];
+                        }
                         if(strtolower($this->getConfig()->get('Provider')) == 'json'){
-                            $info = $this->getStats($player->getName(), 'JSON', 'all');
+                            $info = $this->getStats($player, 'JSON', 'all');
                             $text['PlayerName'] = TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']);
                             foreach($fstat['Stats'] as $stat){
                                 if($stat['Enabled']){
@@ -426,7 +433,7 @@ class StatsPE extends PluginBase implements Listener
                 $fstat = $fstats[strtolower($stat)];
                 if($fstat['Enabled']){
                     if(strtolower($this->getConfig()->get('Provider')) == 'json'){
-                        $info = $this->getStats($player->getName(), 'JSON', 'all');
+                        $info = $this->getStats($player, 'JSON', 'all');
                         $text['PlayerName'] = TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']);
                         foreach($fstat['Stats'] as $stat){
                             if($stat['Enabled']){
