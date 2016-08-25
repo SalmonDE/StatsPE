@@ -21,8 +21,6 @@ class CheckVersionTask extends AsyncTask
         $nversion = str_replace([' ', "\r", "\n"], '', $url);
         if($nversion){
             if($this->cversion == $nversion){
-                var_dump($this->cversion);
-                var_dump($nversion);
                 $this->setResult(false);
             }else{
                 $this->setResult($nversion);
