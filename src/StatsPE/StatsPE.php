@@ -461,7 +461,6 @@ class StatsPE extends PluginBase implements Listener
         //}
         $pn = $player->getName();
         if($provider == 'json'){
-            $this->spawnFloatingStats(false, $player);
             if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
                 $cid = $player->getClientId();
@@ -559,6 +558,7 @@ class StatsPE extends PluginBase implements Listener
                 $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, $stat['Stat'], $stat['Type'], $stat['Data']));
             }
         }
+        $this->spawnFloatingStats(false, $player);
     }
 
     public function onDeath(PlayerDeathEvent $event){
