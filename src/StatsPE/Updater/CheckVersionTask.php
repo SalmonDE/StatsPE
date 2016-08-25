@@ -18,25 +18,33 @@ class CheckVersionTask extends AsyncTask
 
     public function onRun(){
         $url = Utils::getURL($this->website.'MCPE-Plugins/Updater/Updater.php?plugin='.$this->name.'&type=version', 20);
-        $nversion = str_replace(array(' ', "\r", "\n"), '', $url);
+        $nversion = str_replace([' ', "\r", "\n"], '', $url);
         if($nversion){
-            if(!$this->cversion == $nversion){
-                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::GOLD.'Update available for '.$this->name.'!');
-                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::RED.'Current version: '.$this->cversion);
-                Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::GREEN.'New Version: '.$nversion);
+            if($this->cversion == $nversion){
+                var_dump($this->cversion);
+                var_dump($nversion);
+                $this->setResult(false);
+            }else{
                 $this->setResult($nversion);
             }
         }else{
-            Server::getInstance()->getPluginManager()->getPlugin($this->name)->getLogger()->error(TF::RED.'Could not check for Update: "Empty Response" !');
-            $this->setResult(false);
+            $this->setResult('Emtpy');
         }
    }
 
     public function onCompletion(Server $server){
-        if($this->getResult()){
-            $server->getPluginManager()->getPlugin($this->name)->update($this->getResult());
+        if($this->getResult() == 'Empty'){
+            $server->getPluginManager()->getPlugin($this->name)->getLogger()->error(TF::RED.'Could not check for Update: "Empty Response" !');
+        }elseif($this->getResult()){
+            $server->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::GOLD.'Update available for '.$this->name.'!');
+            $server->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::RED.'Current version: '.$this->cversion);
+            $server->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::GREEN.'New Version: '.$this->getResult());
+            if($this->autoupdate){
+                $server->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::AQUA.'Updating to '.$this->getResult().' ...');
+                $server->getPluginManager()->getPlugin($this->name)->update($this->getResult());
+            }
         }else{
-            $server->getPluginManager()->getPlugin($this->name)->getLogger()->error('Auto Updater failed!');
+            $server->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::GREEN.'No Update available!');
         }
     }
 }

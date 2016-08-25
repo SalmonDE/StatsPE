@@ -895,7 +895,7 @@ class StatsPE extends PluginBase implements Listener
 
     public function update($nversion){
         $url = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/Updater/Updater.php?plugin='.$this->getDescription()->getName().'&type=downloadurl');
-        $md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/'.$this->getDescription()->getName().'/Updater.php?plugin='.$this->getDescription()->getName().'&type=md5');
-        $this->getServer()->getScheduler()->scheduleDelayedTask(new UpdaterTask($url, $md5, $this->getDataFolder(), $this->getDescription()->getVersion(), $nversion, $this), 400);
+        $md5 = Utils::getURL($this->getDescription()->getWebsite().'MCPE-Plugins/Updater/Updater.php?plugin='.$this->getDescription()->getName().'&type=md5');
+        $this->getServer()->getScheduler()->scheduleDelayedTask(new UpdaterTask($url, $md5, $this->getDescription()->getVersion(), $nversion, $this), 400);
     }
 }
