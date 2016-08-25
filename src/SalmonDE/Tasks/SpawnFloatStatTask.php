@@ -1,5 +1,5 @@
 <?php
-namespace StatsPE\Tasks;
+namespace SalmonDE\Tasks;
 
 use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\scheduler\AsyncTask;

@@ -1,5 +1,5 @@
 <?php
-namespace StatsPE\Updater;
+namespace SalmonDE\Updater;
 
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;

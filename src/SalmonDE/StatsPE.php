@@ -1,5 +1,5 @@
 <?php
-namespace StatsPE;
+namespace SalmonDE;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -20,11 +20,11 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\math\Vector3;
-use StatsPE\Tasks\SaveDataTask;
-use StatsPE\Tasks\ShowStatsTask;
-use StatsPE\Tasks\SpawnFloatStatTask;
-use StatsPE\Updater\CheckVersionTask;
-use StatsPE\Updater\UpdaterTask;
+use SalmonDE\Tasks\SaveDataTask;
+use SalmonDE\Tasks\ShowStatsTask;
+use SalmonDE\Tasks\SpawnFloatStatTask;
+use SalmonDE\Updater\CheckVersionTask;
+use SalmonDE\Updater\UpdaterTask;
 
 class StatsPE extends PluginBase implements Listener
 {
