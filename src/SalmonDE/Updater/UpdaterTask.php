@@ -8,6 +8,7 @@ use pocketmine\utils\Utils;
 class UpdaterTask extends PluginTask
 {
     public function __construct($url, $hash, $version, $nversion, $owner){
+        $this->name = $owner->getDescription()->getName();
         parent::__construct($owner);
         $this->url = $url;
         $this->md5hash = $hash;
@@ -18,11 +19,11 @@ class UpdaterTask extends PluginTask
     public function onRun($currenttick){
         $file = Utils::getURL($this->url);
         if(md5($file) == $this->md5hash){
-            foreach(glob("plugins/StatsPE*.phar") as $phar){
+            foreach(glob("plugins/".$this->name."*.phar") as $phar){
                 unlink($phar);
             }
-            file_put_contents('plugins/StatsPE.phar', $file);
-            if(!file_exists('plugins/StatsPE.phar')){
+            file_put_contents('plugins/'.$this->name.'.phar', $file);
+            if(!file_exists('plugins/'.$this->name.'.phar')){
                 $this->getOwner()->getLogger()->error('Failed to download the update!');
             }else{
                 $this->getOwner()->getServer()->broadcastMessage(TF::RED.TF::BOLD.$this->getOwner()->getConfig()->get('Shutdown-Message'));
