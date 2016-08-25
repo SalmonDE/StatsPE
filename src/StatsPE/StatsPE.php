@@ -142,7 +142,7 @@ class StatsPE extends PluginBase implements Listener
                             'X' => $sender->getX(),
                             'Y' => $sender->getY(),
                             'Z' => $sender->getZ(),
-                            'Level' => $sender->getLevel()->getName();
+                            'Level' => $sender->getLevel()->getName()
                         ],
                         'Stats' => [
                             'FirstJoin' => true,
@@ -321,8 +321,8 @@ class StatsPE extends PluginBase implements Listener
         if(file_exists($this->getDataFolder().'floatingstats.yml')){
             $fstats = yaml_parse_file($this->getDataFolder().'floatingstats.yml');
             foreach($fstats as $fstat){
-                $text = 
-                $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text))
+                $text = 'Null';
+                $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
                 //To-Do CHECK IF LEVEL IS LOADED
             }
         }
