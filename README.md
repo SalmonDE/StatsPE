@@ -18,8 +18,8 @@ _Optional_         | If you want to disable a statistic from showing on `/stats 
 
 **_MySQL Configuration_** | **_Using MySQL with StatsPE_**
 ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------
-Step 4                    | Put in your MySQL Settings in [these](https://github.com/SalmonGER/StatsPE/blob/master/resources/config.yml#L24-L29) lines.
-Step 5                    | Change the data providers from JSON to MySQL in [this](https://github.com/SalmonGER/StatsPE/blob/master/resources/config.yml#L20-L22) line.
+Step 4                    | Put your MySQL Settings in [these](https://github.com/SalmonGER/StatsPE/blob/master/resources/config.yml#L41-L45) lines.
+Step 5                    | Change the data providers from JSON to MySQL in [this](https://github.com/SalmonGER/StatsPE/blob/master/resources/config.yml#L38) line.
 
 --------------------------------------------------------------------------------
 
