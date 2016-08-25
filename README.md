@@ -34,7 +34,7 @@ Step 5                    | Change the data providers from JSON to MySQL in [thi
 
 **FloatingStat Setting** | **Description**                                                                                       | **Example**
 ------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------
-Name                     | The name of the floating stat, specified by the creater                                               | Spawn
+Name                     | The name of the floating stat, specified by the creator                                               | Spawn
 Enabled                  | Specifies if the floating stat should be enabled (must be true or false)                              | false
 Position                 | Contains information about the position of the floating stat (Array)                                  | X => '100' Y => '50' Z => '400' Level => 'Lobby'
 PlayerName               | If NOT false the associated floating stat will show the stats of the player specified in this setting | SalericioDE
