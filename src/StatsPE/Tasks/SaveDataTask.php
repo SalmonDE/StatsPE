@@ -1,7 +1,6 @@
 <?php
 namespace StatsPE\Tasks;
 
-use pocketmine\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
@@ -12,8 +11,9 @@ class SaveDataTask extends AsyncTask
       $this->stat = $stat;
       $this->type = $type;
       $this->data = $data;
+      $this->lang = $owner->getMessages();
       $this->timeformat = $owner->getConfig()->get('TimeFormat');
-      if($player instanceof Player){
+      if(is_object($player)){
           $this->player = strtolower($player->getName());
       }else{
           $this->player = strtolower($player);
@@ -33,7 +33,7 @@ class SaveDataTask extends AsyncTask
               }
               mysqli_query($connection, "UPDATE Stats SET $this->stat = '$this->data' WHERE PlayerName = '$this->player'");
           }elseif($poccurence > 1){
-              $this->setResult('Player '.$this->player.' is occuring more than once in Table Stats of the Database '.$this->mysql['database']);
+              $this->setResult(str_ireplace('{value}', $this->player, $this->lang['Player']['CommandMultipleOccurences']));
           }else{
               mysqli_query($connection, "INSERT INTO Stats (PlayerName, XBoxAuthenticated, FirstJoin, LastJoin, JoinCount, KillCount, DeathCount, KickCount, OnlineTime, BlocksBreaked, BlocksPlaced, ChatMessages, FishCount, EnterBedCount, EatCount, CraftCount) VALUES ('$this->player', 'false', '$date', '$date', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
               mysqli_query($connection, "UPDATE Stats SET $this->stat = '$this->data' WHERE PlayerName = '$this->player'");
@@ -44,13 +44,13 @@ class SaveDataTask extends AsyncTask
               $this->setResult(false);
           }
       }else{
-              $this->setResult('Could not connect to Database');
+              $this->setResult($this->lang['MySQL']['ConnectFailure']);
       }
   }
 
   public function onCompletion(Server $server){
       if($this->getResult()){
-          $server->getPluginManager()->getPlugin('StatsPE')->getLogger()->error('Error while Saving Data of '.$this->player.': '.$this->getResult());
+          $server->getPluginManager()->getPlugin('StatsPE')->getLogger()->error(str_ireplace(['{player}', '{error}'], [$this->player, $this->getResult()], $this->lang['MySQL']['DataSavingError']));
       }
   }
 }
