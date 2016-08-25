@@ -152,8 +152,6 @@ class StatsPE extends PluginBase implements Listener
             }else{
                 return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true)["$data"];
             }
-        }elseif(strtolower($type) == 'mysql'){
-
         }
     }
 

@@ -2,9 +2,7 @@
 
 ## Information
 
-**Note:** MySQL support is not complete yet, there is some more coding to do!<br>
-This is the GitHub repository for developing a stats plugin, which uses JSON and MySQL to save it's data.<br>
-The plugin also contains an auto updater which checks if an update is available and downloads it if enabled in the config file.<br>
+**Note:** MySQL support is done but we need testers since this feature is very new.<br>
 
 ## Feel free to request any features you would like the plugin to have [here](https://github.com/SalmonGER/StatsPE/issues/1)
 
