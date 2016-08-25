@@ -1,4 +1,4 @@
-![alt tag](https://salmonde.de/MCPE-Plugins/Pictures/StatsPE.jpg)
+![Alt text](https://salmonde.de/MCPE-Plugins/Pictures/StatsPE/StatsPE.jpg "StatsPE Icon")
 # StatsPE - Advanced Stats Plugin [![Travis-CI](https://travis-ci.org/SalmonGER/StatsPE.svg?branch=master)](https://travis-ci.org/SalmonGER/StatsPE)
 
 ## Information
