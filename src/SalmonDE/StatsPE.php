@@ -14,6 +14,7 @@ use pocketmine\event\inventory\CraftItemEvent;
 use pocketmine\event\player\PlayerBedEnterEvent;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerFishEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -69,7 +70,8 @@ class StatsPE extends PluginBase implements Listener
                 FishCount INT(255) UNSIGNED DEFAULT 0,
                 EnterBedCount INT(255) UNSIGNED DEFAULT 0,
                 EatCount INT(255) UNSIGNED DEFAULT 0,
-                CraftCount INT(255) UNSIGNED DEFAULT 0
+                CraftCount INT(255) UNSIGNED DEFAULT 0,
+                DroppedItems INT(255) UNSIGNED DEFAULT 0
                 )";
                 if(mysqli_select_db($connection, $mysql['database'])){
                     if(!mysqli_query($connection, "SELECT * FROM Stats")){
@@ -231,6 +233,11 @@ class StatsPE extends PluginBase implements Listener
                                     'CraftCount' => [
                                         'Name' => 'CraftCount',
                                         'Lang' => 'StatCraftCount',
+                                        'Enabled' => true
+                                    ],
+                                    'DroppedItems' => [
+                                        'Name' => 'DroppedItems',
+                                        'Lang' => 'StatDroppedItems',
                                         'Enabled' => true
                                     ]
                                 ]
@@ -400,6 +407,9 @@ class StatsPE extends PluginBase implements Listener
                     if($switch['CraftCount']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['CraftCount'], $this->getMessages('Player')['StatCraftCount']));
                     }
+                    if($switch['DroppedItems']){
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['DroppedItems'], $this->getMessages('Player')['StatDroppedItems']));
+                    }
                 }else{
                     $requestor->sendMessage(TF::RED.str_ireplace('{value}', $target, $this->getMessages('Player')['CommandErrorNoStats']));
                 }
@@ -538,6 +548,7 @@ class StatsPE extends PluginBase implements Listener
                       'EnterBedCount' => '0',
                       'EatCount' => '0',
                       'CraftCount' => '0',
+                      'DroppedItems' => '0'
                 );
                 $this->saveData($player, $data);
             }
@@ -591,348 +602,6 @@ class StatsPE extends PluginBase implements Listener
         $this->spawnFloatingStats(false, $player, $player);
     }
 
-    public function onDeath(PlayerDeathEvent $event){
-        $player = $event->getPlayer();
-        $damagecause = $player->getLastDamageCause();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $d = $info['DeathCount'] + 1;
-            $data = array(
-                'PlayerName' => $info['PlayerName'],
-                'Online' => $info['Online'],
-                'ClientID' => $info['ClientID'],
-                'UUID' => $info['UUID'],
-                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                'LastIP' => $info['LastIP'],
-                'FirstJoin' => $info['FirstJoin'],
-                'LastJoin' => $info['LastJoin'],
-                'JoinCount' => $info['JoinCount'],
-                'KillCount' => $info['KillCount'],
-                'DeathCount' => $d,
-                'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
-                'BlocksBreaked' => $info['BlocksBreaked'],
-                'BlocksPlaced' => $info['BlocksPlaced'],
-                'ChatMessages' => $info['ChatMessages'],
-                'FishCount' => $info['FishCount'],
-                'EnterBedCount' => $info['EnterBedCount'],
-                'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount']
-          );
-            $this->saveData($player, $data);
-            if(method_exists($damagecause, 'getDamager')){
-                if($damagecause->getDamager() instanceof Player){
-                    $killer = $player->getLastDamageCause()->getDamager();
-                    $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
-                    $k = $info['KillCount'] + 1;
-                    $kdata = array(
-                    'PlayerName' => $kinfo['PlayerName'],
-                    'Online' => $kinfo['Online'],
-                      'ClientID' => $kinfo['ClientID'],
-                            'UUID' => $kinfo['UUID'],
-                            'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
-                      'LastIP' => $kinfo['LastIP'],
-                      'FirstJoin' => $kinfo['FirstJoin'],
-                      'LastJoin' => $kinfo['LastJoin'],
-                    'JoinCount' => $kinfo['JoinCount'],
-                    'KillCount' => $k,
-                    'DeathCount' => $kinfo['DeathCount'],
-                    'KickCount' => $kinfo['KickCount'],
-                      'OnlineTime' => $kinfo['OnlineTime'],
-                      'BlocksBreaked' => $kinfo['BlocksBreaked'],
-                      'BlocksPlaced' => $kinfo['BlocksPlaced'],
-                    'ChatMessages' => $kinfo['ChatMessages'],
-                    'FishCount' => $kinfo['FishCount'],
-                    'EnterBedCount' => $kinfo['EnterBedCount'],
-                    'EatCount' => $kinfo['EatCount'],
-                      'CraftCount' => $kinfo['CraftCount']
-              );
-                    $this->saveData($killer, $kdata);
-                }
-            }
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DeathCount', 'Count', '1'));
-            if(method_exists($damagecause, 'getDamager')){
-                if($damagecause->getDamager() instanceof Player){
-                    $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($damagecause->getDamager(), $this, 'KillCount', 'Count', '1'));
-                }
-            }
-        }
-    }
-
-    public function onKick(PlayerKickEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'JSON'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $kc = $info['KickCount'] + 1;
-            $data = array(
-              'PlayerName' => $info['PlayerName'],
-              'Online' => $info['Online'],
-                'ClientID' => $info['ClientID'],
-                'UUID' => $info['UUID'],
-                  'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                'LastIP' => $info['LastIP'],
-                'FirstJoin' => $info['FirstJoin'],
-                'LastJoin' => $info['LastJoin'],
-                'JoinCount' => $info['JoinCount'],
-                'KillCount' => $info['KillCount'],
-                'DeathCount' => $info['DeathCount'],
-                'KickCount' => $kc,
-                'OnlineTime' => $info['OnlineTime'],
-                'BlocksBreaked' => $info['BlocksBreaked'],
-                  'BlocksPlaced' => $info['BlocksPlaced'],
-                'ChatMessages' => $info['ChatMessages'],
-                'FishCount' => $info['FishCount'],
-                'EnterBedCount' => $info['EnterBedCount'],
-              'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount']
-          );
-            $this->saveData($player, $data);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'KickCount', 'Count', '1'));
-        }
-    }
-
-    public function onBlockBreak(BlockBreakEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $br = $info['BlocksBreaked'] + 1;
-            $data = array(
-                'PlayerName' => $info['PlayerName'],
-                'Online' => $info['Online'],
-                'ClientID' => $info['ClientID'],
-                'UUID' => $info['UUID'],
-                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                'LastIP' => $info['LastIP'],
-                'FirstJoin' => $info['FirstJoin'],
-                'LastJoin' => $info['LastJoin'],
-                'JoinCount' => $info['JoinCount'],
-                'KillCount' => $info['KillCount'],
-                'DeathCount' => $info['DeathCount'],
-                'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
-                'BlocksBreaked' => $br,
-                'BlocksPlaced' => $info['BlocksPlaced'],
-                'ChatMessages' => $info['ChatMessages'],
-                'FishCount' => $info['FishCount'],
-                'EnterBedCount' => $info['EnterBedCount'],
-                'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount']
-          );
-            $this->saveData($player, $data);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksBreaked', 'Count', '1'));
-        }
-    }
-
-    public function onBlockPlace(BlockPlaceEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $bp = $info['BlocksPlaced'] + 1;
-            $data = array(
-                 'PlayerName' => $info['PlayerName'],
-                 'Online' => $info['Online'],
-                 'ClientID' => $info['ClientID'],
-                 'UUID' => $info['UUID'],
-                 'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                 'LastIP' => $info['LastIP'],
-                 'FirstJoin' => $info['FirstJoin'],
-                 'LastJoin' => $info['LastJoin'],
-                 'JoinCount' => $info['JoinCount'],
-                 'KillCount' => $info['KillCount'],
-                 'DeathCount' => $info['DeathCount'],
-                 'KickCount' => $info['KickCount'],
-                 'OnlineTime' => $info['OnlineTime'],
-                 'BlocksBreaked' => $info['BlocksBreaked'],
-                 'BlocksPlaced' => $bp,
-                 'ChatMessages' => $info['ChatMessages'],
-                 'FishCount' => $info['FishCount'],
-                 'EnterBedCount' => $info['EnterBedCount'],
-                 'EatCount' => $info['EatCount'],
-                 'CraftCount' => $info['CraftCount']
-            );
-            $this->saveData($player, $data);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksPlaced', 'Count', '1'));
-        }
-    }
-
-    public function onChat(PlayerChatEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $cm = $info['ChatMessages'] + 1;
-            $data = array(
-                  'PlayerName' => $info['PlayerName'],
-                  'Online' => $info['Online'],
-                  'ClientID' => $info['ClientID'],
-                  'UUID' => $info['UUID'],
-                  'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                  'LastIP' => $info['LastIP'],
-                  'FirstJoin' => $info['FirstJoin'],
-                  'LastJoin' => $info['LastJoin'],
-                  'JoinCount' => $info['JoinCount'],
-                  'KillCount' => $info['KillCount'],
-                  'DeathCount' => $info['DeathCount'],
-                  'KickCount' => $info['KickCount'],
-                  'OnlineTime' => $info['OnlineTime'],
-                  'BlocksBreaked' => $info['BlocksBreaked'],
-                  'BlocksPlaced' => $info['BlocksPlaced'],
-                  'ChatMessages' => $cm,
-                  'FishCount' => $info['FishCount'],
-                  'EnterBedCount' => $info['EnterBedCount'],
-                  'EatCount' => $info['EatCount'],
-                  'CraftCount' => $info['CraftCount']
-            );
-            $this->saveData($player, $data);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'ChatMessages', 'Count', '1'));
-        }
-    }
-
-    public function onFish(PlayerFishEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $fc = $info['FishCount'] + 1;
-            $data = array(
-                'PlayerName' => $info['PlayerName'],
-                'Online' => $info['Online'],
-                'ClientID' => $info['ClientID'],
-                'UUID' => $info['UUID'],
-                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                'LastIP' => $info['LastIP'],
-                'FirstJoin' => $info['FirstJoin'],
-                'LastJoin' => $info['LastJoin'],
-                'JoinCount' => $info['JoinCount'],
-                'KillCount' => $info['KillCount'],
-                'DeathCount' => $info['DeathCount'],
-                'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
-                'BlocksBreaked' => $info['BlocksBreaked'],
-                'BlocksPlaced' => $info['BlocksPlaced'],
-                'ChatMessages' => $info['ChatMessages'],
-                'FishCount' => $fc,
-                'EnterBedCount' => $info['EnterBedCount'],
-                'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount']
-            );
-            $this->saveData($player, $data);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'FishCount', 'Count', '1'));
-        }
-    }
-
-    public function onBedEnter(PlayerBedEnterEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $ebc = $info['EnterBedCount'] + 1;
-            $data = array(
-                'PlayerName' => $info['PlayerName'],
-                'Online' => $info['Online'],
-                'ClientID' => $info['ClientID'],
-                'UUID' => $info['UUID'],
-                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                'LastIP' => $info['LastIP'],
-                'FirstJoin' => $info['FirstJoin'],
-                'LastJoin' => $info['LastJoin'],
-                'JoinCount' => $info['JoinCount'],
-                'KillCount' => $info['KillCount'],
-                'DeathCount' => $info['DeathCount'],
-                'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
-                'BlocksBreaked' => $info['BlocksBreaked'],
-                'BlocksPlaced' => $info['BlocksPlaced'],
-                'ChatMessages' => $info['ChatMessages'],
-                'FishCount' => $info['FishCount'],
-                'EnterBedCount' => $ebc,
-                'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount']
-            );
-            $this->saveData($player, $data);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EnterBedCount', 'Count', '1'));
-        }
-    }
-
-    public function onConsumeItem(PlayerItemConsumeEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $ec = $info['EatCount'] + 1;
-            $data = array(
-                'PlayerName' => $info['PlayerName'],
-                'Online' => $info['Online'],
-                'ClientID' => $info['ClientID'],
-                'UUID' => $info['UUID'],
-                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                'LastIP' => $info['LastIP'],
-                'FirstJoin' => $info['FirstJoin'],
-                'LastJoin' => $info['LastJoin'],
-                'JoinCount' => $info['JoinCount'],
-                'KillCount' => $info['KillCount'],
-                'DeathCount' => $info['DeathCount'],
-                'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
-                'BlocksBreaked' => $info['BlocksBreaked'],
-                'BlocksPlaced' => $info['BlocksPlaced'],
-                'ChatMessages' => $info['ChatMessages'],
-                'FishCount' => $info['FishCount'],
-                'EnterBedCount' => $info['EnterBedCount'],
-                'EatCount' => $ec,
-                'CraftCount' => $info['CraftCount']
-            );
-            $this->saveData($player, $data);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EatCount', 'Count', '1'));
-        }
-    }
-
-    public function onCraft(CraftItemEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $cc = $info['CraftCount'] + 1;
-            $data = array(
-                'PlayerName' => $info['PlayerName'],
-                'Online' => $info['Online'],
-                'ClientID' => $info['ClientID'],
-                'UUID' => $info['UUID'],
-                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
-                'LastIP' => $info['LastIP'],
-                'FirstJoin' => $info['FirstJoin'],
-                'LastJoin' => $info['LastJoin'],
-                'JoinCount' => $info['JoinCount'],
-                'KillCount' => $info['KillCount'],
-                'DeathCount' => $info['DeathCount'],
-                'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
-                'BlocksBreaked' => $info['BlocksBreaked'],
-                'BlocksPlaced' => $info['BlocksPlaced'],
-                'ChatMessages' => $info['ChatMessages'],
-                'FishCount' => $info['FishCount'],
-                'EnterBedCount' => $info['EnterBedCount'],
-                'EatCount' => $info['EatCount'],
-                'CraftCount' => $cc
-            );
-            $this->saveData($player, $data);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'CraftCount', 'Count', '1'));
-        }
-    }
-
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
@@ -958,11 +627,388 @@ class StatsPE extends PluginBase implements Listener
                 'FishCount' => $info['FishCount'],
                 'EnterBedCount' => $info['EnterBedCount'],
                 'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount']
+                'CraftCount' => $info['CraftCount'],
+                'DroppedItems' => $info['DroppedItems']
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'Online', 'Normal', $this->getMessages('Player')['StatYes']));
+        }
+    }
+
+    public function onDeath(PlayerDeathEvent $event){
+        $player = $event->getPlayer();
+        $damagecause = $player->getLastDamageCause();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'] + 1,
+                'KickCount' => $info['KickCount'],
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'],
+                'EnterBedCount' => $info['EnterBedCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount'],
+                'DroppedItems' => $info['DroppedItems']
+          );
+          $this->saveData($player, $data);
+          if(method_exists($damagecause, 'getDamager')){
+              if($damagecause->getDamager() instanceof Player){
+                  $killer = $damagecause->getDamager();
+                  $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
+                  $kdata = array(
+                      'PlayerName' => $kinfo['PlayerName'],
+                      'Online' => $kinfo['Online'],
+                      'ClientID' => $kinfo['ClientID'],
+                      'UUID' => $kinfo['UUID'],
+                      'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
+                      'LastIP' => $kinfo['LastIP'],
+                      'FirstJoin' => $kinfo['FirstJoin'],
+                      'LastJoin' => $kinfo['LastJoin'],
+                      'JoinCount' => $kinfo['JoinCount'],
+                      'KillCount' => $kinfo['KillCount'] + 1,
+                      'DeathCount' => $kinfo['DeathCount'],
+                      'KickCount' => $kinfo['KickCount'],
+                      'OnlineTime' => $kinfo['OnlineTime'],
+                      'BlocksBreaked' => $kinfo['BlocksBreaked'],
+                      'BlocksPlaced' => $kinfo['BlocksPlaced'],
+                      'ChatMessages' => $kinfo['ChatMessages'],
+                      'FishCount' => $kinfo['FishCount'],
+                      'EnterBedCount' => $kinfo['EnterBedCount'],
+                      'EatCount' => $kinfo['EatCount'],
+                      'CraftCount' => $kinfo['CraftCount'],
+                      'DroppedItems' => $kinfo['DroppedItems']
+                  );
+                  $this->saveData($killer, $kdata);
+                }
+            }
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DeathCount', 'Count', '1'));
+            if(method_exists($damagecause, 'getDamager')){
+                if($damagecause->getDamager() instanceof Player){
+                    $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($damagecause->getDamager(), $this, 'KillCount', 'Count', '1'));
+                }
+            }
+        }
+    }
+
+    public function onKick(PlayerKickEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'JSON'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'],
+                'KickCount' => $info['KickCount'] + 1,
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'],
+                'EnterBedCount' => $info['EnterBedCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount'],
+                'DroppedItems' => $info['DroppedItems']
+          );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'KickCount', 'Count', '1'));
+        }
+    }
+
+    public function onBlockBreak(BlockBreakEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'],
+                'KickCount' => $info['KickCount'],
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'] + 1,
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'],
+                'EnterBedCount' => $info['EnterBedCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount'],
+                'DroppedItems' => $info['DroppedItems']
+          );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksBreaked', 'Count', '1'));
+        }
+    }
+
+    public function onBlockPlace(BlockPlaceEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                 'PlayerName' => $info['PlayerName'],
+                 'Online' => $info['Online'],
+                 'ClientID' => $info['ClientID'],
+                 'UUID' => $info['UUID'],
+                 'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                 'LastIP' => $info['LastIP'],
+                 'FirstJoin' => $info['FirstJoin'],
+                 'LastJoin' => $info['LastJoin'],
+                 'JoinCount' => $info['JoinCount'],
+                 'KillCount' => $info['KillCount'],
+                 'DeathCount' => $info['DeathCount'],
+                 'KickCount' => $info['KickCount'],
+                 'OnlineTime' => $info['OnlineTime'],
+                 'BlocksBreaked' => $info['BlocksBreaked'],
+                 'BlocksPlaced' => $info['BlocksPlaced'] + 1,
+                 'ChatMessages' => $info['ChatMessages'],
+                 'FishCount' => $info['FishCount'],
+                 'EnterBedCount' => $info['EnterBedCount'],
+                 'EatCount' => $info['EatCount'],
+                 'CraftCount' => $info['CraftCount'],
+                 'DroppedItems' => $info['DroppedItems']
+            );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksPlaced', 'Count', '1'));
+        }
+    }
+
+    public function onChat(PlayerChatEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                  'PlayerName' => $info['PlayerName'],
+                  'Online' => $info['Online'],
+                  'ClientID' => $info['ClientID'],
+                  'UUID' => $info['UUID'],
+                  'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                  'LastIP' => $info['LastIP'],
+                  'FirstJoin' => $info['FirstJoin'],
+                  'LastJoin' => $info['LastJoin'],
+                  'JoinCount' => $info['JoinCount'],
+                  'KillCount' => $info['KillCount'],
+                  'DeathCount' => $info['DeathCount'],
+                  'KickCount' => $info['KickCount'],
+                  'OnlineTime' => $info['OnlineTime'],
+                  'BlocksBreaked' => $info['BlocksBreaked'],
+                  'BlocksPlaced' => $info['BlocksPlaced'],
+                  'ChatMessages' => $info['ChatMessages'] + 1,
+                  'FishCount' => $info['FishCount'],
+                  'EnterBedCount' => $info['EnterBedCount'],
+                  'EatCount' => $info['EatCount'],
+                  'CraftCount' => $info['CraftCount'],
+                  'DroppedItems' => $info['DroppedItems']
+            );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'ChatMessages', 'Count', '1'));
+        }
+    }
+
+    public function onFish(PlayerFishEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'],
+                'KickCount' => $info['KickCount'],
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'] + 1,
+                'EnterBedCount' => $info['EnterBedCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount'],
+                'DroppedItems' => $info['DroppedItems']
+            );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'FishCount', 'Count', '1'));
+        }
+    }
+
+    public function onBedEnter(PlayerBedEnterEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'],
+                'KickCount' => $info['KickCount'],
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'],
+                'EnterBedCount' => $info['EnterBedCount'] + 1,
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount'],
+                'DroppedItems' => $info['DroppedItems']
+            );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EnterBedCount', 'Count', '1'));
+        }
+    }
+
+    public function onConsumeItem(PlayerItemConsumeEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'],
+                'KickCount' => $info['KickCount'],
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'],
+                'EnterBedCount' => $info['EnterBedCount'],
+                'EatCount' => $info['EatCount'] + 1,
+                'CraftCount' => $info['CraftCount'],
+                'DroppedItems' => $info['DroppedItems']
+            );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EatCount', 'Count', '1'));
+        }
+    }
+
+    public function onCraft(CraftItemEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'],
+                'KickCount' => $info['KickCount'],
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'],
+                'EnterBedCount' => $info['EnterBedCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount'] + 1,
+                'DroppedItems' => $info['DroppedItems']
+            );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'CraftCount', 'Count', '1'));
+        }
+    }
+
+    public function onItemDrop(PlayerDropItemEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'],
+                'KickCount' => $info['KickCount'],
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'],
+                'EnterBedCount' => $info['EnterBedCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount'],
+                'DroppedItems' => $info['DroppedItems'] + 1
+            );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DroppedItems', 'Count', 1));
         }
     }
 

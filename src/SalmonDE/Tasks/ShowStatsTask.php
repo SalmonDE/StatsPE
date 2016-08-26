@@ -119,7 +119,7 @@ class ShowStatsTask extends AsyncTask
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KillCount'], $this->lang['Player']['StatKillCount']));
             }
             if($this->switch['DeathCount']){
-                $this->requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$data['DeathCount']);
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['DeathCount'], $this->lang['Player']['StatDeathCount']));
             }
             if($data['DeathCount'] > 0 && $this->switch['K/D']){
                 $this->requestor->sendMessage(str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['K/D']));
@@ -150,6 +150,9 @@ class ShowStatsTask extends AsyncTask
             }
             if($this->switch['CraftCount']){
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['CraftCount'], $this->lang['Player']['StatCraftCount']));
+            }
+            if($switch['DroppedItems']){
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['DroppedItems'], $this->lang['Player']['StatDroppedItems']));
             }
           }
       }else{

@@ -23,6 +23,7 @@ Stats:
   BedEnterCount: true
   EatCount: true
   CraftCount: true
+  DroppedItems: true
 
 # Enable/Disable the Auto-Updater Feature.
 Auto-Update: true
