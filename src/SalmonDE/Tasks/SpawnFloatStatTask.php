@@ -10,7 +10,7 @@ use pocketmine\math\Vector3;
 class SpawnFloatStatTask extends AsyncTask
 {
 
-  public function __construct($owner, $fstat, $player){
+  public function __construct($owner, $fstat, $player, $target = null){
       $this->lang = $owner->getMessages('Player');
       $this->mysql = $owner->getConfig()->get('MySQL');
       $this->fstat = $fstat;
@@ -19,6 +19,7 @@ class SpawnFloatStatTask extends AsyncTask
       }else{
           $this->player = $player;
       }
+      $this->target = $target();
   }
 
   public function onRun(){
@@ -42,7 +43,7 @@ class SpawnFloatStatTask extends AsyncTask
     }
     $text = implode("\n", $text);
     if($server->isLevelLoaded($this->fstat['Position']['Level'])){
-        $server->getLevelByName($this->fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($this->fstat['Position']['X'], $this->fstat['Position']['Y'], $this->fstat['Position']['Z']), '', $text));
+        $server->getLevelByName($this->fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($this->fstat['Position']['X'], $this->fstat['Position']['Y'], $this->fstat['Position']['Z']), '', $text), [$this->target]);
     }
   }
 }

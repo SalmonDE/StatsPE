@@ -408,7 +408,7 @@ class StatsPE extends PluginBase implements Listener
         }
     }
 
-    public function spawnFloatingStats($stat = false, $player = false){
+    public function spawnFloatingStats($stat = false, $player = false, $target = null){
         if(is_object($player)){
             $player = $player->getName();
         }
@@ -436,10 +436,10 @@ class StatsPE extends PluginBase implements Listener
                             }
                             $text = implode("\n", $text);
                             if($this->getServer()->isLevelLoaded($fstat['Position']['Level'])){
-                                $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
+                                $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text), [$target]);
                             }
                         }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
-                            $this->getServer()->getScheduler()->scheduleAsyncTask(new SpawnFloatStatTask($this, $fstat, $player));
+                            $this->getServer()->getScheduler()->scheduleAsyncTask(new SpawnFloatStatTask($this, $fstat, $player, $target));
                         }
                     }
                 }
@@ -462,10 +462,10 @@ class StatsPE extends PluginBase implements Listener
                         }
                         $text = implode("\n", $text);
                         if($this->getServer()->isLevelLoaded($fstat['Position']['Level'])){
-                            $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text));
+                            $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text), [$target]);
                         }
                     }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
-                        $this->getServer()->getScheduler()->scheduleAsyncTask(new SpawnFloatStatTask($this, $fstat, $player));
+                        $this->getServer()->getScheduler()->scheduleAsyncTask(new SpawnFloatStatTask($this, $fstat, $player, $target));
                     }
                 }
             }
@@ -586,7 +586,7 @@ class StatsPE extends PluginBase implements Listener
                 $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, $stat['Stat'], $stat['Type'], $stat['Data']));
             }
         }
-        $this->spawnFloatingStats(false, $player);
+        $this->spawnFloatingStats(false, $player, $player);
     }
 
     public function onDeath(PlayerDeathEvent $event){
