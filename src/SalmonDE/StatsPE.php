@@ -346,7 +346,9 @@ class StatsPE extends PluginBase implements Listener
                     $switch = $this->getConfig()->get('Stats');
                     $info = $this->getStats($target, 'json', 'all');
                     $requestor->sendMessage(TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']));
-                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['Online'], $this->getMessages('Player')['StatOnline']));
+                    if($switch['Online']){
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['Online'], $this->getMessages('Player')['StatOnline']));
+                    }
                     if($requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['ClientID'], $this->getMessages('Player')['StatClientID']));
                         @$requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['UUID'], $this->getMessages('Player')['StatUUID']));
@@ -366,7 +368,7 @@ class StatsPE extends PluginBase implements Listener
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KillCount'], $this->getMessages('Player')['StatKillCount']));
                     }
                     if($switch['DeathCount']){
-                        $requestor->sendMessage(TF::AQUA.'Deaths: '.TF::LIGHT_PURPLE.$info['DeathCount']);
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['DeathCount'], $this->getMessages('Player')['StatDeathCount']));
                     }
                     if($info['DeathCount'] > 0 && $switch['K/D']){
                         $this->requestor->sendMessage(str_replace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['K/D']));
