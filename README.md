@@ -29,7 +29,7 @@ Step 5                    | Change the data providers from JSON to MySQL in [thi
 /floatingstats add [name]    | Adds a floatingstat to your current person with a name specified by you                    | statspe.cmd.floatingstats
 /floatingstats list          | Lists all floatingstats on the server                                                      | statspe.cmd.floatingstats
 /floatingstats remove [name] | Removes a floatingstat                                                                     | statspe.cmd.floatingstats
-/fixtable                    | Tries to add or modify columns to a existing table                                         | statspe.cmd.fixtable
+/fixtable                    | Tries to add or modify columns to an existing table (MySQL only!)                          | statspe.cmd.fixtable
 
 --------------------------------------------------------------------------------
 
