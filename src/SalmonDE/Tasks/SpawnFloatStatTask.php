@@ -19,7 +19,11 @@ class SpawnFloatStatTask extends AsyncTask
       }else{
           $this->player = $player;
       }
-      $this->target = $target;
+      if(is_object($target)){
+          $this->target = $target->getName();
+      }else{
+          $this->target = $target;
+      }
   }
 
   public function onRun(){
@@ -43,7 +47,7 @@ class SpawnFloatStatTask extends AsyncTask
     }
     $text = implode("\n", $text);
     if($server->isLevelLoaded($this->fstat['Position']['Level'])){
-        $server->getLevelByName($this->fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($this->fstat['Position']['X'], $this->fstat['Position']['Y'], $this->fstat['Position']['Z']), '', $text), [$this->target]);
+        $server->getLevelByName($this->fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($this->fstat['Position']['X'], $this->fstat['Position']['Y'], $this->fstat['Position']['Z']), '', $text), [$server->getPlayerExact($this->target)]);
     }
   }
 }
