@@ -59,11 +59,11 @@ class StatsPE extends PluginBase implements Listener
                 LastIP VARCHAR(15) NOT NULL,
                 FirstJoin VARCHAR(30) NOT NULL,
                 LastJoin VARCHAR(30) NOT NULL,
-                JoinCount INT(255) UNSIGNED DEFAULT 0,
+                JoinCount INT(255) NOT NULL DEFAULT 0,
                 KillCount INT(255) UNSIGNED DEFAULT 0,
                 DeathCount INT(255) UNSIGNED DEFAULT 0,
                 KickCount INT(255) UNSIGNED DEFAULT 0,
-                OnlineTime VARCHAR(30) DEFAULT 0,
+                OnlineTime INT(255) UNSIGNED DEFAULT 0,
                 BlocksBreaked INT(255) UNSIGNED DEFAULT 0,
                 BlocksPlaced INT(255) UNSIGNED DEFAULT 0,
                 ChatMessages INT(255) UNSIGNED DEFAULT 0,
@@ -145,7 +145,7 @@ class StatsPE extends PluginBase implements Listener
                     if($sender instanceof Player){
                         if(count($args) == 2){
                             $fstat = [
-                                'Name' => $args[1],
+                                'Name' => $player->getName(),
                                 'Enabled' => true,
                                 'Position' => [
                                     'X' => $sender->getX(),
