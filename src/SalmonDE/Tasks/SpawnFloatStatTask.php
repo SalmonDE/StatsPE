@@ -19,7 +19,7 @@ class SpawnFloatStatTask extends AsyncTask
       }else{
           $this->player = $player;
       }
-      $this->target = $target();
+      $this->target = $target;
   }
 
   public function onRun(){
