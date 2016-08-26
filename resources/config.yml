@@ -32,10 +32,6 @@ Shutdown-Message: "Restarting Server due to a software update!"
 # Default: "H:i:s d.m.Y" = Hour:Minute:Seconds Day.Month.Year
 # Example: 12:00:63 22.07.2016
 TimeFormat: "H:i:s d.m.Y"
-# These settings will be used for XBoxAuthenticated and Online
-# (Up to 10 letters!)
-Yes: "Yes"
-No: "No"
 
 # Set data provider for StatsPE
 # Available Providers: MySQL, JSON

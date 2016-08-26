@@ -47,8 +47,8 @@ class StatsPE extends PluginBase implements Listener
             $connection = @mysqli_connect($mysql['host'], $mysql['user'], $mysql['password']);
             if($connection){
                 $this->getLogger()->notice(TF::GREEN.$this->getMessages('MySQL')['ConnectSuccess']);
-                $yes = $this->getConfig()->get('Yes');
-                $no = $this->getConfig()->get('No');
+                $yes = $this->getMessages('Player')['StatYes'];
+                $no = $this->getMessages('Player')['StatNo'];
                 $table = "CREATE TABLE Stats (
                 PlayerName VARCHAR(16) NOT NULL UNIQUE,
                 Online VARCHAR(10) NOT NULL DEFAULT '$yes',
@@ -476,13 +476,13 @@ class StatsPE extends PluginBase implements Listener
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
         //if($player->isXboxAuthenticated()){
-        //    $xa = $this->getConfig()->get('yes');
+        //    $xa = $this->getMessages('Player')['StatYes'];
         //}else{
-              $xa = $this->getConfig()->get('No');
+              $xa = $this->getMessages('Player')['StatNo'];
         //}
         $pn = $player->getName();
         if($provider == 'json'){
-            if(file_exists($this->getDataFolder().'/Stats/'.$player->getName().'.json')){
+            if(file_exists($this->getDataFolder().'/Stats/'.strtolower($player->getName()).'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
                 $cid = $player->getClientId();
                 $ip = $player->getAddress();
@@ -490,7 +490,7 @@ class StatsPE extends PluginBase implements Listener
                 $jc = $info['JoinCount'] + 1;
                 $data = array(
                       'PlayerName' => $pn,
-                      'Online' => $this->getConfig()->get('Yes'),
+                      'Online' => $this->getMessages('Player')['StatYes'],
                       'ClientID' => $cid,
                       'UUID' => $player->getUniqueId(),
                       'XBoxAuthenticated' => $xa,
@@ -517,7 +517,7 @@ class StatsPE extends PluginBase implements Listener
                 $ip = $player->getAddress();
                 $data = array(
                       'PlayerName' => $pn,
-                      'Online' => $this->getConfig()->get('Yes'),
+                      'Online' => $this->getMessages('Player')['StatYes'],
                       'ClientID' => $cid,
                       'UUID' => $player->getUniqueId(),
                       'XBoxAuthenticated' => $xa,
@@ -549,7 +549,7 @@ class StatsPE extends PluginBase implements Listener
                 '2' => [
                     'Stat' => 'Online',
                     'Type' => 'Normal',
-                    'Data' => $this->getConfig()->get('Yes')
+                    'Data' => $this->getMessages('Player')['StatYes']
                 ],
                 '3' => [
                     'Stat' => 'ClientID',
@@ -938,7 +938,7 @@ class StatsPE extends PluginBase implements Listener
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $data = array(
                 'PlayerName' => $info['PlayerName'],
-                'Online' => $this->getConfig()->get('No'),
+                'Online' => $this->getMessages('Player')['StatNo'],
                 'ClientID' => $info['ClientID'],
                 'UUID' => $info['UUID'],
                 'XBoxAuthenticated' => $info['XBoxAuthenticated'],
@@ -960,7 +960,7 @@ class StatsPE extends PluginBase implements Listener
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'Online', 'Normal', $this->getConfig()->get('No')));
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'Online', 'Normal', $this->getMessages('Player')['StatYes']));
         }
     }
 

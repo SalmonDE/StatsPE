@@ -14,8 +14,8 @@ class SaveDataTask extends AsyncTask
       $this->data = $data;
       $this->lang = $owner->getMessages();
       $this->timeformat = $owner->getConfig()->get('TimeFormat');
-      $this->yes = $owner->getConfig()->get('Yes');
-      $this->no = $owner->getConfig()->get('No');
+      $this->yes = $owner->getMessages('Player')['StatYes'];
+      $this->no = $owner->getMessages('Player')['StatNo'];;
       if(is_object($player)){
           $this->player = strtolower($player->getName());
       }else{
