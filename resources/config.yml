@@ -6,6 +6,7 @@
 Language: eng
 # Enable Stats: true/false
 Stats:
+  Online: true
   FirstJoin: true
   LastJoin: true
   JoinCount: true
