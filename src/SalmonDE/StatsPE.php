@@ -1018,3 +1018,4 @@ class StatsPE extends PluginBase implements Listener
         $this->getServer()->getScheduler()->scheduleTask(new UpdaterTask($url, $md5, $this->getDescription()->getVersion(), $nversion, $this));
     }
 }
+?>
