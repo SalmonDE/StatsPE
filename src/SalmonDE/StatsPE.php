@@ -18,6 +18,7 @@ use pocketmine\event\player\PlayerFishEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\math\Vector3;
 use SalmonDE\Tasks\FixTableTask;
@@ -927,6 +928,39 @@ class StatsPE extends PluginBase implements Listener
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'CraftCount', 'Count', '1'));
+        }
+    }
+
+    public function onQuit(PlayerQuitEvent $event){
+        $player = $event->getPlayer();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $data = array(
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $this->getConfig()->get('No'),
+                'ClientID' => $info['ClientID'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'LastIP' => $info['LastIP'],
+                'FirstJoin' => $info['FirstJoin'],
+                'LastJoin' => $info['LastJoin'],
+                'JoinCount' => $info['JoinCount'],
+                'KillCount' => $info['KillCount'],
+                'DeathCount' => $info['DeathCount'],
+                'KickCount' => $info['KickCount'],
+                'OnlineTime' => $info['OnlineTime'],
+                'BlocksBreaked' => $info['BlocksBreaked'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
+                'ChatMessages' => $info['ChatMessages'],
+                'FishCount' => $info['FishCount'],
+                'EnterBedCount' => $info['EnterBedCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount']
+            );
+            $this->saveData($player, $data);
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'Online', 'Normal', $this->getConfig()->get('No')));
         }
     }
 
