@@ -20,6 +20,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\math\Vector3;
+use SalmonDE\Tasks\FixTableTask;
 use SalmonDE\Tasks\SaveDataTask;
 use SalmonDE\Tasks\ShowStatsTask;
 use SalmonDE\Tasks\SpawnFloatStatTask;
@@ -45,11 +46,14 @@ class StatsPE extends PluginBase implements Listener
             $connection = @mysqli_connect($mysql['host'], $mysql['user'], $mysql['password']);
             if($connection){
                 $this->getLogger()->notice(TF::GREEN.$this->getMessages('MySQL')['ConnectSuccess']);
+                $yes = $this->getConfig()->get('Yes');
+                $no = $this->getConfig()->get('No');
                 $table = "CREATE TABLE Stats (
                 PlayerName VARCHAR(16) NOT NULL UNIQUE,
+                Online VARCHAR(10) NOT NULL DEFAULT '$yes',
                 ClientID VARCHAR(30) NOT NULL,
                 UUID VARCHAR(30),
-                XBoxAuthenticated CHAR(5) NOT NULL DEFAULT 'false',
+                XBoxAuthenticated CHAR(10) NOT NULL DEFAULT '$no',
                 LastIP VARCHAR(15) NOT NULL,
                 FirstJoin VARCHAR(30) NOT NULL,
                 LastJoin VARCHAR(30) NOT NULL,
@@ -148,6 +152,11 @@ class StatsPE extends PluginBase implements Listener
                                 ],
                                 'PlayerName' => false,
                                 'Stats' => [
+                                    'Online' => [
+                                        'Name' => 'Online',
+                                        'Lang' => 'StatOnline',
+                                        'Enabled' => false
+                                    ],
                                     'FirstJoin' => [
                                         'Name' => 'FirstJoin',
                                         'Lang' => 'StatFirstJoin',
@@ -300,6 +309,9 @@ class StatsPE extends PluginBase implements Listener
                 $sender->sendMessage(TF::RED.$this->getMessages('Player')['CommandErrorTooLessArguments']);
                 return false;
             }
+        }elseif($cmd == 'fixtable'){
+            $sender->sendMessage(TF::GREEN.$this->getMessages('MySQL')['CommandFixTable']);
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new FixTableTask($this, $sender));
         }
     }
 
@@ -319,7 +331,7 @@ class StatsPE extends PluginBase implements Listener
             if($data == 'all'){
                 return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true);
             }else{
-                return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true)["$data"];
+                return json_decode(file_get_contents($this->getDataFolder().'Stats/'.strtolower($player).'.json'), true)[$data];
             }
         }
     }
@@ -333,6 +345,7 @@ class StatsPE extends PluginBase implements Listener
                     $switch = $this->getConfig()->get('Stats');
                     $info = $this->getStats($target, 'json', 'all');
                     $requestor->sendMessage(TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']));
+                    $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['Online'], $this->getMessages('Player')['StatOnline']));
                     if($requestor->hasPermission('statspe.cmd.stats.advancedinfo')){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['ClientID'], $this->getMessages('Player')['StatClientID']));
                         @$requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['UUID'], $this->getMessages('Player')['StatUUID']));
@@ -462,9 +475,9 @@ class StatsPE extends PluginBase implements Listener
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
         //if($player->isXboxAuthenticated()){
-        //    $xa = 'true';
+        //    $xa = $this->getConfig()->get('yes');
         //}else{
-            $xa = 'false';
+              $xa = $this->getConfig()->get('No');
         //}
         $pn = $player->getName();
         if($provider == 'json'){
@@ -475,10 +488,11 @@ class StatsPE extends PluginBase implements Listener
                 $ls = date($this->getConfig()->get('TimeFormat'));
                 $jc = $info['JoinCount'] + 1;
                 $data = array(
-                    'PlayerName' => $pn,
+                      'PlayerName' => $pn,
+                      'Online' => $this->getConfig()->get('Yes'),
                       'ClientID' => $cid,
                       'UUID' => $player->getUniqueId(),
-                    'XBoxAuthenticated' => $xa,
+                      'XBoxAuthenticated' => $xa,
                       'LastIP' => $ip,
                       'FirstJoin' => $info['FirstJoin'],
                       'LastJoin' => $ls,
@@ -501,7 +515,8 @@ class StatsPE extends PluginBase implements Listener
                 $cid = $player->getClientId();
                 $ip = $player->getAddress();
                 $data = array(
-                    'PlayerName' => $pn,
+                      'PlayerName' => $pn,
+                      'Online' => $this->getConfig()->get('Yes'),
                       'ClientID' => $cid,
                       'UUID' => $player->getUniqueId(),
                       'XBoxAuthenticated' => $xa,
@@ -531,31 +546,36 @@ class StatsPE extends PluginBase implements Listener
                     'Data' => $player->getName()
                 ],
                 '2' => [
+                    'Stat' => 'Online',
+                    'Type' => 'Normal',
+                    'Data' => $this->getConfig()->get('Yes')
+                ],
+                '3' => [
                     'Stat' => 'ClientID',
                     'Type' => 'Normal',
                     'Data' => $player->getClientId()
                 ],
-                '3' => [
+                '4' => [
                     'Stat' => 'UUID',
                     'Type' => 'Normal',
                     'Data' => $player->getUniqueId()
                 ],
-                '4' => [
+                '5' => [
                     'Stat' => 'XBoxAuthenticated',
                     'Type' => 'Normal',
                     'Data' => $xa
                 ],
-                '5' => [
+                '6' => [
                     'Stat' => 'LastIP',
                     'Type' => 'Normal',
                     'Data' => $player->getAddress()
                 ],
-                '6' => [
+                '7' => [
                     'Stat' => 'LastJoin',
                     'Type' => 'Normal',
                     'Data' => date($this->getConfig()->get('TimeFormat'))
                 ],
-                '7' => [
+                '8' => [
                     'Stat' => 'JoinCount',
                     'Type' => 'Count',
                     'Data' => 1
@@ -576,10 +596,11 @@ class StatsPE extends PluginBase implements Listener
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $d = $info['DeathCount'] + 1;
             $data = array(
-              'PlayerName' => $info['PlayerName'],
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
                 'ClientID' => $info['ClientID'],
-                    'UUID' => $info['UUID'],
-                    'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
                 'LastIP' => $info['LastIP'],
                 'FirstJoin' => $info['FirstJoin'],
                 'LastJoin' => $info['LastJoin'],
@@ -589,12 +610,12 @@ class StatsPE extends PluginBase implements Listener
                 'KickCount' => $info['KickCount'],
                 'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'],
-                  'BlocksPlaced' => $info['BlocksPlaced'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
                 'FishCount' => $info['FishCount'],
                 'EnterBedCount' => $info['EnterBedCount'],
-              'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount']
           );
             $this->saveData($player, $data);
             if(method_exists($damagecause, 'getDamager')){
@@ -604,6 +625,7 @@ class StatsPE extends PluginBase implements Listener
                     $k = $info['KillCount'] + 1;
                     $kdata = array(
                     'PlayerName' => $kinfo['PlayerName'],
+                    'Online' => $kinfo['Online'],
                       'ClientID' => $kinfo['ClientID'],
                             'UUID' => $kinfo['UUID'],
                             'XBoxAuthenticated' => $kinfo['XBoxAuthenticated'],
@@ -621,7 +643,7 @@ class StatsPE extends PluginBase implements Listener
                     'FishCount' => $kinfo['FishCount'],
                     'EnterBedCount' => $kinfo['EnterBedCount'],
                     'EatCount' => $kinfo['EatCount'],
-                      'CraftCount' => $kinfo['CraftCount'],
+                      'CraftCount' => $kinfo['CraftCount']
               );
                     $this->saveData($killer, $kdata);
                 }
@@ -644,6 +666,7 @@ class StatsPE extends PluginBase implements Listener
             $kc = $info['KickCount'] + 1;
             $data = array(
               'PlayerName' => $info['PlayerName'],
+              'Online' => $info['Online'],
                 'ClientID' => $info['ClientID'],
                 'UUID' => $info['UUID'],
                   'XBoxAuthenticated' => $info['XBoxAuthenticated'],
@@ -661,7 +684,7 @@ class StatsPE extends PluginBase implements Listener
                 'FishCount' => $info['FishCount'],
                 'EnterBedCount' => $info['EnterBedCount'],
               'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount'],
+                'CraftCount' => $info['CraftCount']
           );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
@@ -676,25 +699,26 @@ class StatsPE extends PluginBase implements Listener
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $br = $info['BlocksBreaked'] + 1;
             $data = array(
-              'PlayerName' => $info['PlayerName'],
+                'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
                 'ClientID' => $info['ClientID'],
-                  'UUID' => $info['UUID'],
-                  'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                'UUID' => $info['UUID'],
+                'XBoxAuthenticated' => $info['XBoxAuthenticated'],
                 'LastIP' => $info['LastIP'],
                 'FirstJoin' => $info['FirstJoin'],
                 'LastJoin' => $info['LastJoin'],
                 'JoinCount' => $info['JoinCount'],
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
-              'KickCount' => $info['KickCount'],
+                'KickCount' => $info['KickCount'],
                 'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $br,
-                  'BlocksPlaced' => $info['BlocksPlaced'],
+                'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
                 'FishCount' => $info['FishCount'],
                 'EnterBedCount' => $info['EnterBedCount'],
-              'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount'],
+                'EatCount' => $info['EatCount'],
+                'CraftCount' => $info['CraftCount']
           );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
@@ -709,25 +733,26 @@ class StatsPE extends PluginBase implements Listener
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $bp = $info['BlocksPlaced'] + 1;
             $data = array(
-               'PlayerName' => $info['PlayerName'],
+                 'PlayerName' => $info['PlayerName'],
+                 'Online' => $info['Online'],
                  'ClientID' => $info['ClientID'],
-                   'UUID' => $info['UUID'],
-                   'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                 'UUID' => $info['UUID'],
+                 'XBoxAuthenticated' => $info['XBoxAuthenticated'],
                  'LastIP' => $info['LastIP'],
                  'FirstJoin' => $info['FirstJoin'],
                  'LastJoin' => $info['LastJoin'],
                  'JoinCount' => $info['JoinCount'],
                  'KillCount' => $info['KillCount'],
-               'DeathCount' => $info['DeathCount'],
-               'KickCount' => $info['KickCount'],
+                 'DeathCount' => $info['DeathCount'],
+                 'KickCount' => $info['KickCount'],
                  'OnlineTime' => $info['OnlineTime'],
                  'BlocksBreaked' => $info['BlocksBreaked'],
-                   'BlocksPlaced' => $bp,
+                 'BlocksPlaced' => $bp,
                  'ChatMessages' => $info['ChatMessages'],
                  'FishCount' => $info['FishCount'],
                  'EnterBedCount' => $info['EnterBedCount'],
-               'EatCount' => $info['EatCount'],
-                 'CraftCount' => $info['CraftCount'],
+                 'EatCount' => $info['EatCount'],
+                 'CraftCount' => $info['CraftCount']
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
@@ -742,25 +767,26 @@ class StatsPE extends PluginBase implements Listener
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $cm = $info['ChatMessages'] + 1;
             $data = array(
-                'PlayerName' => $info['PlayerName'],
+                  'PlayerName' => $info['PlayerName'],
+                  'Online' => $info['Online'],
                   'ClientID' => $info['ClientID'],
-                    'UUID' => $info['UUID'],
-                    'XBoxAuthenticated' => $info['XBoxAuthenticated'],
+                  'UUID' => $info['UUID'],
+                  'XBoxAuthenticated' => $info['XBoxAuthenticated'],
                   'LastIP' => $info['LastIP'],
                   'FirstJoin' => $info['FirstJoin'],
                   'LastJoin' => $info['LastJoin'],
                   'JoinCount' => $info['JoinCount'],
                   'KillCount' => $info['KillCount'],
                   'DeathCount' => $info['DeathCount'],
-                'KickCount' => $info['KickCount'],
+                  'KickCount' => $info['KickCount'],
                   'OnlineTime' => $info['OnlineTime'],
                   'BlocksBreaked' => $info['BlocksBreaked'],
-                    'BlocksPlaced' => $info['BlocksPlaced'],
+                  'BlocksPlaced' => $info['BlocksPlaced'],
                   'ChatMessages' => $cm,
                   'FishCount' => $info['FishCount'],
                   'EnterBedCount' => $info['EnterBedCount'],
-                'EatCount' => $info['EatCount'],
-                  'CraftCount' => $info['CraftCount'],
+                  'EatCount' => $info['EatCount'],
+                  'CraftCount' => $info['CraftCount']
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
@@ -776,6 +802,7 @@ class StatsPE extends PluginBase implements Listener
             $fc = $info['FishCount'] + 1;
             $data = array(
                 'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
                 'ClientID' => $info['ClientID'],
                 'UUID' => $info['UUID'],
                 'XBoxAuthenticated' => $info['XBoxAuthenticated'],
@@ -793,7 +820,7 @@ class StatsPE extends PluginBase implements Listener
                 'FishCount' => $fc,
                 'EnterBedCount' => $info['EnterBedCount'],
                 'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount'],
+                'CraftCount' => $info['CraftCount']
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
@@ -809,6 +836,7 @@ class StatsPE extends PluginBase implements Listener
             $ebc = $info['EnterBedCount'] + 1;
             $data = array(
                 'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
                 'ClientID' => $info['ClientID'],
                 'UUID' => $info['UUID'],
                 'XBoxAuthenticated' => $info['XBoxAuthenticated'],
@@ -826,7 +854,7 @@ class StatsPE extends PluginBase implements Listener
                 'FishCount' => $info['FishCount'],
                 'EnterBedCount' => $ebc,
                 'EatCount' => $info['EatCount'],
-                'CraftCount' => $info['CraftCount'],
+                'CraftCount' => $info['CraftCount']
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
@@ -842,6 +870,7 @@ class StatsPE extends PluginBase implements Listener
             $ec = $info['EatCount'] + 1;
             $data = array(
                 'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
                 'ClientID' => $info['ClientID'],
                 'UUID' => $info['UUID'],
                 'XBoxAuthenticated' => $info['XBoxAuthenticated'],
@@ -859,7 +888,7 @@ class StatsPE extends PluginBase implements Listener
                 'FishCount' => $info['FishCount'],
                 'EnterBedCount' => $info['EnterBedCount'],
                 'EatCount' => $ec,
-                'CraftCount' => $info['CraftCount'],
+                'CraftCount' => $info['CraftCount']
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
@@ -875,6 +904,7 @@ class StatsPE extends PluginBase implements Listener
             $cc = $info['CraftCount'] + 1;
             $data = array(
                 'PlayerName' => $info['PlayerName'],
+                'Online' => $info['Online'],
                 'ClientID' => $info['ClientID'],
                 'UUID' => $info['UUID'],
                 'XBoxAuthenticated' => $info['XBoxAuthenticated'],
@@ -892,7 +922,7 @@ class StatsPE extends PluginBase implements Listener
                 'FishCount' => $info['FishCount'],
                 'EnterBedCount' => $info['EnterBedCount'],
                 'EatCount' => $info['EatCount'],
-                'CraftCount' => $cc,
+                'CraftCount' => $cc
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){

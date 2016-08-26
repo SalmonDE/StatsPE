@@ -1,5 +1,5 @@
 name: StatsPE
-version: 2.2.3
+version: 2.2.4
 api: 2.0.0
 main: SalmonDE\StatsPE
 description: Stats Plugin for your Server!
@@ -15,6 +15,9 @@ commands:
   description: Adds a floating text with stats on your current position
   usage: /floatingstats <add|list|remove> [name]
   permission: statspe.cmd.floatingstats
+ fixtable:
+   description: Tries to add or modify columns to a existing table
+   permission: statspe.cmd.fixtable
 permissions:
  statspe:
   description: Main permission of StatsPE.
@@ -22,6 +25,8 @@ permissions:
    statspe.cmd:
     description: Main permission of the StatsPE commands.
     children:
+     statspe.cmd.fixtable:
+       description: Permission for /fixtable.
      statspe.cmd.floatingstats:
       description: Permission for /floatingstats.
      statspe.cmd.stats:

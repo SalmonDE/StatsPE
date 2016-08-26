@@ -16,7 +16,7 @@ _Optional_         | If you want to disable a statistic from showing on `/stats 
 --------------------------------------------------------------------------------
 
 **_MySQL Configuration_** | **_Using MySQL with StatsPE_**
-------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------
+------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------
 Step 4                    | Put your MySQL Settings in [these](https://github.com/SalmonGER/StatsPE/blob/master/resources/config.yml#L41-L45) lines.
 Step 5                    | Change the data providers from JSON to MySQL in [this](https://github.com/SalmonGER/StatsPE/blob/master/resources/config.yml#L38) line.
 
@@ -29,6 +29,7 @@ Step 5                    | Change the data providers from JSON to MySQL in [thi
 /floatingstats add [name]    | Adds a floatingstat to your current person with a name specified by you                    | statspe.cmd.floatingstats
 /floatingstats list          | Lists all floatingstats on the server                                                      | statspe.cmd.floatingstats
 /floatingstats remove [name] | Removes a floatingstat                                                                     | statspe.cmd.floatingstats
+/fixtable                    | Tries to add or modify columns to a existing table                                         | statspe.cmd.fixtable
 
 --------------------------------------------------------------------------------
 
