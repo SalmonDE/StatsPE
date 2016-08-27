@@ -6,7 +6,7 @@ $updater = glob('plugins/StatsPE-src/Updater/*.php');
 $tasks = glob('plugins/StatsPE-src/Tasks/*.php');
 $phpfiles = array_merge($base, $updater, $tasks);
 foreach($phpfiles as $file){
-    exec("php -l $file", $output);
+    echo(exec("php -l $file", $output));
 }
 foreach($output as $line){
     if(strpos($line, 'No syntax errors detected in')){
