@@ -2,8 +2,8 @@
 
 # Supported Languages:
 # English (English) = eng,
-# Romana (RO) = rom,
 # German (Deutsch) = deu
+# Romanian (Romana) = rom
 Language: eng
 # Enable Stats: true/false
 Stats:
