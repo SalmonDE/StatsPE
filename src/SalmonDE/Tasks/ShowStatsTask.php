@@ -44,8 +44,8 @@ class ShowStatsTask extends AsyncTask
           $data = $this->getResult();
           if(is_string($this->requestor)){
             $server->getPlayerExact($this->requestor)->sendMessage(TF::GOLD.str_ireplace('{value}', $data['PlayerName'], $this->lang['Player']['StatsFor']));
-            if($switch['Online']){
-                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $info['Online'], $this->getMessages('Player')['StatOnline']));
+            if($this->switch['Online']){
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['Online'], $this->lang['Player']['StatOnline']));
             }
             if($server->getPlayerExact($this->requestor)->hasPermission('statspe.cmd.stats.advancedinfo')){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['ClientID'], $this->lang['Player']['StatClientID']));
@@ -66,7 +66,7 @@ class ShowStatsTask extends AsyncTask
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KillCount'], $this->lang['Player']['StatKillCount']));
             }
             if($this->switch['DeathCount']){
-                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $info['DeathCount'], $this->lang['Player']['StatDeathCount']));
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['DeathCount'], $this->lang['Player']['StatDeathCount']));
             }
             if($data['DeathCount'] > 0 && $this->switch['K/D']){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['StatK/D']));

@@ -710,7 +710,7 @@ class StatsPE extends PluginBase implements Listener
     public function onKick(PlayerKickEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'JSON'){
+        if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
             $data = array(
                 'PlayerName' => $info['PlayerName'],
