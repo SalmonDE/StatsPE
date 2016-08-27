@@ -1,17 +1,18 @@
 <?php
 # Build.php by @robske110 (modified)
+$output = [];
 $base = glob('plugins/StatsPE-src/*.php');
 $updater = glob('plugins/StatsPE-src/Updater/*.php');
 $tasks = glob('plugins/StatsPE-src/Tasks/*.php');
 $phpfiles = array_merge($base, $updater, $tasks);
 foreach($phpfiles as $file){
-    exec('php -l '.$file, $output);
+    $output = exec('php -l '.$file, output);
 }
 foreach($output as $line){
     if(strpos($line, 'No syntax errors detected in')){
-        print($line);
+        echo($line);
     }else{
-        print($line);
+        echo($line);
         exit(1);
     }
 }
