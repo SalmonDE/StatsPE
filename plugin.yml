@@ -31,6 +31,6 @@ permissions:
       description: Permission for /floatingstats.
      statspe.cmd.stats:
       description: Permission for /stats.
-      children:
-       statspe.cmd.stats.advancedinfo:
-        description: Enables advanced stats about a player for /stats.
+      default: true
+     statspe.cmd.stats.advancedinfo:
+      description: Enables advanced stats about a player for /stats.
