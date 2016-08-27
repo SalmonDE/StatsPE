@@ -378,7 +378,7 @@ class StatsPE extends PluginBase implements Listener
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['DeathCount'], $this->getMessages('Player')['StatDeathCount']));
                     }
                     if($info['DeathCount'] > 0 && $switch['K/D']){
-                        $this->requestor->sendMessage(str_replace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['K/D']));
+                        $requestor->sendMessage(TF::AQUA.str_replace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['K/D']));
                     }
                     if($switch['KickCount']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KickCount'], $this->getMessages('Player')['StatKickCount']));
