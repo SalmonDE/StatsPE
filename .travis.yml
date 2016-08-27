@@ -19,9 +19,11 @@ before_script:
  - cp -rf SalmonGER/StatsPE/plugin.yml ClearSky/plugins/StatsPE-src
  - cp -rf SalmonGER/StatsPE/LICENSE ClearSky/plugins/StatsPE-src
  - cp -rf SalmonGER/StatsPE/build.php ClearSky/
+ - cp -rf SalmonGER/StatsPE/syntaxcheck.php ClearSky/
  - cd ClearSky/plugins/
  - wget -O DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
  - cd /home/travis/build/ClearSky
+ - php syntaxcheck.php
 
 script:
  - php build.php
