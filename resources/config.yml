@@ -2,9 +2,9 @@
 
 # Supported Languages:
 # English (English) = eng,
-# German (Deutsch) = deu
-# Romanian (Romana) = rom
-# netherlands (dutch) = nld
+# German (Deutsch) = deu,
+# Romanian (Romana) = rom,
+# Dutch (Nederlands) = nld
 Language: eng
 # Enable Stats: true/false
 Stats:
