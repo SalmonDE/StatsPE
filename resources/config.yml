@@ -2,6 +2,7 @@
 
 # Supported Languages:
 # English (English) = eng,
+# Romana (RO) = ro,
 # German (Deutsch) = deu
 Language: eng
 # Enable Stats: true/false
