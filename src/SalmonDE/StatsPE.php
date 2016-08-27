@@ -521,6 +521,7 @@ class StatsPE extends PluginBase implements Listener
                       'EnterBedCount' => $info['EnterBedCount'],
                       'EatCount' => $info['EatCount'],
                       'CraftCount' => $info['CraftCount'],
+                      'DroppedItems' => $info['DroppedItems']
                 );
                 $this->saveData($player, $data);
             }else{
