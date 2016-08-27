@@ -69,7 +69,7 @@ class ShowStatsTask extends AsyncTask
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $info['DeathCount'], $this->lang['Player']['StatDeathCount']));
             }
             if($data['DeathCount'] > 0 && $this->switch['K/D']){
-                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['K/D']));
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['StatK/D']));
             }
             if($this->switch['KickCount']){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
