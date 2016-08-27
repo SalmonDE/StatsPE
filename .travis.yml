@@ -1,27 +1,28 @@
 language: php
- 
+
 php:
  - 7.0.9
- 
+
 branches:
  - master
-  
+
 before_script:
  - cd /home/travis/build/
  - phpenv config-rm xdebug.ini
  - pecl install channel://pecl.php.net/pthreads-3.1.6
  - pecl install channel://pecl.php.net/weakref-0.3.2
- - echo | pecl install channel://pecl.php.net/yaml-2.0.0RC8
+ - pecl install channel://pecl.php.net/yaml-2.0.0RC8
  - git clone --depth=50 --branch=php7 https://github.com/ClearSkyTeam/ClearSky.git
- - mkdir -p ClearSky/plugins/StatsPE
- - cp -rf SalmonGER/StatsPE/src ClearSky/plugins/StatsPE
- - cp -rf SalmonGER/StatsPE/resources ClearSky/plugins/StatsPE
- - cp -rf SalmonGER/StatsPE/plugin.yml ClearSky/plugins/StatsPE
+ - mkdir -p ClearSky/plugins/StatsPE-src
+ - cp -rf SalmonGER/StatsPE/src ClearSky/plugins/StatsPE-src
+ - cp -rf SalmonGER/StatsPE/resources ClearSky/plugins/StatsPE-src
+ - cp -rf SalmonGER/StatsPE/plugin.yml ClearSky/plugins/StatsPE-src
+ - cp -rf SalmonGER/StatsPE/LICENSE ClearSky/plugins/StatsPE-src
  - cp -rf SalmonGER/StatsPE/build.php ClearSky/
  - cd ClearSky/plugins/
  - wget -O DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
  - cd /home/travis/build/ClearSky
- 
+
 script:
  - php build.php
 
@@ -33,6 +34,6 @@ deploy:
   overwrite: true
   on:
     tags: false
-  
+
 notifications:
  email: false

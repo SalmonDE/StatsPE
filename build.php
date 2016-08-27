@@ -1,22 +1,32 @@
 <?php
-# Build.php by @robske110
+# Build.php by @robske110 (modified)
+$base = glob('plugins/StatsPE-src/*.php');
+$updater = glob('plugins/StatsPE-src/Updater/*.php');
+$tasks = glob('plugins/StatsPE-src/Tasks/*.php');
+$phpfiles = array_merge($base, $updater, $tasks);
+foreach($phpfiles as $file){
+    exec('php -l '.$file, $output);
+}
+foreach($output as $line){
+    print($line);
+}
 $server = proc_open(PHP_BINARY.' src/pocketmine/PocketMine.php --no-wizard --disable-readline', [
     0 => ['pipe', 'r'],
     1 => ['pipe', 'w'],
     2 => ['pipe', 'w'],
 ], $pipes);
 fwrite($pipes[0], "makeplugin StatsPE\nstop\n\n");
-while (!feof($pipes[1])) {
+while(!feof($pipes[1])){
     echo fgets($pipes[1]);
 }
 fclose($pipes[0]);
 fclose($pipes[1]);
 fclose($pipes[2]);
 echo "\n\nReturn value: ".proc_close($server)."\n";
-if (count(glob('plugins/DevTools/StatsPE*.phar')) === 0) {
+if(count(glob('plugins/DevTools/StatsPE*.phar')) === 0){
     echo "Failed to create StatsPE.phar!\n";
     exit(1);
-} else {
+}else{
     $fn = glob('plugins/DevTools/StatsPE*');
     rename($fn[0], 'plugins/DevTools/StatsPE.phar');
     echo "StatsPE.phar created!\n";
