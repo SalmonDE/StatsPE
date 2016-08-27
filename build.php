@@ -8,7 +8,12 @@ foreach($phpfiles as $file){
     exec('php -l '.$file, $output);
 }
 foreach($output as $line){
-    print($line);
+    if(strpos($line, 'No syntax errors detected in')){
+        print($line);
+    }else{
+        print($line);
+        exit(1);
+    }
 }
 $server = proc_open(PHP_BINARY.' src/pocketmine/PocketMine.php --no-wizard --disable-readline', [
     0 => ['pipe', 'r'],
