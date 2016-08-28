@@ -247,14 +247,14 @@ class StatsPE extends PluginBase implements Listener
                                 if(!in_array(strtolower($args[1]), $fstats)){
                                     $fstats[strtolower($args[1])] = $fstat;
                                     yaml_emit_file($this->getDataFolder().'floatingstats.yml', $fstats);
-                                    $this->spawnFloatingStats($fstat['Name'], $sender);
+                                    $this->spawnFloatingStats($fstat['Name'], $sender, $sender);
                                     $sender->sendMessage(TF::GREEN.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatCreateSuccess']));
                                 }else{
                                     $sender->sendMessage(TF::RED.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatExists']));
                                 }
                             }else{
                                 yaml_emit_file($this->getDataFolder().'floatingstats.yml', [strtolower($fstat['Name']) => $fstat]);
-                                $this->spawnFloatingStats($fstat['Name'], $sender);
+                                $this->spawnFloatingStats($fstat['Name'], $sender, $sender);
                                 $sender->sendMessage(TF::GREEN.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatCreateSuccess']));
                             }
                             return true;
@@ -420,7 +420,7 @@ class StatsPE extends PluginBase implements Listener
         }
     }
 
-    public function spawnFloatingStats($stat = false, $player = false, $target = null){
+    public function spawnFloatingStats($stat = false, $player = false, $target = false){
         if(is_object($player)){
             $player = $player->getName();
         }
