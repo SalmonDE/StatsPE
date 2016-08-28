@@ -26,9 +26,9 @@ Step 5                    | Change the data providers from JSON to MySQL in [thi
 ---------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------
 /stats [player]              | Shows the player's stats, only for what is enabled in config.yml                           | statspe.cmd.stats
 /stats [player]              | Shows the player's stats along with advanced info, such as their ClientID and IP addresses | statspe.cmd.stats.advancedinfo
-/floatingstats add [name]    | Adds a floatingstat to your current person with a name specified by you                    | statspe.cmd.floatingstats
-/floatingstats list          | Lists all floatingstats on the server                                                      | statspe.cmd.floatingstats
-/floatingstats remove [name] | Removes a floatingstat                                                                  | statspe.cmd.floatingstats
+/floatingstats add [name]    | Adds a floating text to your current person with a name specified by you                    | statspe.cmd.floatingstats
+/floatingstats list          | Lists all floating texts on the server                                                      | statspe.cmd.floatingstats
+/floatingstats remove [name] | Removes a floating text                                                                 | statspe.cmd.floatingstats
 /fixtable                    | Tries to add or modify columns to an existing table (MySQL only!)                          | statspe.cmd.fixtable
 
 --------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ Stats                    | Contains settings to disable or enable single statist
 
 **_Statistic_**   | **_Description_**                             | **_Example_**                      | **_Type_**
 ----------------- | --------------------------------------------- | ---------------------------------- | ----------
-PlayerName        | Name of the player (case sensitive)           | SalericioDE                        | Normal
+PlayerName        | Name of the player (case sensitive)           | SalericioDE_110                    | Normal
 ClientID          | ClientID of the MCPE installation             | -8655314918531                     | Advanced
 XBoxAuthenticated | If the user is authenticated with Xbox or not | true                               | Advanced
 LastIP            | Last used IP from the player                  | 192.168.1.45                       | Advanced
@@ -56,7 +56,7 @@ JoinCount         | How many times the player joined the server   | 10          
 KillCount         | How often the player killed another player    | 69                                 | Normal
 DeathCount        | How often the player died                     | 9                                  | Normal
 KickCount         | How often the player got kicked               | 1                                  | Normal
-OnlineTime        | How long the player played on the server      | WIP                                | To-Do
+OnlineTime        | How long the player played on the server      | WIP                                | To-Do / Normal
 BlocksBreaked     | How many blocks the player broke              | 3                                  | Normal
 BlocksPlaced      | How many blocks the placer placed             | 4                                  | Normal
 ChatMessages      | How many chat messages the player sent        | 78                                 | Normal
