@@ -4,7 +4,7 @@ api: 2.0.0
 main: SalmonDE\StatsPE
 description: Stats Plugin for your Server!
 author: SalmonDE
-authors: [Aericio]
+authors: [Aericio, robske_110]
 website: https://salmonde.de/
 commands:
  stats:
