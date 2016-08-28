@@ -12,7 +12,7 @@ commands:
   usage: /stats [player]
   permission: statspe.cmd.stats
  floatingstats:
-  description: Adds or removes a floating text with stats on your current position
+  description: Adds a floating text with stats on your current position
   usage: /floatingstats <add|list|remove> [name]
   permission: statspe.cmd.floatingstats
  fixtable:
