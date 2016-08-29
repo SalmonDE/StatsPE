@@ -55,6 +55,7 @@ LastJoin          | Last time the player joined                   | 04:23:01 22.
 JoinCount         | How many times the player joined the server   | 10                                 | Normal
 KillCount         | How often the player killed another player    | 69                                 | Normal
 DeathCount        | How often the player died                     | 9                                  | Normal
+K/D               | Player's Kill/Death Ratio                     | 38%                                | Normal
 KickCount         | How often the player got kicked               | 1                                  | Normal
 OnlineTime        | How long the player played on the server      | WIP                                | To-Do
 BlocksBreaked     | How many blocks the player broke              | 3                                  | Normal
@@ -64,5 +65,6 @@ FishCount         | How many fishes the player catched            | 1           
 EnterBedCount     | How often the player used a bed               | 2                                  | Normal
 EatCount          | How often the player consumed an item         | 13                                 | Normal
 CraftCount        | How often the player crafted something        | 6                                  | Normal
-
+Items dropped     | How many items the player dropped             | 294                                | Normal
+Money [EconomyAPI, PocketMoney] | How much money person has (?)   | $4221                              | Normal
 --------------------------------------------------------------------------------
