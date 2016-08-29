@@ -35,8 +35,10 @@ class StatsPE extends PluginBase implements Listener
     public function onEnable(){
       @mkdir($this->getDataFolder());
       $this->saveResource('config.yml');
-      $this->saveResource(strtolower($this->getConfig()->get('Language')).'.ini');
-      rename($this->getDataFolder().strtolower($this->getConfig()->get('Language')).'.ini', $this->getDataFolder().'messages.ini');
+      if(!file_exists($this->getDataFolder().'messages.ini')){
+          $this->saveResource(strtolower($this->getConfig()->get('Language')).'.ini');
+          rename($this->getDataFolder().strtolower($this->getConfig()->get('Language')).'.ini', $this->getDataFolder().'messages.ini');
+      }
         if(!$this->getServer()->getName() === 'ClearSky'){
             $this->getLogger()->warning(TF::RED.$this->getMessages('General')['NotSupported']);
         }
