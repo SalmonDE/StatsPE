@@ -1,12 +1,14 @@
 # Configuration file for StatsPE
 
 # Supported Languages:
+# If you are changing language packs, delete messages.ini after setting to your preferred language.
 # English (English) = eng,
 # German (Deutsch) = deu,
 # Romanian (Romana) = rom,
 # Dutch (Nederlands) = nld,
 # Russian (Russia) = rus
 Language: eng
+
 # Enable Stats: true/false
 Stats:
   Online: true
