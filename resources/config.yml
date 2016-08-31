@@ -4,7 +4,8 @@
 # English (English) = eng,
 # German (Deutsch) = deu,
 # Romanian (Romana) = rom,
-# Dutch (Nederlands) = nld
+# Dutch (Nederlands) = nld,
+# Russian (Russia) = rus
 Language: eng
 # Enable Stats: true/false
 Stats:
