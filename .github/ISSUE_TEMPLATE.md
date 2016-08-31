@@ -1,11 +1,20 @@
-###General
-**Server Software** I use:
+### General
 
-**Version** of StatsPE I use:
+**Server Software:**
+- [ ] Pocketmine-MP
+- [ ] Genisys
+- [ ] ClearSky
+- [ ] ImagicalMine
+- [ ] Other: (Software)
 
-**Data Provider** I use: [] MySQL, [] JSON
+**Version of StatsPE:**
+- [ ] 2.3.5
 
-##Steps to reproduce the issue
+**Data Provider:**
+- [ ] MySQL 
+- [ ] JSON
+
+## Steps to Reproduce the Issue
 
 
-##Extra information
+## Extra Information
