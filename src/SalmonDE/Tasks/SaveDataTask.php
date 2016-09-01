@@ -37,7 +37,7 @@ class SaveDataTask extends AsyncTask
                   $data = mysqli_query($connection, "SELECT * FROM Stats WHERE PlayerName = '$this->player'");
                   $data = mysqli_fetch_assoc($data);
                   $timediff = date_diff(new \DateTime($data['FirstJoin'], $this->data));
-                  $this->data = json_encode(['Years' => round($timediff->y, 2), 'Months' => round($timediff->m, 2), 'Days' => round($timediff->d, 2), 'Minutes' => round($timediff->i, 2)]);
+                  $this->data = json_encode(['Years' => $timediff->y, 'Months' => $timediff->m, 'Days' => $timediff->d, 'Minutes' => $timediff->i]);
               }
               mysqli_query($connection, "UPDATE Stats SET $this->stat = '$this->data' WHERE PlayerName = '$this->player'");
           }elseif($poccurence > 1){
