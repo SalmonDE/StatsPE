@@ -12,8 +12,7 @@ class SaveDataTask extends AsyncTask
       $this->stat = $stat;
       $this->type = $type;
       $this->data = $data;
-      $this->lang = $owner->getMessages();
-      $this->timeformat = $owner->getConfig()->get('TimeFormat');
+      $this->lang = $owner->getMessages()
       $this->yes = $owner->getMessages('Player')['StatYes'];
       $this->no = $owner->getMessages('Player')['StatNo'];;
       if(is_object($player)){
@@ -27,7 +26,7 @@ class SaveDataTask extends AsyncTask
       $connection = @mysqli_connect($this->mysql['host'], $this->mysql['user'], $this->mysql['password'], $this->mysql['database']);
       if($connection){
           $poccurence = mysqli_num_rows(mysqli_query($connection, "SELECT * FROM Stats WHERE PlayerName = '$this->player'"));
-          $date = date($this->timeformat);
+          $date = date('Y-m-d H:i:s');
           if($poccurence == 1){
               if($this->type == 'Count'){
                   $data = mysqli_query($connection, "SELECT * FROM Stats WHERE PlayerName = '$this->player'");
