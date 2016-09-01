@@ -19,8 +19,7 @@ Stats:
   K/D: true
   DeathCount: true
   KickCount: true
-  # OnlineTime has not been implemented
-  OnlineTime: false
+  OnlineTime: true
   BlockBreakCount: true
   BlockPlaceCount: true
   ChatCount: true
@@ -33,12 +32,6 @@ Stats:
 # Enable/Disable the Auto-Updater Feature.
 Auto-Update: true
 Shutdown-Message: "Restarting Server due to a software update!"
-# Time Format used for Stats like last and first Join
-# Further information about this on this page:
-# http://php.net/manual/de/function.date.php
-# Default: "H:i:s d.m.Y" = Hour:Minute:Seconds Day.Month.Year
-# Example: 12:00:63 22.07.2016
-TimeFormat: "H:i:s d.m.Y"
 
 # Set data provider for StatsPE
 # Available Providers: MySQL, JSON

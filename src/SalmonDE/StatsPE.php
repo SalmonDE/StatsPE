@@ -200,7 +200,7 @@ class StatsPE extends PluginBase implements Listener
                                     'OnlineTime' => [
                                         'Name' => 'OnlineTime',
                                         'Lang' => 'StatOnlineTime',
-                                        'Enabled' => false,
+                                        'Enabled' => true,
                                     ],
                                     'BlockBreakCount' => [
                                         'Name' => 'BlocksBreaked',
@@ -386,7 +386,7 @@ class StatsPE extends PluginBase implements Listener
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KickCount'], $this->getMessages('Player')['StatKickCount']));
                     }
                     if($switch['OnlineTime']){
-                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['OnlineTime'], $this->getMessages('Player')['StatOnlineTime']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', json_decode($info['OnlineTime'], true)['Minutes'], $this->getMessages('Player')['StatOnlineTime']));
                     }
                     if($switch['BlockBreakCount']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksBreaked'], $this->getMessages('Player')['StatBlockBreakCount']));
@@ -500,7 +500,7 @@ class StatsPE extends PluginBase implements Listener
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
                 $cid = $player->getClientId();
                 $ip = $player->getAddress();
-                $ls = date($this->getConfig()->get('TimeFormat'));
+                $ls = date('Y-m-d H:i:s');
                 $jc = $info['JoinCount'] + 1;
                 $data = array(
                       'PlayerName' => $pn,
@@ -527,7 +527,7 @@ class StatsPE extends PluginBase implements Listener
                 );
                 $this->saveData($player, $data);
             }else{
-                $fp = date($this->getConfig()->get('TimeFormat'));
+                $fp = date('Y-m-d H:i:s');
                 $cid = $player->getClientId();
                 $ip = $player->getAddress();
                 $data = array(
@@ -590,7 +590,7 @@ class StatsPE extends PluginBase implements Listener
                 '7' => [
                     'Stat' => 'LastJoin',
                     'Type' => 'Normal',
-                    'Data' => date($this->getConfig()->get('TimeFormat'))
+                    'Data' => date('Y-m-d H:i:s')
                 ],
                 '8' => [
                     'Stat' => 'JoinCount',
@@ -610,6 +610,8 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $timediff = date_diff(new \DateTime($info['FirstJoin']), new \DateTime(date('Y-m-d H:i:s')));
+            $onlinetime = json_encode(['Years' => $timediff->y, 'Months' => $timediff->m, 'Days' => $timediff->d, 'Minutes' => $timediff->i]);
             $data = array(
                 'PlayerName' => $info['PlayerName'],
                 'Online' => $this->getMessages('Player')['StatNo'],
@@ -623,7 +625,7 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
+                'OnlineTime' => $onlinetime,
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -635,7 +637,8 @@ class StatsPE extends PluginBase implements Listener
             );
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'Online', 'Normal', $this->getMessages('Player')['StatYes']));
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'Online', 'Normal', $this->getMessages('Player')['StatNo']));
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'OnlineTime', 'Time', new \DateTime(date('Y-m-d H:i:s'))));
         }
     }
 
