@@ -249,15 +249,19 @@ class StatsPE extends PluginBase implements Listener
                                 if(!in_array(strtolower($args[1]), $fstats)){
                                     $fstats[strtolower($args[1])] = $fstat;
                                     yaml_emit_file($this->getDataFolder().'floatingstats.yml', $fstats);
-                                    $this->spawnFloatingStats($fstat['Name'], $sender, $sender);
                                     $sender->sendMessage(TF::GREEN.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatCreateSuccess']));
+                                    foreach($this->getServer()->getOnlinePlayers() as $player){
+                                        $this->spawnFloatingStats($fstat['Name'], $player, $player);
+                                    }
                                 }else{
                                     $sender->sendMessage(TF::RED.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatExists']));
                                 }
                             }else{
                                 yaml_emit_file($this->getDataFolder().'floatingstats.yml', [strtolower($fstat['Name']) => $fstat]);
-                                $this->spawnFloatingStats($fstat['Name'], $sender, $sender);
                                 $sender->sendMessage(TF::GREEN.str_ireplace('{name}', $args[1], $this->getMessages('Player')['FloatingStatCreateSuccess']));
+                                foreach($this->getServer()->getOnlinePlayers() as $player){
+                                    $this->spawnFloatingStats($fstat['Name'], $player, $player);
+                                }
                             }
                             return true;
                         }elseif(count($args) < 2){
