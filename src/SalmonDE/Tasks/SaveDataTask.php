@@ -12,9 +12,9 @@ class SaveDataTask extends AsyncTask
       $this->stat = $stat;
       $this->type = $type;
       $this->data = $data;
-      $this->lang = $owner->getMessages()
+      $this->lang = $owner->getMessages();
       $this->yes = $owner->getMessages('Player')['StatYes'];
-      $this->no = $owner->getMessages('Player')['StatNo'];;
+      $this->no = $owner->getMessages('Player')['StatNo'];
       if(is_object($player)){
           $this->player = strtolower($player->getName());
       }else{
