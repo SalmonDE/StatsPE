@@ -37,7 +37,7 @@ class SaveDataTask extends AsyncTask
           }elseif($poccurence > 1){
               $this->setResult(str_ireplace('{value}', $this->player, $this->lang['Player']['CommandMultipleOccurences']));
           }else{
-              mysqli_query($connection, "INSERT INTO Stats (PlayerName, Online, XBoxAuthenticated, FirstJoin, LastJoin, JoinCount, KillCount, DeathCount, KickCount, OnlineTime, BlocksBreaked, BlocksPlaced, ChatMessages, FishCount, EnterBedCount, EatCount, CraftCount) VALUES ('$this->player', '$this->yes', '$this->no', '$date', '$date', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+              mysqli_query($connection, "INSERT INTO Stats (PlayerName, Online, XBoxAuthenticated, FirstJoin, LastJoin, JoinCount, KillCount, DeathCount, KickCount, BlocksBreaked, BlocksPlaced, ChatMessages, FishCount, EnterBedCount, EatCount, CraftCount) VALUES ('$this->player', '$this->yes', '$this->no', '$date', '$date', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
               mysqli_query($connection, "UPDATE Stats SET $this->stat = '$this->data' WHERE PlayerName = '$this->player'");
           }
           if(mysqli_error($connection)){
