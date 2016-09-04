@@ -511,12 +511,12 @@ class StatsPE extends PluginBase implements Listener
             if(file_exists($this->getDataFolder().'/Stats/'.strtolower($player->getName()).'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
                 $info['JoinCount'] = $info['JoinCount'] + 1;
-                $info['PlayerName'] = $pn,
-                $info['Online'] = $this->getMessages('Player')['StatYes'],
-                $info['ClientID'] = $cid,
-                $info['UUID'] => $player->getUniqueId(),
-                $info['XBoxAuthenticated'] = $xa,
-                $info['LastIP'] = $ip,
+                $info['PlayerName'] = $pn;
+                $info['Online'] = $this->getMessages('Player')['StatYes'];
+                $info['ClientID'] = $cid;
+                $info['UUID'] => $player->getUniqueId();
+                $info['XBoxAuthenticated'] = $xa;
+                $info['LastIP'] = $ip;
                 $info['LastJoin'] = date('Y-m-d H:i:s');
                 $this->saveData($player, $info);
             }else{
