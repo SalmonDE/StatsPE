@@ -613,7 +613,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
           $info = $this->getStats($player->getName(), 'JSON', 'all');
-          $info['DeathCount'] = $info['DeathCount'] + 1,
+          $info['DeathCount'] = $info['DeathCount']++;
           $this->saveData($player, $data);
           if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
               if($damagecause->getDamager() instanceof Player){
@@ -628,7 +628,7 @@ class StatsPE extends PluginBase implements Listener
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DeathCount', 'Count', '1'));
             if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
-                if($damagecause->getDamager() instanceof Player){ 
+                if($damagecause->getDamager() instanceof Player){
                     $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($damagecause->getDamager(), $this, 'KillCount', 'Count', '1'));
                 }
             }
