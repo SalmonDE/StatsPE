@@ -514,7 +514,7 @@ class StatsPE extends PluginBase implements Listener
                 $info['PlayerName'] = $pn;
                 $info['Online'] = $this->getMessages('Player')['StatYes'];
                 $info['ClientID'] = $cid;
-                $info['UUID'] => $player->getUniqueId();
+                $info['UUID'] = $player->getUniqueId();
                 $info['XBoxAuthenticated'] = $xa;
                 $info['LastIP'] = $ip;
                 $info['LastJoin'] = date('Y-m-d H:i:s');
