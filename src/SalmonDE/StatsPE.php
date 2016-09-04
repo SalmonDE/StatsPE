@@ -392,7 +392,7 @@ class StatsPE extends PluginBase implements Listener
                     if($switch['KickCount']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KickCount'], $this->getMessages('Player')['StatKickCount']));
                     }
-                    if($switch['OnlineTime']){
+                    if($switch['OnlineTime'] && $info['Online'] == $this->getMessages('Player')['StatYes']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace(['{hours}', '{minutes}', '{seconds}'], [$timediff->h, $timediff->i, $timediff->s], $this->getMessages('Player')['StatOnlineTime']));
                     }
                     if($switch['BlockBreakCount']){
@@ -452,7 +452,9 @@ class StatsPE extends PluginBase implements Listener
                                             $text['K/D'] = TF::AQUA.str_ireplace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['StatK/D']);
                                         }
                                     }elseif($stat['Name'] == 'OnlineTime'){
-                                        $text['OnlineTime'] = TF::AQUA.str_ireplace('{value}', $timediff->i, $this->getMessages('Player')['StatOnlineTime']);
+                                        if($info['Online'] == $this->getMessages('Player')['StatYes']){
+                                            $text['OnlineTime'] = TF::AQUA.str_ireplace(['{hours}', '{minutes}', '{seconds}'], [$timediff->h, $timediff->i, $timediff->s], $this->getMessages('Player')['StatOnlineTime']);
+                                        }
                                     }else{
                                         $text[$stat['Name']] = TF::AQUA.str_ireplace('{value}', $info[$stat['Name']], $this->getMessages('Player')[$stat['Lang']]);
                                     }
@@ -478,6 +480,10 @@ class StatsPE extends PluginBase implements Listener
                                 if($stat['Name'] == 'K/D'){
                                     if($info['DeathCount'] > 0){
                                         $text['K/D'] = TF::AQUA.str_ireplace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['StatK/D']);
+                                    }
+                                }elseif($stat['Name'] == 'OnlineTime'){
+                                    if($info['Online'] == $this->getMessages('Player')['StatYes']){
+                                        $text['OnlineTime'] = TF::AQUA.str_ireplace(['{hours}', '{minutes}', '{seconds}'], [$timediff->h, $timediff->i, $timediff->s], $this->getMessages('Player')['StatOnlineTime']);
                                     }
                                 }else{
                                     $text[$stat['Name']] = TF::AQUA.str_ireplace('{value}', $info[$stat['Name']], $this->getMessages('Player')[$stat['Lang']]);
@@ -510,7 +516,7 @@ class StatsPE extends PluginBase implements Listener
         if($provider == 'json'){
             if(file_exists($this->getDataFolder().'/Stats/'.strtolower($player->getName()).'.json')){
                 $info = $this->getStats($player->getName(), 'JSON', 'all');
-                $info['JoinCount'] = $info['JoinCount'] + 1;
+                ++$info['JoinCount'];
                 $info['PlayerName'] = $pn;
                 $info['Online'] = $this->getMessages('Player')['StatYes'];
                 $info['ClientID'] = $cid;
@@ -613,7 +619,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
           $info = $this->getStats($player->getName(), 'JSON', 'all');
-          $info['DeathCount'] = $info['DeathCount']++;
+          $info['DeathCount'] = ++$info['DeathCount'];
           $this->saveData($player, $data);
           if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
               if($damagecause->getDamager() instanceof Player){
@@ -640,7 +646,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['KickCount']++;
+            ++$info['KickCount'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'KickCount', 'Count', '1'));
@@ -652,7 +658,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['BlocksBreaked']++;
+            ++$info['BlocksBreaked'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksBreaked', 'Count', '1'));
@@ -664,7 +670,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['BlocksPlaced']++;
+            ++$info['BlocksPlaced'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksPlaced', 'Count', '1'));
@@ -676,7 +682,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['ChatMessages']++;
+            ++$info['ChatMessages'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'ChatMessages', 'Count', '1'));
@@ -688,7 +694,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['FishCount']++;
+            ++$info['FishCount'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'FishCount', 'Count', '1'));
@@ -700,7 +706,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['EnterBedCount']++;
+            ++$info['EnterBedCount'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EnterBedCount', 'Count', '1'));
@@ -712,7 +718,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['EatCount']++;
+            ++$info['EatCount'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EatCount', 'Count', '1'));
@@ -724,7 +730,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['CraftCount']++;
+            ++$info['CraftCount'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'CraftCount', 'Count', '1'));
@@ -736,7 +742,7 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['DroppedItems']++;
+            ++$info['DroppedItems'];
             $this->saveData($player, $info);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DroppedItems', 'Count', 1));

@@ -42,7 +42,9 @@ class SpawnFloatStatTask extends AsyncTask
                     $text['K/D'] = TF::AQUA.str_ireplace('{value}', round($info['KillCount'] / $info['DeathCount'], 2), $this->lang['StatK/D']);
                 }
             }elseif($stat['Name'] == 'OnlineTime'){
-                $text['OnlineTime'] = TF::AQUA.str_ireplace(['{hours}', '{minutes}', '{seconds}'], [$timediff->h, $timediff->i, $timediff->s], $this->lang['StatOnlineTime']);
+                if($info['Online'] == $this->lang['StatYes']){
+                    $text['OnlineTime'] = TF::AQUA.str_ireplace(['{hours}', '{minutes}', '{seconds}'], [$timediff->h, $timediff->i, $timediff->s], $this->lang['StatOnlineTime']);
+                }
             }else{
                 $text[$stat['Name']] = TF::AQUA.str_ireplace('{value}', $info[$stat['Name']], $this->lang[$stat['Lang']]);
             }

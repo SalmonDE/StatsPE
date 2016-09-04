@@ -75,7 +75,7 @@ class ShowStatsTask extends AsyncTask
             if($this->switch['KickCount']){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
             }
-            if($this->switch['OnlineTime']){
+            if($this->switch['OnlineTime'] && $data['Online'] == $this->lang['StatYes']){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace(['{hours}', '{minutes}', '{seconds}'], [$timediff->h, $timediff->i, $timediff->s], $this->lang['Player']['StatOnlineTime']));
             }
             if($this->switch['BlockBreakCount']){
@@ -128,7 +128,7 @@ class ShowStatsTask extends AsyncTask
             if($this->switch['KickCount']){
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
             }
-            if($this->switch['OnlineTime']){
+            if($this->switch['OnlineTime'] && $data['Online'] == $this->lang['StatYes']){
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace(['{hours}', '{minutes}'], [$timediff->h, $timediff->i], $this->lang['Player']['StatOnlineTime']));
             }
             if($this->switch['BlockBreakCount']){
