@@ -333,7 +333,7 @@ class StatsPE extends PluginBase implements Listener
         if(strtolower($this->getConfig()->get('Provider')) == 'json'){
             fwrite(fopen($this->getDataFolder().'Stats/'.strtolower($player->getName()).'.json', 'w'), json_encode($data, JSON_PRETTY_PRINT));
         }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask($player, $this, $stat, $data);
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, $stat, $data));
         }
     }
 
