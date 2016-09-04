@@ -1,10 +1,10 @@
 name: StatsPE
-version: 2.3.9
+version: 2.3.10
 api: 2.0.0
 main: SalmonDE\StatsPE
 description: Stats Plugin for your Server!
 author: SalmonDE
-authors: [Aericio, robske_110]
+authors: [Aericio, robske_110, thebigsmileXD]
 website: https://salmonde.de/
 commands:
  stats:
