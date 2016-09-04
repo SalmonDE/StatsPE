@@ -70,7 +70,7 @@ class ShowStatsTask extends AsyncTask
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['DeathCount'], $this->lang['Player']['StatDeathCount']));
             }
             if($data['DeathCount'] > 0 && $this->switch['K/D']){
-                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['StatK/D']));
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_replace('{value}', round($data['KillCount'] / $data['DeathCount'], 2), $this->lang['Player']['StatK/D']));
             }
             if($this->switch['KickCount']){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
@@ -123,7 +123,7 @@ class ShowStatsTask extends AsyncTask
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['DeathCount'], $this->lang['Player']['StatDeathCount']));
             }
             if($data['DeathCount'] > 0 && $this->switch['K/D']){
-                $this->requestor->sendMessage(str_replace('{value}', $data['KillCount'] / $data['DeathCount'], $this->lang['Player']['K/D']));
+                $this->requestor->sendMessage(str_replace('{value}', round($data['KillCount'] / $data['DeathCount'], 2), $this->lang['Player']['K/D']));
             }
             if($this->switch['KickCount']){
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
