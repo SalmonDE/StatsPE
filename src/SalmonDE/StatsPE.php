@@ -390,7 +390,7 @@ class StatsPE extends PluginBase implements Listener
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KickCount'], $this->getMessages('Player')['StatKickCount']));
                     }
                     if($switch['OnlineTime']){
-                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $timediff->i, $this->getMessages('Player')['StatOnlineTime']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace(['{hours}', '{minutes}', '{seconds}'], [$timediff->h, $timediff->i, $timediff->s], $this->getMessages('Player')['StatOnlineTime']));
                     }
                     if($switch['BlockBreakCount']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksBreaked'], $this->getMessages('Player')['StatBlockBreakCount']));
