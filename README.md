@@ -4,7 +4,7 @@
 
 ## Information
 
-**Feel free to request any features you would like to have [here](https://github.com/SalmonGER/StatsPE/issues/1)**
+**Want to test the features before using them? Test them on this server: salmonde.de:19132**
 
 **_Installation_** | **_StatsPE_**
 ------------------ | -------------------------------------------------------------------------------------------------------------------
