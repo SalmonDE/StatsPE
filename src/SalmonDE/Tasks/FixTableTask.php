@@ -86,46 +86,41 @@ class FixTableTask extends AsyncTask
                         'Extra' => "UNSIGNED DEFAULT 0"
                     ],
                     '13' => [
-                        'Name' => 'OnlineTime',
-                        'Datatype' => 'VARCHAR(30)',
-                        'Extra' => "DEFAULT '0'"
-                    ],
-                    '14' => [
                         'Name' => 'BlocksBreaked',
                         'Datatype' => 'INT(255)',
                         'Extra' => "UNSIGNED DEFAULT 0"
                     ],
-                    '15' => [
+                    '14' => [
                         'Name' => 'BlocksPlaced',
                         'Datatype' => 'INT(255)',
                         'Extra' => "UNSIGNED DEFAULT 0"
                     ],
-                    '16' => [
+                    '15' => [
                         'Name' => 'ChatMessages',
                         'Datatype' => 'INT(255)',
                         'Extra' => "UNSIGNED DEFAULT 0"
                     ],
-                    '17' => [
+                    '16' => [
                         'Name' => 'FishCount',
                         'Datatype' => 'INT(255)',
                         'Extra' => "UNSIGNED DEFAULT 0"
                     ],
-                    '18' => [
+                    '17' => [
                         'Name' => 'EnterBedCount',
                         'Datatype' => 'INT(255)',
                         'Extra' => "UNSIGNED DEFAULT 0"
                     ],
-                    '19' => [
+                    '18' => [
                         'Name' => 'EatCount',
                         'Datatype' => 'INT(255)',
                         'Extra' => "UNSIGNED DEFAULT 0"
                     ],
-                    '20' => [
+                    '19' => [
                         'Name' => 'CraftCount',
                         'Datatype' => 'INT(255)',
                         'Extra' => "UNSIGNED DEFAULT 0"
                     ],
-                    '21' => [
+                    '20' => [
                         'Name' => 'DroppedItems',
                         'Datatype' => 'INT(255)',
                         'Extra' => "UNSIGNED DEFAULT 0"

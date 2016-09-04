@@ -33,6 +33,7 @@ class SpawnFloatStatTask extends AsyncTask
 
   public function onCompletion(Server $server){
     $info = $this->getResult();
+    $timediff = date_diff(new \DateTime($info['FirstJoin']), new \DateTime(date('Y-m-d H:i:s')));
     $text['PlayerName'] = TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->lang['StatsFor']);
     foreach($this->fstat['Stats'] as $stat){
         if($stat['Enabled']){
@@ -40,6 +41,8 @@ class SpawnFloatStatTask extends AsyncTask
                 if($info['DeathCount'] > 0){
                     $text['K/D'] = TF::AQUA.str_ireplace('{value}', $info['KillCount'] / $info['DeathCount'], $this->lang['StatK/D']);
                 }
+            }elseif($stat['Name'] == 'OnlineTime'){
+                $text['OnlineTime'] = TF::AQUA.str_ireplace('{value}', $timediff->i, $this->lang['StatOnlineTime']);
             }else{
                 $text[$stat['Name']] = TF::AQUA.str_ireplace('{value}', $info[$stat['Name']], $this->lang[$stat['Lang']]);
             }

@@ -65,7 +65,6 @@ class StatsPE extends PluginBase implements Listener
                 KillCount INT(255) UNSIGNED DEFAULT 0,
                 DeathCount INT(255) UNSIGNED DEFAULT 0,
                 KickCount INT(255) UNSIGNED DEFAULT 0,
-                OnlineTime VARCHAR(30) DEFAULT 0,
                 BlocksBreaked INT(255) UNSIGNED DEFAULT 0,
                 BlocksPlaced INT(255) UNSIGNED DEFAULT 0,
                 ChatMessages INT(255) UNSIGNED DEFAULT 0,
@@ -358,6 +357,7 @@ class StatsPE extends PluginBase implements Listener
                 if(file_exists($this->getDataFolder().'Stats/'.strtolower($target).'.json')){
                     $switch = $this->getConfig()->get('Stats');
                     $info = $this->getStats($target, 'json', 'all');
+                    $timediff = date_diff(new \DateTime($info['FirstJoin']), new \DateTime(date('Y-m-d H:i:s')));
                     $requestor->sendMessage(TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']));
                     if($switch['Online']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['Online'], $this->getMessages('Player')['StatOnline']));
@@ -390,7 +390,7 @@ class StatsPE extends PluginBase implements Listener
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['KickCount'], $this->getMessages('Player')['StatKickCount']));
                     }
                     if($switch['OnlineTime']){
-                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', json_decode($info['OnlineTime'], true)['Minutes'], $this->getMessages('Player')['StatOnlineTime']));
+                        $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $timediff->i, $this->getMessages('Player')['StatOnlineTime']));
                     }
                     if($switch['BlockBreakCount']){
                         $requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $info['BlocksBreaked'], $this->getMessages('Player')['StatBlockBreakCount']));
@@ -440,6 +440,7 @@ class StatsPE extends PluginBase implements Listener
                         }
                         if(strtolower($this->getConfig()->get('Provider')) == 'json'){
                             $info = $this->getStats($player, 'JSON', 'all');
+                            $timediff = date_diff(new \DateTime($info['FirstJoin']), new \DateTime(date('Y-m-d H:i:s')));
                             $text['PlayerName'] = TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']);
                             foreach($fstat['Stats'] as $stat){
                                 if($stat['Enabled']){
@@ -447,6 +448,8 @@ class StatsPE extends PluginBase implements Listener
                                         if($info['DeathCount'] > 0){
                                             $text['K/D'] = TF::AQUA.str_ireplace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['StatK/D']);
                                         }
+                                    }elseif($stat['Name'] == 'OnlineTime'){
+                                        $text['OnlineTime'] = TF::AQUA.str_ireplace('{value}', $timediff->i, $this->getMessages('Player')['StatOnlineTime']);
                                     }else{
                                         $text[$stat['Name']] = TF::AQUA.str_ireplace('{value}', $info[$stat['Name']], $this->getMessages('Player')[$stat['Lang']]);
                                     }
@@ -519,7 +522,6 @@ class StatsPE extends PluginBase implements Listener
                       'KillCount' => $info['KillCount'],
                       'DeathCount' => $info['DeathCount'],
                       'KickCount' => $info['KickCount'],
-                      'OnlineTime' => $info['OnlineTime'],
                       'BlocksBreaked' => $info['BlocksBreaked'],
                       'BlocksPlaced' => $info['BlocksPlaced'],
                       'ChatMessages' => $info['ChatMessages'],
@@ -547,7 +549,6 @@ class StatsPE extends PluginBase implements Listener
                       'KillCount' => '0',
                       'DeathCount' => '0',
                       'KickCount' => '0',
-                      'OnlineTime' => '0',
                       'BlocksBreaked' => '0',
                       'BlocksPlaced' => '0',
                       'ChatMessages' => '0',
@@ -614,8 +615,6 @@ class StatsPE extends PluginBase implements Listener
         $provider = strtolower($this->getConfig()->get('Provider'));
         if($provider == 'json'){
             $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $timediff = date_diff(new \DateTime($info['FirstJoin']), new \DateTime(date('Y-m-d H:i:s')));
-            $onlinetime = json_encode(['Years' => $timediff->y, 'Months' => $timediff->m, 'Days' => $timediff->d, 'Minutes' => $timediff->i]);
             $data = array(
                 'PlayerName' => $info['PlayerName'],
                 'Online' => $this->getMessages('Player')['StatNo'],
@@ -629,7 +628,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $onlinetime,
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -642,7 +640,6 @@ class StatsPE extends PluginBase implements Listener
             $this->saveData($player, $data);
         }elseif($provider == 'mysql'){
             $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'Online', 'Normal', $this->getMessages('Player')['StatNo']));
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'OnlineTime', 'Time', new \DateTime(date('Y-m-d H:i:s'))));
         }
     }
 
@@ -665,7 +662,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'] + 1,
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -693,7 +689,6 @@ class StatsPE extends PluginBase implements Listener
                       'KillCount' => $kinfo['KillCount'] + 1,
                       'DeathCount' => $kinfo['DeathCount'],
                       'KickCount' => $kinfo['KickCount'],
-                      'OnlineTime' => $kinfo['OnlineTime'],
                       'BlocksBreaked' => $kinfo['BlocksBreaked'],
                       'BlocksPlaced' => $kinfo['BlocksPlaced'],
                       'ChatMessages' => $kinfo['ChatMessages'],
@@ -734,7 +729,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'] + 1,
-                'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -768,7 +762,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'] + 1,
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -802,7 +795,6 @@ class StatsPE extends PluginBase implements Listener
                  'KillCount' => $info['KillCount'],
                  'DeathCount' => $info['DeathCount'],
                  'KickCount' => $info['KickCount'],
-                 'OnlineTime' => $info['OnlineTime'],
                  'BlocksBreaked' => $info['BlocksBreaked'],
                  'BlocksPlaced' => $info['BlocksPlaced'] + 1,
                  'ChatMessages' => $info['ChatMessages'],
@@ -836,7 +828,6 @@ class StatsPE extends PluginBase implements Listener
                   'KillCount' => $info['KillCount'],
                   'DeathCount' => $info['DeathCount'],
                   'KickCount' => $info['KickCount'],
-                  'OnlineTime' => $info['OnlineTime'],
                   'BlocksBreaked' => $info['BlocksBreaked'],
                   'BlocksPlaced' => $info['BlocksPlaced'],
                   'ChatMessages' => $info['ChatMessages'] + 1,
@@ -870,7 +861,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -904,7 +894,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -938,7 +927,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -972,7 +960,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],
@@ -1006,7 +993,6 @@ class StatsPE extends PluginBase implements Listener
                 'KillCount' => $info['KillCount'],
                 'DeathCount' => $info['DeathCount'],
                 'KickCount' => $info['KickCount'],
-                'OnlineTime' => $info['OnlineTime'],
                 'BlocksBreaked' => $info['BlocksBreaked'],
                 'BlocksPlaced' => $info['BlocksPlaced'],
                 'ChatMessages' => $info['ChatMessages'],

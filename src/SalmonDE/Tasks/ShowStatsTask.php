@@ -42,6 +42,7 @@ class ShowStatsTask extends AsyncTask
   public function onCompletion(Server $server){
       if(is_array($this->getResult())){
           $data = $this->getResult();
+          $timediff = date_diff(new \DateTime($data['FirstJoin']), new \DateTime(date('Y-m-d H:i:s')));
           if(is_string($this->requestor)){
             $server->getPlayerExact($this->requestor)->sendMessage(TF::GOLD.str_ireplace('{value}', $data['PlayerName'], $this->lang['Player']['StatsFor']));
             if($this->switch['Online']){
@@ -75,7 +76,7 @@ class ShowStatsTask extends AsyncTask
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
             }
             if($this->switch['OnlineTime']){
-                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', json_decode($data['OnlineTime'], true)['Minutes'], $this->lang['Player']['StatOnlineTime']));
+                $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $timediff->i, $this->lang['Player']['StatOnlineTime']));
             }
             if($this->switch['BlockBreakCount']){
                 $server->getPlayerExact($this->requestor)->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksBreaked'], $this->lang['Player']['StatBlockBreakCount']));
@@ -128,7 +129,7 @@ class ShowStatsTask extends AsyncTask
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['KickCount'], $this->lang['Player']['StatKickCount']));
             }
             if($this->switch['OnlineTime']){
-                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', json_decode($data['OnlineTime'], true)['Minutes'], $this->lang['Player']['StatOnlineTime']));
+                $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $timediff->i, $this->lang['Player']['StatOnlineTime']));
             }
             if($this->switch['BlockBreakCount']){
                 $this->requestor->sendMessage(TF::AQUA.str_ireplace('{value}', $data['BlocksBreaked'], $this->lang['Player']['StatBlocksBreakCount']));
