@@ -474,6 +474,7 @@ class StatsPE extends PluginBase implements Listener
                 if($fstat['Enabled']){
                     if(strtolower($this->getConfig()->get('Provider')) == 'json'){
                         $info = $this->getStats($player, 'JSON', 'all');
+                        $timediff = date_diff(new \DateTime($info['FirstJoin']), new \DateTime(date('Y-m-d H:i:s')));
                         $text['PlayerName'] = TF::GOLD.str_ireplace('{value}', $info['PlayerName'], $this->getMessages('Player')['StatsFor']);
                         foreach($fstat['Stats'] as $stat){
                             if($stat['Enabled']){
@@ -620,15 +621,13 @@ class StatsPE extends PluginBase implements Listener
         if($provider == 'json'){
           $info = $this->getStats($player->getName(), 'JSON', 'all');
           $info['DeathCount']++;
-          $this->saveData($player, $data);
+          $this->saveData($player, $info);
           if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
               if($damagecause->getDamager() instanceof Player){
                   $killer = $damagecause->getDamager();
                   $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
-                  $kdata = array(
-                      'KillCount' => $kinfo['KillCount'] + 1,
-                  );
-                  $this->saveData($killer, $kdata);
+                  $kinfo['KillCount']++;
+                  $this->saveData($killer, $kinfo);
                 }
             }
         }elseif($provider == 'mysql'){
