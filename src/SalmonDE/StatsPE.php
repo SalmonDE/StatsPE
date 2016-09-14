@@ -33,6 +33,7 @@ class StatsPE extends PluginBase implements Listener
 {
 
     public function onEnable(){
+      $this->getServer()->getScheduler()->scheduleAsyncTask(new CheckVersionTask($this));
       @mkdir($this->getDataFolder());
       $this->saveResource('config.yml');
       if(!file_exists($this->getDataFolder().'messages.ini')){
@@ -103,7 +104,6 @@ class StatsPE extends PluginBase implements Listener
             $this->getLogger()->critical($this->getMessages('MySQL')['ProviderInvalid'].$provider);
         }
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        $this->getServer()->getScheduler()->scheduleAsyncTask(new CheckVersionTask($this));
     }
 
     public function getMessages($category = false, $line = false){

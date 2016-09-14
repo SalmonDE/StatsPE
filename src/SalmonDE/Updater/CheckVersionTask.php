@@ -26,7 +26,7 @@ class CheckVersionTask extends AsyncTask
                 $this->setResult($nversion);
             }
         }else{
-            $this->setResult('Emtpy');
+            $this->setResult('Empty');
         }
    }
 
