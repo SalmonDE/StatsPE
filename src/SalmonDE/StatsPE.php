@@ -503,6 +503,9 @@ class StatsPE extends PluginBase implements Listener
         }
     }
 
+    /**
+     * @priority LOWEST
+     */
     public function onJoin(PlayerJoinEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
@@ -528,7 +531,7 @@ class StatsPE extends PluginBase implements Listener
                 $this->saveData($player, $info);
             }else{
                 $fp = date('Y-m-d H:i:s');
-                $data = array(
+                $data = [
                       'PlayerName' => $pn,
                       'Online' => $this->getMessages('Player')['StatYes'],
                       'ClientID' => $cid,
@@ -549,11 +552,11 @@ class StatsPE extends PluginBase implements Listener
                       'EatCount' => '0',
                       'CraftCount' => '0',
                       'DroppedItems' => '0'
-                );
+                ];
                 $this->saveData($player, $data);
             }
         }elseif($provider == 'mysql'){
-            $stats = array(
+            $stats = [
                 '1' => [
                     'Stat' => 'PlayerName',
                     'Type' => 'Normal',
@@ -594,7 +597,7 @@ class StatsPE extends PluginBase implements Listener
                     'Type' => 'Count',
                     'Data' => 1
                 ]
-            );
+            ];
             foreach($stats as $stat){
                 $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, $stat['Stat'], $stat['Type'], $stat['Data']));
             }
@@ -602,6 +605,9 @@ class StatsPE extends PluginBase implements Listener
         $this->spawnFloatingStats(false, $player, $player);
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
         $provider = strtolower($this->getConfig()->get('Provider'));
@@ -615,136 +621,183 @@ class StatsPE extends PluginBase implements Listener
     }
 
     public function onDeath(PlayerDeathEvent $event){
-        $player = $event->getPlayer();
-        $damagecause = $player->getLastDamageCause();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-          $info = $this->getStats($player->getName(), 'JSON', 'all');
-          $info['DeathCount']++;
-          $this->saveData($player, $info);
-          if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
-              if($damagecause->getDamager() instanceof Player){
-                  $killer = $damagecause->getDamager();
-                  $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
-                  $kinfo['KillCount']++;
-                  $this->saveData($killer, $kinfo);
+        if(!$event->isCancelled()){
+            $player = $event->getPlayer();
+            $damagecause = $player->getLastDamageCause();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['DeathCount']++;
+                $this->saveData($player, $info);
+                if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
+                    if($damagecause->getDamager() instanceof Player){
+                        $killer = $damagecause->getDamager();
+                        $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
+                        $kinfo['KillCount']++;
+                        $this->saveData($killer, $kinfo);
+                    }
                 }
-            }
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DeathCount', 'Count', '1'));
-            if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
-                if($damagecause->getDamager() instanceof Player){
-                    $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($damagecause->getDamager(), $this, 'KillCount', 'Count', '1'));
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DeathCount', 'Count', '1'));
+                if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
+                    if($damagecause->getDamager() instanceof Player){
+                        $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($damagecause->getDamager(), $this, 'KillCount', 'Count', '1'));
+                    }
                 }
             }
         }
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onKick(PlayerKickEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['KickCount']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'KickCount', 'Count', '1'));
+        if(!$event->isCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['KickCount']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'KickCount', 'Count', '1'));
+            }
         }
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onBlockBreak(BlockBreakEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['BlocksBreaked']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksBreaked', 'Count', '1'));
+        if(!$event->isCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['BlocksBreaked']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksBreaked', 'Count', '1'));
+            }
         }
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onBlockPlace(BlockPlaceEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['BlocksPlaced']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksPlaced', 'Count', '1'));
+        if(!$event->setCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['BlocksPlaced']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'BlocksPlaced', 'Count', '1'));
+            }
         }
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onChat(PlayerChatEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['ChatMessages']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'ChatMessages', 'Count', '1'));
+        if(!$event->isCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['ChatMessages']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'ChatMessages', 'Count', '1'));
+            }
         }
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onFish(PlayerFishEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['FishCount']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'FishCount', 'Count', '1'));
+        if(!$event->setCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['FishCount']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'FishCount', 'Count', '1'));
+            }
         }
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onBedEnter(PlayerBedEnterEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['EnterBedCount']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EnterBedCount', 'Count', '1'));
+        if(!$event->setCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['EnterBedCount']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EnterBedCount', 'Count', '1'));
+            }
         }
     }
 
-    public function onConsumeItem(PlayerItemConsumeEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['EatCount']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EatCount', 'Count', '1'));
+  /**
+    * @priority LOWEST
+    */
+    public function onItemConsume(PlayerItemConsumeEvent $event){
+        if(!$event->isCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['EatCount']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'EatCount', 'Count', '1'));
+            }
         }
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onCraft(CraftItemEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['CraftCount']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'CraftCount', 'Count', '1'));
+        if(!$event->isCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['CraftCount']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'CraftCount', 'Count', '1'));
+            }
         }
     }
 
+  /**
+    * @priority LOWEST
+    */
     public function onItemDrop(PlayerDropItemEvent $event){
-        $player = $event->getPlayer();
-        $provider = strtolower($this->getConfig()->get('Provider'));
-        if($provider == 'json'){
-            $info = $this->getStats($player->getName(), 'JSON', 'all');
-            $info['DroppedItems']++;
-            $this->saveData($player, $info);
-        }elseif($provider == 'mysql'){
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DroppedItems', 'Count', 1));
+        if(!$event->isCancelled()){
+            $player = $event->getPlayer();
+            $provider = strtolower($this->getConfig()->get('Provider'));
+            if($provider == 'json'){
+                $info = $this->getStats($player->getName(), 'JSON', 'all');
+                $info['DroppedItems']++;
+                $this->saveData($player, $info);
+            }elseif($provider == 'mysql'){
+                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DroppedItems', 'Count', 1));
+            }
         }
     }
 
