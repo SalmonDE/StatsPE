@@ -621,28 +621,26 @@ class StatsPE extends PluginBase implements Listener
     }
 
     public function onDeath(PlayerDeathEvent $event){
-        if(!$event->isCancelled()){
-            $player = $event->getPlayer();
-            $damagecause = $player->getLastDamageCause();
-            $provider = strtolower($this->getConfig()->get('Provider'));
-            if($provider == 'json'){
-                $info = $this->getStats($player->getName(), 'JSON', 'all');
-                $info['DeathCount']++;
-                $this->saveData($player, $info);
-                if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
-                    if($damagecause->getDamager() instanceof Player){
-                        $killer = $damagecause->getDamager();
-                        $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
-                        $kinfo['KillCount']++;
-                        $this->saveData($killer, $kinfo);
-                    }
+        $player = $event->getPlayer();
+        $damagecause = $player->getLastDamageCause();
+        $provider = strtolower($this->getConfig()->get('Provider'));
+        if($provider == 'json'){
+            $info = $this->getStats($player->getName(), 'JSON', 'all');
+            $info['DeathCount']++;
+            $this->saveData($player, $info);
+            if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
+                if($damagecause->getDamager() instanceof Player){
+                    $killer = $damagecause->getDamager();
+                    $kinfo = $this->getStats($killer->getName(), 'JSON', 'all');
+                    $kinfo['KillCount']++;
+                    $this->saveData($killer, $kinfo);
                 }
-            }elseif($provider == 'mysql'){
-                $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DeathCount', 'Count', '1'));
-                if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
-                    if($damagecause->getDamager() instanceof Player){
-                        $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($damagecause->getDamager(), $this, 'KillCount', 'Count', '1'));
-                    }
+            }
+        }elseif($provider == 'mysql'){
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($player, $this, 'DeathCount', 'Count', '1'));
+            if(method_exists($damagecause, 'getDamager')){ //TODO:remHack&&replWbetrrImpl
+                if($damagecause->getDamager() instanceof Player){
+                    $this->getServer()->getScheduler()->scheduleAsyncTask(new SaveDataTask($damagecause->getDamager(), $this, 'KillCount', 'Count', '1'));
                 }
             }
         }
