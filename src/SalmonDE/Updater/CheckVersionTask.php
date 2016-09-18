@@ -17,8 +17,9 @@ class CheckVersionTask extends AsyncTask
     }
 
     public function onRun(){
-        $url = Utils::getURL($this->website.'MCPE-Plugins/Updater/Updater.php?plugin='.$this->name.'&type=version', 20);
-        $nversion = str_replace([' ', "\r", "\n"], '', $url);
+        $url = json_decode(Utils::getURL($this->website.'MCPE-Plugins/Updater/Updater.php?plugin='.$this->name.'&new=1', 20), true);
+        $nversion = $url['version'];
+        $nversion;
         if($nversion){
             if($this->cversion == $nversion){
                 $this->setResult(false);
@@ -39,7 +40,7 @@ class CheckVersionTask extends AsyncTask
             $server->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::GREEN.'New Version: '.$this->getResult());
             if($this->autoupdate){
                 $server->getPluginManager()->getPlugin($this->name)->getLogger()->alert(TF::AQUA.'Updating to '.$this->getResult().' ...');
-                $server->getPluginManager()->getPlugin($this->name)->update($this->getResult());
+                $server->getPluginManager()->getPlugin($this->name)->update();
             }
         }else{
             $server->getPluginManager()->getPlugin($this->name)->getLogger()->notice(TF::GREEN.'No Update available!');
