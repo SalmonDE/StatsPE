@@ -684,7 +684,7 @@ class StatsPE extends PluginBase implements Listener
     * @priority LOWEST
     */
     public function onBlockPlace(BlockPlaceEvent $event){
-        if(!$event->setCancelled()){
+        if(!$event->isCancelled()){
             $player = $event->getPlayer();
             $provider = strtolower($this->getConfig()->get('Provider'));
             if($provider == 'json'){
@@ -718,7 +718,7 @@ class StatsPE extends PluginBase implements Listener
     * @priority LOWEST
     */
     public function onFish(PlayerFishEvent $event){
-        if(!$event->setCancelled()){
+        if(!$event->isCancelled()){
             $player = $event->getPlayer();
             $provider = strtolower($this->getConfig()->get('Provider'));
             if($provider == 'json'){
@@ -735,7 +735,7 @@ class StatsPE extends PluginBase implements Listener
     * @priority LOWEST
     */
     public function onBedEnter(PlayerBedEnterEvent $event){
-        if(!$event->setCancelled()){
+        if(!$event->isCancelled()){
             $player = $event->getPlayer();
             $provider = strtolower($this->getConfig()->get('Provider'));
             if($provider == 'json'){
