@@ -8,7 +8,8 @@
 - [ ] Other: (Software)
 
 #### **Version of StatsPE:**
-- [ ] 2.3.5
+###### Do /version StatsPE to check
+
 
 #### **Data Provider:**
 - [ ] MySQL 
