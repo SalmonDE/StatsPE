@@ -66,5 +66,5 @@ EnterBedCount     | How often the player used a bed               | 2           
 EatCount          | How often the player consumed an item         | 13                                 | Normal
 CraftCount        | How often the player crafted something        | 6                                  | Normal
 Items dropped     | How many items the player dropped             | 294                                | Normal
-Money [EconomyAPI, PocketMoney] | How much money person has (?)   | $4221                              | Normal
+Money [EconomyAPI, PocketMoney] | How much money person has       | $4221                              | Normal
 --------------------------------------------------------------------------------
