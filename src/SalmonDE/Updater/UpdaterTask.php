@@ -19,22 +19,25 @@ class UpdaterTask extends PluginTask
 
     public function onRun($currenttick){
         $file = Utils::getURL($this->url);
-        if(md5($file) == $this->md5hash){
-            unlink('plugins/'.$this->name.'.phar');
-            file_put_contents('plugins/'.$this->name.'.phar', $file);
-            if(!file_exists('plugins/'.$this->name.'.phar')){
-                $this->getOwner()->getLogger()->error('Failed to download the update!');
-            }else{
-                $this->getOwner()->getServer()->broadcastMessage(TF::RED.TF::BOLD.$this->getOwner()->getConfig()->get('Shutdown-Message'));
-                $this->getOwner()->getServer()->broadcastTip(TF::RED.TF::BOLD.$this->getOwner()->getConfig()->get('Shutdown-Message'));
-                foreach(glob("plugins/".$this->name."*.phar") as $phar){
+        if($file){
+            if(md5($file) == $this->md5hash){
+                foreach(glob("plugins/*".$this->name."*.phar") as $phar){
                     unlink($phar);
                 }
-                sleep(7);
-                $this->getOwner()->getServer()->shutdown();
+                file_put_contents('plugins/'.$this->name.'.phar', $file);
+                if(!file_exists('plugins/'.$this->name.'.phar')){
+                        $this->getOwner()->getLogger()->error('Failed to download the update!');
+                }else{
+                    $this->getOwner()->getServer()->broadcastMessage(TF::RED.TF::BOLD.'Server will restart due to a software update!');
+                    $this->getOwner()->getServer()->broadcastTip(TF::RED.TF::BOLD.'Server will restart due to a software update!');
+                    sleep(7);
+                    $this->getOwner()->getServer()->shutdown();
+                }
+            }else{
+                $this->getOwner()->getLogger()->error('md5 hash of the phar was incorrect!');
             }
         }else{
-            $this->owner->getLogger()->error('md5 hash of the phar was incorrect');
+            $this->getOwner()->getLogger()->error('Error while downloading new phar!');
         }
     }
 }
