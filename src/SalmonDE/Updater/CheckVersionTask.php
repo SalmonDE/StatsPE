@@ -19,7 +19,6 @@ class CheckVersionTask extends AsyncTask
     public function onRun(){
         $url = json_decode(Utils::getURL($this->website.'MCPE-Plugins/Updater/Updater.php?plugin='.$this->name.'&new=1', 20), true);
         $nversion = $url['version'];
-        $nversion;
         if($nversion){
             if($this->cversion == $nversion){
                 $this->setResult(false);
