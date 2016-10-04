@@ -449,7 +449,7 @@ class StatsPE extends PluginBase implements Listener
                                 if($stat['Enabled']){
                                     if($stat['Name'] == 'K/D'){
                                         if($info['DeathCount'] > 0){
-                                            $text['K/D'] = TF::AQUA.str_ireplace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['StatK/D']);
+                                            $text['K/D'] = TF::AQUA.str_ireplace('{value}', round($info['KillCount'] / $info['DeathCount'], 2), $this->getMessages('Player')['StatK/D']);
                                         }
                                     }elseif($stat['Name'] == 'OnlineTime'){
                                         if($info['Online'] == $this->getMessages('Player')['StatYes']){
@@ -461,7 +461,7 @@ class StatsPE extends PluginBase implements Listener
                                 }
                             }
                             $text = implode("\n", $text);
-                            if($this->getServer()->isLevelLoaded($fstat['Position']['Level'])){
+                            if($this->getServer()->getLevelByName($fstat['Position']['Level'])){
                                 $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text), [$target]);
                             }
                         }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
@@ -480,7 +480,7 @@ class StatsPE extends PluginBase implements Listener
                             if($stat['Enabled']){
                                 if($stat['Name'] == 'K/D'){
                                     if($info['DeathCount'] > 0){
-                                        $text['K/D'] = TF::AQUA.str_ireplace('{value}', $info['KillCount'] / $info['DeathCount'], $this->getMessages('Player')['StatK/D']);
+                                        $text['K/D'] = TF::AQUA.str_ireplace('{value}', round($info['KillCount'] / $info['DeathCount'], 2), $this->getMessages('Player')['StatK/D']);
                                     }
                                 }elseif($stat['Name'] == 'OnlineTime'){
                                     if($info['Online'] == $this->getMessages('Player')['StatYes']){
@@ -492,7 +492,7 @@ class StatsPE extends PluginBase implements Listener
                             }
                         }
                         $text = implode("\n", $text);
-                        if($this->getServer()->isLevelLoaded($fstat['Position']['Level'])){
+                        if($this->getServer()->getLevelByName($fstat['Position']['Level'])){
                             $this->getServer()->getLevelByName($fstat['Position']['Level'])->addparticle(new FloatingTextParticle(new Vector3($fstat['Position']['X'], $fstat['Position']['Y'], $fstat['Position']['Z']), '', $text), [$target]);
                         }
                     }elseif(strtolower($this->getConfig()->get('Provider')) == 'mysql'){
