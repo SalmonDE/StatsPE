@@ -803,3 +803,4 @@ class StatsPE extends PluginBase implements Listener
         $this->getServer()->getScheduler()->scheduleTask(new UpdaterTask($this, $this->getDescription()->getVersion()));
     }
 }
+?>
