@@ -150,10 +150,10 @@ class StatsPE extends PluginBase implements Listener
                                 'Name' => $args[1],
                                 'Enabled' => true,
                                 'Position' => [
-                                    'X' => $sender->getX(),
-                                    'Y' => $sender->getY() + 1,
-                                    'Z' => $sender->getZ(),
-                                    'Level' => $sender->getLevel()->getName()
+                                    'X' => $player->getX(),
+                                    'Y' => $player->getY() + 1,
+                                    'Z' => $player->getZ(),
+                                    'Level' => $player->getLevel()->getName()
                                 ],
                                 'PlayerName' => false,
                                 'Stats' => [
