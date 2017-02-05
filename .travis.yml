@@ -21,7 +21,7 @@ before_script:
  - cp -rf SalmonDE/StatsPE/build.php PocketMine-MP/
  - cp -rf SalmonDE/StatsPE/syntaxcheck.php PocketMine-MP/
  - cd PocketMine-MP/plugins/
- - wget -O DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
+ - wget -O DevTools.phar https://github.com/pmmp/PocketMine-DevTools/releases/download/v1.11.2/PocketMine-DevTools_v1.11.2.phar
  - cd /home/travis/build/PocketMine-MP
  - php syntaxcheck.php
 
