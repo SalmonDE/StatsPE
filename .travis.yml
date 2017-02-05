@@ -14,12 +14,12 @@ before_script:
  - echo | pecl install channel://pecl.php.net/yaml-2.0.0RC8
  - git clone --depth=50 --branch=php7 https://github.com/ClearSkyTeam/ClearSky.git
  - mkdir -p ClearSky/plugins/StatsPE-src
- - cp -rf SalmonGER/StatsPE/src ClearSky/plugins/StatsPE-src
- - cp -rf SalmonGER/StatsPE/resources ClearSky/plugins/StatsPE-src
- - cp -rf SalmonGER/StatsPE/plugin.yml ClearSky/plugins/StatsPE-src
- - cp -rf SalmonGER/StatsPE/LICENSE ClearSky/plugins/StatsPE-src
- - cp -rf SalmonGER/StatsPE/build.php ClearSky/
- - cp -rf SalmonGER/StatsPE/syntaxcheck.php ClearSky/
+ - cp -rf SalmonDE/StatsPE/src ClearSky/plugins/StatsPE-src
+ - cp -rf SalmonDE/StatsPE/resources ClearSky/plugins/StatsPE-src
+ - cp -rf SalmonDE/StatsPE/plugin.yml ClearSky/plugins/StatsPE-src
+ - cp -rf SalmonDE/StatsPE/LICENSE ClearSky/plugins/StatsPE-src
+ - cp -rf SalmonDE/StatsPE/build.php ClearSky/
+ - cp -rf SalmonDE/StatsPE/syntaxcheck.php ClearSky/
  - cd ClearSky/plugins/
  - wget -O DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
  - cd /home/travis/build/ClearSky

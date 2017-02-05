@@ -1,6 +1,6 @@
 ![Alt text](https://salmonde.de/MCPE-Plugins/Pictures/StatsPE/StatsPE.png "StatsPE Icon")
 
-# StatsPE - Advanced Stats Plugin [![Travis-CI](https://travis-ci.org/SalmonGER/StatsPE.svg?branch=master)](https://travis-ci.org/SalmonGER/StatsPE)
+# StatsPE - Advanced Stats Plugin [![Travis-CI](https://travis-ci.org/SalmonDE/StatsPE.svg?branch=master)](https://travis-ci.org/SalmonDE/StatsPE)
 
 ## Information
 
@@ -8,7 +8,7 @@
 
 **_Installation_** | **_StatsPE_**
 ------------------ | -------------------------------------------------------------------------------------------------------------------
-Step 1             | Download the plugin [here](https://github.com/SalmonGER/StatsPE/releases/latest/) to get the latest pre-built phar!
+Step 1             | Download the plugin [here](https://github.com/SalmonDE/StatsPE/releases/latest/) to get the latest pre-built phar!
 Step 2             | After it has downloaded, drag the plugin into your **plugins** folder of your server files.
 Step 3             | Start the server, and StatsPE has been added to your server!
 _Optional_         | If you want to disable a statistic from showing on `/stats [player]`, replace `true` with `false` in the config.
@@ -17,8 +17,8 @@ _Optional_         | If you want to disable a statistic from showing on `/stats 
 
 **_MySQL Configuration_** | **_Using MySQL with StatsPE_**
 ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------
-Step 4                    | Put your MySQL Settings in [these](https://github.com/SalmonGER/StatsPE/blob/master/resources/config.yml#L41-L45) lines.
-Step 5                    | Change the data providers from JSON to MySQL in [this](https://github.com/SalmonGER/StatsPE/blob/master/resources/config.yml#L38) line.
+Step 4                    | Put your MySQL Settings in [these](https://github.com/SalmonDE/StatsPE/blob/master/resources/config.yml#L41-L45) lines.
+Step 5                    | Change the data providers from JSON to MySQL in [this](https://github.com/SalmonDE/StatsPE/blob/master/resources/config.yml#L38) line.
 
 --------------------------------------------------------------------------------
 
