@@ -1,10 +1,10 @@
 ### ***General***
 
 #### **Server Software:**
-- [ ] Pocketmine-MP
+- [ ] PocketMine-MP (PMMP)
+- [ ] CSPMMP
 - [ ] Genisys
-- [ ] ClearSky
-- [ ] ImagicalMine
+- [ ] Tesseract
 - [ ] Other: (Software)
 
 #### **Version of StatsPE:**
