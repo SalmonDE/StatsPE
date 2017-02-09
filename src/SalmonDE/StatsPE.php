@@ -800,8 +800,4 @@ class StatsPE extends PluginBase implements Listener
             }
         }
     }
-
-    public function update(){
-        $this->getServer()->getScheduler()->scheduleTask(new UpdaterTask($this, $this->getDescription()->getVersion()));
-    }
 }
