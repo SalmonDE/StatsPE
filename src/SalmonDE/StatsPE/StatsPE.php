@@ -1,5 +1,5 @@
 <?php
-namespace SalmonDE;
+namespace SalmonDE\StatsPE;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
