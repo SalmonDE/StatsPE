@@ -1,5 +1,5 @@
 <?php
-namespace SalmonDE\Tasks;
+namespace SalmonDE\StatsPE\Tasks;
 
 use pocketmine\Player;
 use pocketmine\scheduler\AsyncTask;

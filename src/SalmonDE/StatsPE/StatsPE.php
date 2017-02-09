@@ -22,10 +22,10 @@ use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\math\Vector3;
-use SalmonDE\Tasks\FixTableTask;
-use SalmonDE\Tasks\SaveDataTask;
-use SalmonDE\Tasks\ShowStatsTask;
-use SalmonDE\Tasks\SpawnFloatStatTask;
+use SalmonDE\StatsPE\Tasks\FixTableTask;
+use SalmonDE\StatsPE\Tasks\SaveDataTask;
+use SalmonDE\StatsPE\Tasks\ShowStatsTask;
+use SalmonDE\StatsPE\Tasks\SpawnFloatStatTask;
 
 class StatsPE extends PluginBase implements Listener
 {
