@@ -10,7 +10,7 @@ before_script:
  - cd /home/travis/build/
  - phpenv config-rm xdebug.ini
  - pecl install channel://pecl.php.net/pthreads-3.1.6
- - pecl install channel://pecl.php.net/weakref-0.3.2
+ - pecl install channel://pecl.php.net/weakref-0.3.3
  - echo | pecl install channel://pecl.php.net/yaml-2.0.0
  - git clone --recursive --depth=50 --branch=master https://github.com/pmmp/PocketMine-MP.git
  - mkdir -p PocketMine-MP/plugins/StatsPE-src
@@ -19,13 +19,13 @@ before_script:
  - cp -rf SalmonDE/StatsPE/plugin.yml PocketMine-MP/plugins/StatsPE-src
  - cp -rf SalmonDE/StatsPE/LICENSE PocketMine-MP/plugins/StatsPE-src
  - cp -rf SalmonDE/StatsPE/build.php PocketMine-MP/
- - cp -rf SalmonDE/StatsPE/syntaxcheck.php PocketMine-MP/
+ - cp -rf SalmonDE/StatsPE/check.php PocketMine-MP/
  - cd PocketMine-MP/plugins/
  - wget -O DevTools.phar https://github.com/pmmp/PocketMine-DevTools/releases/download/v1.11.2/PocketMine-DevTools_v1.11.2.phar
  - cd /home/travis/build/PocketMine-MP
- - php syntaxcheck.php
 
 script:
+ - php check.php
  - php build.php
 
 deploy:
