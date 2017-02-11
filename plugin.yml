@@ -1,5 +1,5 @@
 name: StatsPE
-version: 2.4.10
+version: 2.4.11
 api: [2.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3]
 main: SalmonDE\StatsPE\StatsPE
 description: Stats Plugin for your Server!
