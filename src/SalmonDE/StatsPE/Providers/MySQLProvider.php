@@ -4,11 +4,17 @@ namespace SalmonDE\StatsPE\Providers;
 class MySQLProvider implements DataProvider
 {
 
-    public function __construct($host, $username, $password, $db){
+    private $entries = [];
+
+    public function __construct(bool $strict, $host, $username, $password, $db){
         $this->initialize(['host' => $host, 'username' => $username, 'password' => $password, 'db' => $db]);
     }
 
-    public function initialize(array $data){
+    public function initialize(array $data, bool $strict){
+
+    }
+
+    public function addPlayer(\pocketmine\Player $player){
 
     }
 
@@ -16,7 +22,7 @@ class MySQLProvider implements DataProvider
 
     }
 
-    public function getCompleteData() : array{
+    public function getAllData() : array{
 
     }
 
@@ -32,7 +38,21 @@ class MySQLProvider implements DataProvider
 
     }
 
-    public function validEntry(string $entry) : bool{
-
+    public function getEntries() : array{
+        return $this->entries;
     }
+
+    public function validEntry(string $entry) : bool{
+        if(isset($this->entries[$entry])){
+            return true;
+        }
+        Base::getInstance()->getLogger()->warning('Invalid entry: "'.$entry.'" given in "'.self::class.'"!');
+        return false;
+    }
+
+    public function isStrict() : bool{
+        return $this->strict === true;
+    }
+
+    public function saveAll(){}
 }
