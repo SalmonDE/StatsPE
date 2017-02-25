@@ -90,10 +90,6 @@ class JSONProvider implements DataProvider
         return false;
     }
 
-    public function isStrict() : bool{
-        return $this->strict === true;
-    }
-
     public function saveAll(){
         $this->dataConfig->save();
     }

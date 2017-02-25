@@ -27,7 +27,5 @@ interface DataProvider
 
     public function validEntry(string $entry) : bool;
 
-    public function isStrict() : bool;
-
     public function saveAll();
 }

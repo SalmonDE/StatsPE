@@ -50,9 +50,5 @@ class MySQLProvider implements DataProvider
         return false;
     }
 
-    public function isStrict() : bool{
-        return $this->strict === true;
-    }
-
     public function saveAll(){}
 }
