@@ -1,17 +1,7 @@
 # Configuration file for StatsPE
 
-# Supported Languages:
-# If you are changing language packs, delete messages.ini after setting to your preferred language.
-# English (English) = eng,
-# German (Deutsch) = deu,
-# Romanian (Romana) = rom,
-# Dutch (Nederlands) = nld,
-# Russian (Russia) = rus
-Language: eng
-
 # Enable Stats: true/false
 Stats:
-  Online: true
   FirstJoin: true
   LastJoin: true
   JoinCount: true
@@ -23,23 +13,18 @@ Stats:
   BlockBreakCount: true
   BlockPlaceCount: true
   ChatCount: true
-  FishCount: true
   BedEnterCount: true
   EatCount: true
   CraftCount: true
   DroppedItems: true
-
-# Enable/Disable the Auto-Updater Feature.
-Auto-Update: true
-Shutdown-Message: "Restarting Server due to a software update!"
-
-# Set data provider for StatsPE
-# Available Providers: MySQL, JSON
-Provider: JSON
-
-# MySQL Settings (Only configure this if you are going to use MySQL data provider)
+# Data provider for StatsPE
+# It can save it's data in these providers:
+# mysql, json
+Provider: json
 MySQL:
-  host: "MySQL.example.net:3306"
-  user: "ExampleUser"
-  password: "12345678"
-  database: "StatsPE"
+    host: "example.net:3306"
+    username: "ExampleUser"
+    password: "123456789"
+    database: "StatsPE"
+# Enables self updating of the plugin
+Auto-Update: true

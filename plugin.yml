@@ -1,23 +1,9 @@
 name: StatsPE
-version: 2.4.11
-api: [2.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3]
-main: SalmonDE\StatsPE\StatsPE
-description: Stats Plugin for your Server!
+version: 2.5.0
+api: [2.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4]
+main: SalmonDE\StatsPE\Base
+description: Playerstatistics for your server!
 author: SalmonDE
-authors: [Aericio, robske_110, XenialDan]
-website: https://salmonde.de/
-commands:
- stats:
-  description: Shows the Stats of a user.
-  usage: /stats [player]
-  permission: statspe.cmd.stats
- floatingstats:
-  description: Adds a floating text with stats on your current position
-  usage: /floatingstats <add|list|remove> [name]
-  permission: statspe.cmd.floatingstats
- fixtable:
-   description: Tries to add or modify columns to a existing table
-   permission: statspe.cmd.fixtable
 permissions:
  statspe:
   description: Main permission of StatsPE.
