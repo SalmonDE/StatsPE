@@ -28,18 +28,18 @@ Step 5                    | Change the data providers from JSON to MySQL in [thi
 /stats [player]              | Shows the player's stats along with advanced info, such as their ClientID and IP addresses | statspe.cmd.stats.advancedinfo
 /floatingstats add [name]    | Adds a floatingstat to your current person with a name specified by you                    | statspe.cmd.floatingstats
 /floatingstats list          | Lists all floatingstats on the server                                                      | statspe.cmd.floatingstats
-/floatingstats remove [name] | Removes a floatingstat                                                                  | statspe.cmd.floatingstats
+/floatingstats remove [name] | Removes a floatingstats                                                                    | statspe.cmd.floatingstats
 /fixtable                    | Tries to add or modify columns to an existing table (MySQL only!)                          | statspe.cmd.fixtable
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
-**FloatingStat Setting** | **Description**                                                                                       | **Example**
+**FloatingStats Setting**| **Description**                                                                                       | **Example**
 ------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------
-Name                     | The name of the floating stat, specified by the creator                                               | Spawn
-Enabled                  | Specifies if the floating stat should be enabled (must be true or false)                              | false
+Name                     | The name of the floatingstats, specified by the creator                                               | Spawn
+Enabled                  | Specifies if the floatingstats should be enabled (must be true or false)                              | false
 Position                 | Contains information about the position of the floating stat (Array)                                  | X => '100' Y => '50' Z => '400' Level => 'Lobby'
-PlayerName               | If NOT false the associated floating stat will show the stats of the player specified in this setting | SalericioDE
-Stats                    | Contains settings to disable or enable single statistics for the floatingstat (Array)                 | KillCount => true DeathCount => false
+PlayerName               | If NOT false the associated floatingstats will show the stats of the player specified in this setting | SalericioDE
+Stats                    | Contains settings to disable or enable single statistics for the floatingstats (Array)                 | KillCount => true DeathCount => false
 
 --------------------------------------------------------------------------------
 
