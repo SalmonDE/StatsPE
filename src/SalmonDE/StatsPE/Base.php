@@ -33,6 +33,11 @@ class Base extends \pocketmine\plugin\PluginBase
         }
         $msgConfig = new Config($this->getDataFolder().'messages.yml', Config::YAML);
         $this->messages = $msgConfig->getAll();
+        $this->registerCommands();
+    }
+
+    private function registerCommands(){
+        $this->getServer()->getCommandMap()->register('StatsPE', new Commands\StatsCommand($this));
     }
 
     public function getInstance() : Base{
