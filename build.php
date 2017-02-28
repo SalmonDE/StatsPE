@@ -19,6 +19,10 @@ if(count(glob('plugins/DevTools/StatsPE*.phar')) === 0){
 }else{
     $fn = glob('plugins/DevTools/StatsPE*');
     rename($fn[0], 'plugins/DevTools/StatsPE.phar');
+    $phar = new Phar(__DIR__.'/plugins/DevTools/StatsPE.phar');
+    $phar->startBuffering();
+    $phar->compress(Phar::GZ);
+    $phar->stopBuffering();
     echo "StatsPE.phar created!\n";
     exit(0);
 }
