@@ -4,7 +4,7 @@ namespace SalmonDE\StatsPE\Providers;
 use pocketmine\utils\Config;
 use SalmonDE\StatsPE\Base;
 
-class JSONProvider implements DataProvider
+class JSONProvider implements DataProvider //The whole entry thing must be rewritten
 {
     private $entries = [];
     private $dataConfig = null;
@@ -54,19 +54,19 @@ class JSONProvider implements DataProvider
         return $this->dataConfig->getAll();
     }
 
-    public function saveData(string $player, string $entry, $value){
+    public function saveData(string $player, Entry $entry, $value){
         if($this->validEntry($entry)){
             $this->dataConfig->setNested($player.$entry, $value);
         }
     }
 
-    public function addEntry(string $entry, int $expectedType, $default){
+    public function addEntry(Entry $entry){
         if(!$this->validEntry($entry, true)){
             $this->entries[$entry] = ['type' => $expectedType, 'default' => $default];
         }
     }
 
-    public function removeEntry(string $entry){
+    public function removeEntry(Entry $entry){
         if($this->validEntry($entry)){
             unset($this->entries[$entry]);
         }
@@ -76,11 +76,11 @@ class JSONProvider implements DataProvider
         return $this->entries;
     }
 
-    public function getEntryType(string $entry) : int{
+    public function getEntryType(Entry $entry) : int{
         return $this->entries[$entry]['type'];
     }
 
-    public function validEntry(string $entry, $silence = false) : bool{
+    public function validEntry(Entry $entry, $silence = false) : bool{
         if(isset($this->entries[$entry])){
             return true;
         }

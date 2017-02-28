@@ -4,11 +4,6 @@ namespace SalmonDE\StatsPE\Providers;
 interface DataProvider
 {
 
-    const INT = 0;
-    const FLOAT = 1;
-    const STRING = 2;
-    const BOOL = 3;
-
     public function initialize(array $data);
 
     public function addPlayer(\pocketmine\Player $player);
