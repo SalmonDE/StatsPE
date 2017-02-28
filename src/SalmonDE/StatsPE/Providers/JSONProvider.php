@@ -4,7 +4,7 @@ namespace SalmonDE\StatsPE\Providers;
 use pocketmine\utils\Config;
 use SalmonDE\StatsPE\Base;
 
-class JSONProvider implements DataProvider //The whole entry thing must be rewritten
+class JSONProvider implements DataProvider
 {
     private $entries = [];
     private $dataConfig = null;
@@ -18,35 +18,22 @@ class JSONProvider implements DataProvider //The whole entry thing must be rewri
     }
 
     public function addPlayer(\pocketmine\Player $player){
-        if(!is_array($this->dataConfig->get($n = strtolower($player->getName())))){
-            foreach($this->entries as $entry => $data){
-                $this->saveData($n, $entry, $data['default']);
+        if(!is_array($this->dataConfig->get($player->getName()))){
+            foreach($this->entries as $entry){
+                $this->saveData($player->getName(), $entry->getName(), $entry->getDefault());
             }
-            $this->saveAll();
+            $this->saveAll(true);
         }
     }
 
-    public function getData(string $player, string $entry){
-        if($this->validEntry($entry)){
-            $v = $this->dataConfig->getNested($player.$entry);
-            switch($this->getEntryType($entry)){
-                case 0:
-                    if(is_int($v)){
-                        break;
-                    }
-                case 1:
-                    if(is_float($v)){
-                        break;
-                    }
-                case 2:
-                    if(is_string($v)){
-                        break;
-                    }
-                default:
-                    Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry.'" in "'.self::class.'" by "'.__FUNCTION__.'"!'); // ToDo: Move this in the events
-                    throw new \Exception($msg);
+    public function getData(string $player, Entry $entry){
+        if($this->entryExists($entry)){
+            $v = $this->dataConfig->getNested(strtolower($player).$entry->getName());
+            if($entry->isValidType($v)){
+                return $v;
             }
-            return $v;
+            Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry.'" in "'.self::class.'" by "'.__FUNCTION__.'"!'); // ToDo: Move this in the events
+            throw new \Exception($msg);
         }
     }
 
@@ -55,20 +42,20 @@ class JSONProvider implements DataProvider //The whole entry thing must be rewri
     }
 
     public function saveData(string $player, Entry $entry, $value){
-        if($this->validEntry($entry)){
-            $this->dataConfig->setNested($player.$entry, $value);
+        if($this->entryExists($entry) && $entry->isValidType($value)){
+            $this->dataConfig->setNested(strtolower($player).$entry, $value);
         }
     }
 
     public function addEntry(Entry $entry){
-        if(!$this->validEntry($entry, true)){
-            $this->entries[$entry] = ['type' => $expectedType, 'default' => $default];
+        if(!$this->entryExists($entry) && $entry->isValid()){
+            $this->entries[$entry->getName()] = $entry;
         }
     }
 
     public function removeEntry(Entry $entry){
-        if($this->validEntry($entry)){
-            unset($this->entries[$entry]);
+        if($this->entryExists($entry)){
+            unset($this->entries[$entry->getName()]);
         }
     }
 
@@ -76,16 +63,9 @@ class JSONProvider implements DataProvider //The whole entry thing must be rewri
         return $this->entries;
     }
 
-    public function getEntryType(Entry $entry) : int{
-        return $this->entries[$entry]['type'];
-    }
-
-    public function validEntry(Entry $entry, $silence = false) : bool{
-        if(isset($this->entries[$entry])){
+    public function entryExists(Entry $entry) : bool{
+        if(isset($this->entries[$entry->getName()])){
             return true;
-        }
-        if(!$silence){
-            Base::getInstance()->getLogger()->warning('Invalid entry: "'.$entry.'" given in "'.self::class.'"!');
         }
         return false;
     }

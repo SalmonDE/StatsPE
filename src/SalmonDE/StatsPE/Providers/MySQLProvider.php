@@ -1,7 +1,7 @@
 <?php
 namespace SalmonDE\StatsPE\Providers;
 
-class MySQLProvider implements DataProvider
+class MySQLProvider implements DataProvider //ToDo if x changes -> save
 {
 
     private $entries = [];

@@ -8,19 +8,19 @@ interface DataProvider
 
     public function addPlayer(\pocketmine\Player $player);
 
-    public function getData(string $player, string $entry);
+    public function getData(string $player, Entry $entry);
 
     public function getAllData() : array;
 
-    public function saveData(string $player, string $entry, $value);
+    public function saveData(string $player, Entry $entry, $value);
 
-    public function addEntry(string $entry, int $expectedType, $default);
+    public function addEntry(Entry $entry);
 
-    public function removeEntry(string $entry);
+    public function removeEntry(Entry $entry);
 
     public function getEntries() : array;
 
-    public function validEntry(string $entry) : bool;
+    public function entryExists(Entry $entry) : bool;
 
     public function saveAll();
 }
