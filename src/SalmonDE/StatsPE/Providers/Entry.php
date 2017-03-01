@@ -7,7 +7,8 @@ class Entry
     const FLOAT = 1;
     const STRING = 2;
     const ARRAY = 3;
-    const MIXED = 4;
+    const BOOL = 4;
+    const MIXED = 5;
 
     private $name;
     private $defaultValue;
@@ -44,21 +45,31 @@ class Entry
                     return true;
                 }
                 break;
+
             case self::FLOAT:
                 if(is_float($value)){
                     return true;
                 }
                 break;
+
             case self::STRING:
                 if(is_string($value)){
                     return true;
                 }
                 break;
+
             case self::ARRAY:
                 if(is_array($value)){
                     return true;
                 }
                 break;
+
+            case self::BOOL:
+                if(is_bool($value)){
+                    return true;
+                }
+                break;
+
             case self::MIXED:
                 return true;
         }

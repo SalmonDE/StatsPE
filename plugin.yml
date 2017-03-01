@@ -1,22 +1,56 @@
 name: StatsPE
-version: 2.5.0
-api: [2.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4]
+version: 3.0.0-UNSTABLE
+api: [3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4]
 main: SalmonDE\StatsPE\Base
 description: Playerstatistics for your server!
 author: SalmonDE
 permissions:
- statspe:
-  description: Main permission of StatsPE.
-  children:
-   statspe.cmd:
-    description: Main permission of the StatsPE commands.
-    children:
-     statspe.cmd.fixtable:
-       description: Permission for /fixtable.
-     statspe.cmd.floatingstats:
-      description: Permission for /floatingstats.
-     statspe.cmd.stats:
-      description: Permission for /stats.
-      default: true
-     statspe.cmd.stats.advancedinfo:
-      description: Enables advanced stats about a player for /stats.
+    statspe:
+        description: Main permission of StatsPE.
+        children:
+            statspe.cmd:
+                description: Main permission of the StatsPE commands.
+                children:
+                statspe.cmd.floatingstats:
+                    description: Permission for /floatingstats.
+                statspe.cmd.stats:
+                    description: Permission for /stats.
+                    default: true
+            statspe.entry:
+                description: Allows to see entries of the statistics
+                children:
+                    statspe.entry.ClientID:
+                    statspe.entry.LastIP:
+                    statspe.entry.UUID:
+                    statspe.entry.XBoxAuthenticated:
+                    statspe.entry.OnlineTime:
+                        default: true
+                    statspe.entry.FirstJoin:
+                        default: true
+                    statspe.entry.LastJoin:
+                        default: true
+                    statspe.entry.K/D:
+                        default: true
+                    statspe.entry.JoinCount:
+                        default: true
+                    statspe.entry.KillCount:
+                        default: true
+                    statspe.entry.DeathCount:
+                        default: true
+                    statspe.entry.KickCount:
+                    statspe.entry.BlockBreakCount:
+                        default: true
+                    statspe.entry.BlockPlaceCount:
+                        default: true
+                    statspe.entry.ChatCount:
+                        default: true
+                    statspe.entry.BedEnterCount:
+                        default: true
+                    statspe.entry.EatCount:
+                        default: true
+                    statspe.entry.CraftCount:
+                        default: true
+                    statspe.entry.DroppedItemsCount:
+                        default: true
+                    statspe.entry.BowUseCount:
+                        default: true

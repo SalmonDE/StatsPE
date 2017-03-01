@@ -6,11 +6,9 @@ interface DataProvider
 
     public function initialize(array $data);
 
-    public function addPlayer(\pocketmine\Player $player);
-
     public function getData(string $player, Entry $entry);
 
-    public function getAllData() : array;
+    public function getAllData(string $player = null);
 
     public function saveData(string $player, Entry $entry, $value);
 

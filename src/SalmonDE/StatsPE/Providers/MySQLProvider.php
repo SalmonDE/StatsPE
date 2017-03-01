@@ -27,7 +27,7 @@ class MySQLProvider implements DataProvider //ToDo if x changes -> save
     }
 
     public function saveData(string $player, string $entry, $value){
-
+        $this->changes++;
     }
 
     public function addEntry(string $entry, int $expectedType){

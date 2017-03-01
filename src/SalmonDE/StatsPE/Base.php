@@ -2,6 +2,7 @@
 namespace SalmonDE\StatsPE;
 
 use pocketmine\utils\Config;
+use SalmonDE\StatsPE\Providers\Entry;
 
 class Base extends \pocketmine\plugin\PluginBase
 {
@@ -37,7 +38,138 @@ class Base extends \pocketmine\plugin\PluginBase
         }
         $msgConfig = new Config($this->getDataFolder().'messages.yml', Config::YAML);
         $this->messages = $msgConfig->getAll();
+        $this->registerDefaultEntries();
         $this->registerCommands();
+    }
+
+    private function registerDefaultEntries(){
+        foreach($this->getConfig()->get('Stats') as $statistic => $enabled){
+            if($enabled){
+                switch($statistic){
+                    case 'ClientID':
+                        $default = 'undefined';
+                        $expectedType = Entry::STRING;
+                        $save = true;
+                        break;
+
+                    case 'LastIP':
+                        $default = 'undefined';
+                        $expectedType = Entry::STRING;
+                        $save = true;
+                        break;
+
+                    case 'UUID':
+                        $default = 'undefined';
+                        $expectedType = Entry::STRING;
+                        $save = true;
+                        break;
+
+                    case 'XBoxAuthenticated':
+                        $default = false;
+                        $expectedType = Entry::BOOL;
+                        $save = false; //Not yet
+                        break;
+
+                    case 'OnlineTime':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'FirstJoin':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = false;
+                        break;
+
+                    case 'LastJoin':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = false;
+                        break;
+
+                    case 'K/D':
+                        $default = 0.0;
+                        $expectedType = Entry::FLOAT;
+                        $save = false;
+                        break;
+
+                    case 'JoinCount':
+                        $default = 1;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'KillCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'DeathCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'KickCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'BlockBreakCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'BlockPlaceCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'ChatCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'BedEnterCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'EatCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'CraftCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'DroppedItemsCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+
+                    case 'BowUseCount':
+                        $default = 0;
+                        $expectedType = Entry::INT;
+                        $save = true;
+                        break;
+                }
+                $this->provider->addEntry(new Entry($statistic, $default, $expectedType, $save));
+            }
+        }
+        $this->provider->addEntry(new Entry('RealName', 'undefined', Entry::STRING, true));
     }
 
     private function registerCommands(){

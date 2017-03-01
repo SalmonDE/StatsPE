@@ -2,6 +2,10 @@
 
 # Enable Stats: true/false
 Stats:
+  ClientID: true
+  LastIP: false
+  UUID: true
+  XBoxAuthenticated: false
   FirstJoin: true
   LastJoin: true
   JoinCount: true
@@ -16,7 +20,8 @@ Stats:
   BedEnterCount: true
   EatCount: true
   CraftCount: true
-  DroppedItems: true
+  DroppedItemsCount: true
+  BowUseCount: true
 # Data provider for StatsPE
 # It can save it's data in these providers:
 # mysql, json

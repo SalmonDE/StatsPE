@@ -17,17 +17,8 @@ class JSONProvider implements DataProvider
         $this->dataConfig = new Config($data['path'], Config::JSON);
     }
 
-    public function addPlayer(\pocketmine\Player $player){
-        if(!is_array($this->dataConfig->get($player->getName()))){
-            foreach($this->entries as $entry){
-                $this->saveData($player->getName(), $entry->getName(), $entry->getDefault());
-            }
-            $this->saveAll(true);
-        }
-    }
-
     public function getData(string $player, Entry $entry){
-        if($this->entryExists($entry)){
+        if($this->entryExists($entry->getName())){
             if(!$entry->shouldSave()){
                 return;
             }
@@ -35,29 +26,34 @@ class JSONProvider implements DataProvider
             if($entry->isValidType($v)){
                 return $v;
             }
-            Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry.'" in "'.self::class.'" by "'.__FUNCTION__.'"!'); // ToDo: Move this in the events
+            Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!'); // ToDo: Move this in the events
             throw new \Exception($msg);
         }
     }
 
-    public function getAllData() : array{
+    public function getAllData(string $player = null){
+        if($player !== null){
+            return $this->dataConfig->get(strtolower($player));
+        }
         return $this->dataConfig->getAll();
     }
 
     public function saveData(string $player, Entry $entry, $value){
-        if($this->entryExists($entry) && $entry->isValidType($value) && $entry->shouldSave()){
+        if($this->entryExists($entry->getName()) && $entry->isValidType($value) && $entry->shouldSave()){
             $this->dataConfig->setNested(strtolower($player).$entry->getName(), $value);
         }
     }
 
     public function addEntry(Entry $entry){
-        if(!$this->entryExists($entry) && $entry->isValid()){
+        if(!$this->entryExists($entry->getName()) && $entry->isValid()){
             $this->entries[$entry->getName()] = $entry;
+            return true;
         }
+        return false;
     }
 
     public function removeEntry(Entry $entry){
-        if($this->entryExists($entry)){
+        if($this->entryExists($entry->getName())){
             unset($this->entries[$entry->getName()]);
         }
     }
@@ -66,11 +62,8 @@ class JSONProvider implements DataProvider
         return $this->entries;
     }
 
-    public function entryExists(Entry $entry) : bool{
-        if(isset($this->entries[$entry->getName()])){
-            return true;
-        }
-        return false;
+    public function entryExists(string $entry) : bool{
+        @return $this->entries[$entry] instanceof Entry;
     }
 
     public function saveAll(){
