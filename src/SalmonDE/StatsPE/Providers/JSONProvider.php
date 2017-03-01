@@ -28,6 +28,9 @@ class JSONProvider implements DataProvider
 
     public function getData(string $player, Entry $entry){
         if($this->entryExists($entry)){
+            if(!$entry->shouldSave()){
+                return;
+            }
             $v = $this->dataConfig->getNested(strtolower($player).$entry->getName());
             if($entry->isValidType($v)){
                 return $v;
@@ -42,8 +45,8 @@ class JSONProvider implements DataProvider
     }
 
     public function saveData(string $player, Entry $entry, $value){
-        if($this->entryExists($entry) && $entry->isValidType($value)){
-            $this->dataConfig->setNested(strtolower($player).$entry, $value);
+        if($this->entryExists($entry) && $entry->isValidType($value) && $entry->shouldSave()){
+            $this->dataConfig->setNested(strtolower($player).$entry->getName(), $value);
         }
     }
 

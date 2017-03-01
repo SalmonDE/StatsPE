@@ -10,6 +10,10 @@ class Base extends \pocketmine\plugin\PluginBase
     private $provider = null;
     private $messages = [];
 
+    public static function getInstance() : Base{
+        return self::$instance;
+    }
+
     public function onEnable(){
         self::$instance = $this;
         $this->saveResource('config.yml');
@@ -40,11 +44,7 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->getServer()->getCommandMap()->register('StatsPE', new Commands\StatsCommand($this));
     }
 
-    public function getInstance() : Base{
-        return self::$instance;
-    }
-
-    public function getDataProvider() : string{
+    public function getDataProvider() : Providers\DataProvider{
         return $this->provider;
     }
 

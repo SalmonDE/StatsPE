@@ -6,18 +6,21 @@ class Entry
     const INT = 0;
     const FLOAT = 1;
     const STRING = 2;
-    const MIXED = 3;
+    const ARRAY = 3;
+    const MIXED = 4;
 
     private $name;
     private $defaultValue;
     private $expectedType;
     private $valid = false;
+    private $shouldSave = false;
 
-    public function __construct(string $name, $default, int $type = self::MIXED){
+    public function __construct(string $name, $default, int $type = self::MIXED, $shouldSave = true){
         $this->name = $name;
         $this->expectedType = $type;
-        if($this->isValid($default)){
+        if($this->isValidType($default)){
             $this->defaultValue = $default;
+            $this->shouldSave = $shouldSave;
             $this->valid = true;
         }
     }
@@ -51,6 +54,11 @@ class Entry
                     return true;
                 }
                 break;
+            case self::ARRAY:
+                if(is_array($value)){
+                    return true;
+                }
+                break;
             case self::MIXED:
                 return true;
         }
@@ -59,5 +67,9 @@ class Entry
 
     public function isValid() : bool{
         return $this->valid;
+    }
+
+    public function shouldSave() : bool{
+        return $this->shouldSave;
     }
 }
