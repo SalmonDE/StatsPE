@@ -112,12 +112,6 @@ class Base extends \pocketmine\plugin\PluginBase
                         $save = true;
                         break;
 
-                    case 'KickCount':
-                        $default = 0;
-                        $expectedType = Entry::INT;
-                        $save = true;
-                        break;
-
                     case 'BlockBreakCount':
                         $default = 0;
                         $expectedType = Entry::INT;

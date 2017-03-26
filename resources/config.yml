@@ -12,7 +12,6 @@ Stats:
   KillCount: true
   K/D: true
   DeathCount: true
-  KickCount: true
   OnlineTime: true
   BlockBreakCount: true
   BlockPlaceCount: true
