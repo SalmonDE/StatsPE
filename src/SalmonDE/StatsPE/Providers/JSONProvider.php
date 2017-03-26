@@ -26,7 +26,7 @@ class JSONProvider implements DataProvider
             if($entry->isValidType($v)){
                 return $v;
             }
-            Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+            Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
         }
     }
 
@@ -42,7 +42,7 @@ class JSONProvider implements DataProvider
             if($entry->isValidType($value)){
                 $this->dataConfig->setNested(strtolower($player).'.'.$entry->getName(), $value);
             }else{
-                Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+                Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }
         }
     }

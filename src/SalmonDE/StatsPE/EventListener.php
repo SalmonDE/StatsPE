@@ -34,12 +34,12 @@ class EventListener implements \pocketmine\event\Listener
         if($this->dataProvider->entryExists('XBoxAuthenticated')){
             $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('XBoxAuthenticated'), false);
         }
-        if($this->dataProvider->entryExists('RealName')){
-            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('RealName'), $event->getPlayer()->getName());
+        if($this->dataProvider->entryExists('Username')){
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('Username'), $event->getPlayer()->getName());
         }
     }
 
-    public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
+    public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){ // This seems to fail when the server stops with /stop
         $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
         if($this->dataProvider->entryExists('OnlineTime')){
             $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('OnlineTime'), intval($this->dataProvider->getData($name, $ent) + $time));
@@ -52,7 +52,7 @@ class EventListener implements \pocketmine\event\Listener
         }
 
         if($this->dataProvider->entryExists('KillCount')){
-            if($cause = $event->getPlayer()->getLastDamageCause() instanceof \pocketmine\event\entity\EntityDamageByEntityEvent){
+            if(($cause = $event->getPlayer()->getLastDamageCause()) instanceof \pocketmine\event\entity\EntityDamageByEntityEvent){
                 if($dmgr = $cause->getDamager() instanceof Player){
                     $this->dataProvider->saveData($dmgr->getName(), $ent = $this->dataProvider->getEntry('KillCount'), $this->dataProvider->getData($dmgr->getName(), $ent) + 1);
                 }

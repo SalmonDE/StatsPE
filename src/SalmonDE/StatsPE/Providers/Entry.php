@@ -38,7 +38,7 @@ class Entry
         return $this->defaultValue;
     }
 
-    public function isValidType($value) : bool{
+    public final function isValidType($value) : bool{
         switch($this->expectedType){
             case self::INT:
                 if(is_int($value)){

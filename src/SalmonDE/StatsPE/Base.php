@@ -20,24 +20,44 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->saveResource('config.yml');
         $this->saveResource('messages.yml');
         $this->initialize();
-        $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
         $this->runUpdateManager();
     }
 
     public function onDisable(){
+        if(!$this->getServer()->isRunning()){
+            foreach($this->getServer()->getOnlinePlayers() as $player){
+                $this->listener->onQuit(new \pocketmine\event\player\PlayerQuitEvent($player, ''));
+            }
+        }
+        $this->listener = null;
         $this->provider->saveAll();
     }
 
     private function initialize(){
-        switch(strtolower($this->getConfig()->get('Provider'))){
+        switch($p = $this->getConfig()->get('Provider')){
             case 'json':
                 $this->provider = new Providers\JSONProvider($this->getDataFolder().'players.json');
                 break;
             case 'mysql':
                 $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->get('host'), $c->get('username'), $c->get('password'), $c->get('database'));
+                break;
+            default:
+                $this->getLogger()->warning('Unknown provider: "'.$p.'", selecting JSON');
+                $this->provider = new Providers\JSONProvider($this->getDataFolder().'players.json');
         }
+
+        if(!file_exists($this->getDataFolder().'messages.yml')){
+            if($this->getResource($lang = ($this->getConfig()->get('Language').'.yml')) === null){
+                $lang = 'English.yml';
+            }
+            $this->saveResource($lang);
+            rename($this->getDataFolder().$lang, $this->getDataFolder().'messages.yml');
+        }
+
         $msgConfig = new Config($this->getDataFolder().'messages.yml', Config::YAML);
         $this->messages = $msgConfig->getAll();
+
         $this->registerDefaultEntries();
         $this->registerCommands();
     }
@@ -150,11 +170,11 @@ class Base extends \pocketmine\plugin\PluginBase
                 $this->provider->addEntry(new Entry($statistic, $default, $expectedType, $save));
             }
         }
-        $this->provider->addEntry(new Entry('RealName', 'undefined', Entry::STRING, true));
+        $this->provider->addEntry(new Entry('Username', 'undefined', Entry::STRING, true));
     }
 
     private function registerCommands(){
-        $this->getServer()->getCommandMap()->register('StatsPE', new Commands\StatsCommand($this));
+        $this->getServer()->getCommandMap()->register('stats', new Commands\StatsCommand($this));
     }
 
     public function getDataProvider() : Providers\DataProvider{
@@ -166,7 +186,12 @@ class Base extends \pocketmine\plugin\PluginBase
     }
 
     public function getMessage(string $k){
-        return $this->messages[$k];
+        $keys = explode('.', $k);
+        $message = $this->messages['lines'];
+        foreach($keys as $k){
+            $message = $message[$k];
+        }
+        return $message;
     }
 
     public function runUpdateManager(){

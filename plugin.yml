@@ -1,5 +1,5 @@
 name: StatsPE
-version: 3.0.0-UNSTABLE
+version: 3.1.0
 api: [3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4, 3.0.0-ALPHA5]
 main: SalmonDE\StatsPE\Base
 description: Playerstatistics for your server!
@@ -37,20 +37,15 @@ permissions:
                         default: true
                     statspe.entry.DeathCount:
                         default: true
-                    statspe.entry.KickCount:
                     statspe.entry.BlockBreakCount:
                         default: true
                     statspe.entry.BlockPlaceCount:
                         default: true
                     statspe.entry.ChatCount:
                         default: true
-                    statspe.entry.BedEnterCount:
+                    statspe.entry.ItemConsumeCount:
                         default: true
-                    statspe.entry.EatCount:
+                    statspe.entry.ItemCraftCount:
                         default: true
-                    statspe.entry.CraftCount:
-                        default: true
-                    statspe.entry.DroppedItemsCount:
-                        default: true
-                    statspe.entry.BowUseCount:
+                    statspe.entry.ItemDropCount:
                         default: true

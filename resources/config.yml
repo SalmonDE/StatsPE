@@ -1,5 +1,8 @@
 # Configuration file for StatsPE
 
+# Select your language
+Language: English
+
 # Enable Stats: true/false
 Stats:
   ClientID: true
