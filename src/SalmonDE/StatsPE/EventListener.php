@@ -70,4 +70,27 @@ class EventListener implements \pocketmine\event\Listener
             }
         }
     }
+
+
+    /**
+    * @priority MONITOR
+    */
+    public function onBlockBreak(\pocketmine\event\block\BlockBreakEvent $event){
+        if(!$event->isCancelled()){
+            if($this->dataProvider->entryExists('BlockBreakCount')){
+                $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('BlockBreakCount'), $this->dataProvider->getData($name, $ent) + 1);
+            }
+        }
+    }
+
+    /**
+    * @priority MONITOR
+    */
+    public function onBlockPlace(\pocketmine\event\block\BlockPlaceEvent $event){
+        if(!$event->isCancelled()){
+            if($this->dataProvider->entryExists('BlockPlaceCount')){
+                $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('BlockPlaceCount'), $this->dataProvider->getData($name, $ent) + 1);
+            }
+        }
+    }
 }

@@ -152,13 +152,6 @@ class Base extends \pocketmine\plugin\PluginBase
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
-                        break;
-
-                    case 'BowUseCount':
-                        $default = 0;
-                        $expectedType = Entry::INT;
-                        $save = true;
-                        break;
                 }
                 $this->provider->addEntry(new Entry($statistic, $default, $expectedType, $save));
             }

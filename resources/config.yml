@@ -20,7 +20,6 @@ Stats:
   EatCount: true
   CraftCount: true
   DroppedItemsCount: true
-  BowUseCount: true
 # Data provider for StatsPE
 # It can save it's data in these providers:
 # mysql, json
