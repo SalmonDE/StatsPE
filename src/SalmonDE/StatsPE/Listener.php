@@ -7,22 +7,14 @@ class Listener implements \pocketmine\event\Listener
     public function onJoin(\pocketmine\event\player\PlayerJoinEvent $event){
         $dataProvider = Base::getInstance()->getDataProvider();
         if(!is_array($data = $dataProvider->getAllData($event->getPlayer()->getName()))){
-            foreach($dataProvider->getEntries() as $entry){
+            foreach($dataProvider->getEntries() as $entry){ // Run through all entries and save the default values
                 switch($entry->getName()){
                     case 'ClientID':
-                        continue 2;
-
                     case 'LastIP':
-                        continue 2;
-
                     case 'UUID':
-                        continue 2;
-
                     case 'XBoxAuthenticated':
-                        continue 2;
-
                     case 'RealName':
-                        continue 2;
+                        continue 2; //skip some entries which will be set later on
 
                     default:
                         $value = $entry->getDefault();
@@ -30,7 +22,7 @@ class Listener implements \pocketmine\event\Listener
                 $dataProvider->saveData($event->getPlayer()->getName(), $entry, $value);
             }
         }else{
-            if($dataProvider->entryExists('JoinCount')){
+            if($dataProvider->entryExists('JoinCount')){ // Increase the join counter
                 $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('JoinCount'), ++$data['JoinCount']);
             }
         }

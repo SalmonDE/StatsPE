@@ -73,6 +73,6 @@ class JSONProvider implements DataProvider
     }
 
     public function saveAll(){
-        $this->dataConfig->save();
+        $this->dataConfig->save(); // Save every 30 minutes?
     }
 }
