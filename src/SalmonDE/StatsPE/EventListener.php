@@ -15,18 +15,7 @@ class EventListener implements \pocketmine\event\Listener
     public function onJoin(\pocketmine\event\player\PlayerJoinEvent $event){
         if(!is_array($data = $this->dataProvider->getAllData($event->getPlayer()->getName()))){
             foreach($this->dataProvider->getEntries() as $entry){ // Run through all entries and save the default values
-                switch($entry->getName()){
-                    case 'ClientID':
-                    case 'LastIP':
-                    case 'UUID':
-                    case 'XBoxAuthenticated':
-                    case 'RealName':
-                        continue 2; //skip some entries which will be set later on
-
-                    default:
-                        $value = $entry->getDefault();
-                }
-                $this->dataProvider->saveData($event->getPlayer()->getName(), $entry, $value);
+                $this->dataProvider->saveData($event->getPlayer()->getName(), $entry, $entry->getDefault());
             }
         }else{
             if($this->dataProvider->entryExists('JoinCount')){ // Increase the join counter
@@ -34,13 +23,13 @@ class EventListener implements \pocketmine\event\Listener
             }
         }
         if($this->dataProvider->entryExists('ClientID')){
-            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('ClientID'), $event->getPlayer()->getClientId());
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('ClientID'), (string) $event->getPlayer()->getClientId());
         }
         if($this->dataProvider->entryExists('LastIP')){
-            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('LastIP'), $event->getPlayer()->getAddress());
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('LastIP'), (string) $event->getPlayer()->getAddress());
         }
         if($this->dataProvider->entryExists('UUID')){
-            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('UUID'), $event->getPlayer()->getUniqueId());
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('UUID'), $event->getPlayer()->getUniqueId()->toString());
         }
         if($this->dataProvider->entryExists('XBoxAuthenticated')){
             $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('XBoxAuthenticated'), false);
@@ -53,7 +42,7 @@ class EventListener implements \pocketmine\event\Listener
     public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
         $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
         if($this->dataProvider->entryExists('OnlineTime')){
-            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('OnlineTime'), $time);
+            $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('OnlineTime'), intval($this->dataProvider->getData($name, $ent) + $time));
         }
     }
 
@@ -90,6 +79,50 @@ class EventListener implements \pocketmine\event\Listener
         if(!$event->isCancelled()){
             if($this->dataProvider->entryExists('BlockPlaceCount')){
                 $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('BlockPlaceCount'), $this->dataProvider->getData($name, $ent) + 1);
+            }
+        }
+    }
+
+    /**
+    * @priority MONITOR
+    */
+    public function onChat(\pocketmine\event\player\PlayerChatEvent $event){
+        if(!$event->isCancelled()){
+            if($this->dataProvider->entryExists('ChatCount')){
+                $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('ChatCount'), $this->dataProvider->getData($name, $ent) + 1);
+            }
+        }
+    }
+
+    /**
+    * @priority MONITOR
+    */
+    public function onItemConsume(\pocketmine\event\player\PlayerItemConsumeEvent $event){
+        if(!$event->isCancelled()){
+            if($this->dataProvider->entryExists('ItemConsumeCount')){
+                $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('ItemConsumeCount'), $this->dataProvider->getData($name, $ent) + 1);
+            }
+        }
+    }
+
+    /**
+    * @priority MONITOR
+    */
+    public function onCraftItem(\pocketmine\event\inventory\CraftItemEvent $event){
+        if(!$event->isCancelled()){
+            if($this->dataProvider->entryExists('ItemCraftCount')){
+                $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('ItemCraftCount'), $this->dataProvider->getData($name, $ent) + 1);
+            }
+        }
+    }
+
+    /**
+    * @priority MONITOR
+    */
+    public function onDropItem(\pocketmine\event\player\PlayerDropItemEvent $event){
+        if(!$event->isCancelled()){
+            if($this->dataProvider->entryExists('ItemDropCount')){
+                $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('ItemDropCount'), $this->dataProvider->getData($name, $ent) + 1);
             }
         }
     }

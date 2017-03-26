@@ -130,25 +130,19 @@ class Base extends \pocketmine\plugin\PluginBase
                         $save = true;
                         break;
 
-                    case 'BedEnterCount':
+                    case 'ItemConsumeCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
                         break;
 
-                    case 'EatCount':
+                    case 'ItemCraftCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
                         break;
 
-                    case 'CraftCount':
-                        $default = 0;
-                        $expectedType = Entry::INT;
-                        $save = true;
-                        break;
-
-                    case 'DroppedItemsCount':
+                    case 'ItemDropCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;

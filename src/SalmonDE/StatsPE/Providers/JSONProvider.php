@@ -26,8 +26,7 @@ class JSONProvider implements DataProvider
             if($entry->isValidType($v)){
                 return $v;
             }
-            Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!'); // ToDo: Move this in the events
-            throw new \Exception($msg);
+            Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
         }
     }
 
@@ -39,8 +38,12 @@ class JSONProvider implements DataProvider
     }
 
     public function saveData(string $player, Entry $entry, $value){
-        if($this->entryExists($entry->getName()) && $entry->isValidType($value) && $entry->shouldSave()){
-            $this->dataConfig->setNested(strtolower($player).'.'.$entry->getName(), $value);
+        if($this->entryExists($entry->getName()) && $entry->shouldSave()){
+            if($entry->isValidType($value)){
+                $this->dataConfig->setNested(strtolower($player).'.'.$entry->getName(), $value);
+            }else{
+                Base::getInstance()->getLogger()->warning($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+            }
         }
     }
 

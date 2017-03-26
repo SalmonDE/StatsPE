@@ -16,10 +16,9 @@ Stats:
   BlockBreakCount: true
   BlockPlaceCount: true
   ChatCount: true
-  BedEnterCount: true
-  EatCount: true
-  CraftCount: true
-  DroppedItemsCount: true
+  ItemConsumeCount: true
+  ItemCraftCount: true
+  ItemDropCount: true
 # Data provider for StatsPE
 # It can save it's data in these providers:
 # mysql, json
