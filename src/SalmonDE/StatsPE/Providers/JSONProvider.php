@@ -22,7 +22,7 @@ class JSONProvider implements DataProvider
             if(!$entry->shouldSave()){
                 return;
             }
-            $v = $this->dataConfig->getNested(strtolower($player).$entry->getName());
+            $v = $this->dataConfig->getNested(strtolower($player).'.'.$entry->getName());
             if($entry->isValidType($v)){
                 return $v;
             }

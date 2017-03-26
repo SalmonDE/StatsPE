@@ -1,6 +1,8 @@
 <?php
 namespace SalmonDE\StatsPE;
 
+use pocketmine\Player;
+
 class EventListener implements \pocketmine\event\Listener
 {
 
@@ -52,6 +54,20 @@ class EventListener implements \pocketmine\event\Listener
         $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
         if($this->dataProvider->entryExists('OnlineTime')){
             $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('OnlineTime'), $time);
+        }
+    }
+
+    public function onPlayerDeath(\pocketmine\event\player\PlayerDeathEvent $event){
+        if($this->dataProvider->entryExists('DeathCount')){
+            $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('DeathCount'), $this->dataProvider->getData($name, $ent) + 1);
+        }
+
+        if($this->dataProvider->entryExists('KillCount')){
+            if($cause = $event->getPlayer()->getLastDamageCause() instanceof \pocketmine\event\entity\EntityDamageByEntityEvent){
+                if($dmgr = $cause->getDamager() instanceof Player){
+                    $this->dataProvider->saveData($dmgr->getName(), $ent = $this->dataProvider->getEntry('KillCount'), $this->dataProvider->getData($dmgr->getName(), $ent) + 1);
+                }
+            }
         }
     }
 }
