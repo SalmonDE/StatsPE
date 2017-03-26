@@ -40,7 +40,7 @@ class JSONProvider implements DataProvider
 
     public function saveData(string $player, Entry $entry, $value){
         if($this->entryExists($entry->getName()) && $entry->isValidType($value) && $entry->shouldSave()){
-            $this->dataConfig->setNested(strtolower($player).$entry->getName(), $value);
+            $this->dataConfig->setNested(strtolower($player).'.'.$entry->getName(), $value);
         }
     }
 
