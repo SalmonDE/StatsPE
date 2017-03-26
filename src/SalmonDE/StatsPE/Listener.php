@@ -42,4 +42,11 @@ class Listener implements \pocketmine\event\Listener
             $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('RealName'), $event->getPlayer()->getName());
         }
     }
+
+    public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
+        $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds 
+        if(Base::getInstance()->getDataProvider()->entryExists('OnlineTime')){
+            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('OnlineTime'), $time);
+        }
+    }
 }
