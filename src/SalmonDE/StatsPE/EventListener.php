@@ -4,10 +4,15 @@ namespace SalmonDE\StatsPE;
 class EventListener implements \pocketmine\event\Listener
 {
 
+    private $dataProvider = null;
+
+    public function __construct(){
+        $this->dataProvider = Base::getInstance()->getDataProvider();
+    }
+
     public function onJoin(\pocketmine\event\player\PlayerJoinEvent $event){
-        $dataProvider = Base::getInstance()->getDataProvider();
-        if(!is_array($data = $dataProvider->getAllData($event->getPlayer()->getName()))){
-            foreach($dataProvider->getEntries() as $entry){ // Run through all entries and save the default values
+        if(!is_array($data = $this->dataProvider->getAllData($event->getPlayer()->getName()))){
+            foreach($this->dataProvider->getEntries() as $entry){ // Run through all entries and save the default values
                 switch($entry->getName()){
                     case 'ClientID':
                     case 'LastIP':
@@ -19,34 +24,34 @@ class EventListener implements \pocketmine\event\Listener
                     default:
                         $value = $entry->getDefault();
                 }
-                $dataProvider->saveData($event->getPlayer()->getName(), $entry, $value);
+                $this->dataProvider->saveData($event->getPlayer()->getName(), $entry, $value);
             }
         }else{
-            if($dataProvider->entryExists('JoinCount')){ // Increase the join counter
-                $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('JoinCount'), ++$data['JoinCount']);
+            if($this->dataProvider->entryExists('JoinCount')){ // Increase the join counter
+                $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('JoinCount'), ++$data['JoinCount']);
             }
         }
-        if($dataProvider->entryExists('ClientID')){
-            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('ClientID'), $event->getPlayer()->getClientId());
+        if($this->dataProvider->entryExists('ClientID')){
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('ClientID'), $event->getPlayer()->getClientId());
         }
-        if($dataProvider->entryExists('LastIP')){
-            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('LastIP'), $event->getPlayer()->getAddress());
+        if($this->dataProvider->entryExists('LastIP')){
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('LastIP'), $event->getPlayer()->getAddress());
         }
-        if($dataProvider->entryExists('UUID')){
-            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('UUID'), $event->getPlayer()->getUniqueId());
+        if($this->dataProvider->entryExists('UUID')){
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('UUID'), $event->getPlayer()->getUniqueId());
         }
-        if($dataProvider->entryExists('XBoxAuthenticated')){
-            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('XBoxAuthenticated'), false);
+        if($this->dataProvider->entryExists('XBoxAuthenticated')){
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('XBoxAuthenticated'), false);
         }
-        if($dataProvider->entryExists('RealName')){
-            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('RealName'), $event->getPlayer()->getName());
+        if($this->dataProvider->entryExists('RealName')){
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('RealName'), $event->getPlayer()->getName());
         }
     }
 
     public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
         $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
-        if(Base::getInstance()->getDataProvider()->entryExists('OnlineTime')){
-            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('OnlineTime'), $time);
+        if($this->dataProvider->entryExists('OnlineTime')){
+            $this->dataProvider->saveData($event->getPlayer()->getName(), $this->dataProvider->getEntry('OnlineTime'), $time);
         }
     }
 }
