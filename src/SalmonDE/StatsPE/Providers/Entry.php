@@ -1,5 +1,5 @@
 <?php
-namespace SalmonDE\Providers;
+namespace SalmonDE\StatsPE\Providers;
 
 class Entry
 {

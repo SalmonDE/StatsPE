@@ -62,8 +62,14 @@ class JSONProvider implements DataProvider
         return $this->entries;
     }
 
+    public function getEntry(string $entry){
+        if(isset($this->entries[$entry])){
+            return $this->entries[$entry];
+        }
+    }
+
     public function entryExists(string $entry) : bool{
-        @return $this->entries[$entry] instanceof Entry;
+        return isset($this->entries[$entry]);
     }
 
     public function saveAll(){

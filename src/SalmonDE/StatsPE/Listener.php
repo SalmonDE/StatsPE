@@ -27,25 +27,27 @@ class Listener implements \pocketmine\event\Listener
                     default:
                         $value = $entry->getDefault();
                 }
-                $dataProvider->saveData($player->getName(), $entry->getName(), $value));
+                $dataProvider->saveData($event->getPlayer()->getName(), $entry, $value);
             }
         }else{
             if($dataProvider->entryExists('JoinCount')){
-                $dataProvider->saveData($player->getName(), 'JoinCount', ++$data['JoinCount']);
+                $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('JoinCount'), ++$data['JoinCount']);
             }
         }
         if($dataProvider->entryExists('ClientID')){
-            $dataProvider->saveData($player->getName(), 'ClientID', $player->getClientId());
+            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('ClientID'), $event->getPlayer()->getClientId());
         }
         if($dataProvider->entryExists('LastIP')){
-            $dataProvider->saveData($player->getName(), 'LastIP', $player->getAddress());
+            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('LastIP'), $event->getPlayer()->getAddress());
         }
         if($dataProvider->entryExists('UUID')){
-            $dataProvider->saveData($player->getName(), 'UUID', $player->getUniqueId());
+            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('UUID'), $event->getPlayer()->getUniqueId());
         }
         if($dataProvider->entryExists('XBoxAuthenticated')){
-            $dataProvider->saveData($player->getName(), 'XBoxAuthenticated', false);
+            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('XBoxAuthenticated'), false);
         }
-        $dataProvider->saveData($player->getName(), 'RealName', $player->getName());
+        if($dataProvider->entryExists('RealName')){
+            $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('RealName'), $event->getPlayer()->getName());
+        }
     }
 }

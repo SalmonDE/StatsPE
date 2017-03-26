@@ -18,7 +18,7 @@ interface DataProvider
 
     public function getEntries() : array;
 
-    public function entryExists(Entry $entry) : bool;
+    public function entryExists(string $entry) : bool;
 
     public function saveAll();
 }
