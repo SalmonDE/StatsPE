@@ -1,7 +1,7 @@
 <?php
 namespace SalmonDE\StatsPE;
 
-class Listener implements \pocketmine\event\Listener
+class EventListener implements \pocketmine\event\Listener
 {
 
     public function onJoin(\pocketmine\event\player\PlayerJoinEvent $event){
@@ -44,7 +44,7 @@ class Listener implements \pocketmine\event\Listener
     }
 
     public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
-        $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds 
+        $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
         if(Base::getInstance()->getDataProvider()->entryExists('OnlineTime')){
             $dataProvider->saveData($event->getPlayer()->getName(), $dataProvider->getEntry('OnlineTime'), $time);
         }

@@ -20,7 +20,7 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->saveResource('config.yml');
         $this->saveResource('messages.yml');
         $this->initialize();
-        $this->getServer()->getPluginManager()->registerEvents(new Listener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->runUpdateManager();
     }
 
