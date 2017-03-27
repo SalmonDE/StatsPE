@@ -26,6 +26,8 @@ Stats:
 # It can save it's data in these providers:
 # mysql, json
 Provider: json
+# Time in minutes after which changes are saved
+Save-Interval: 20
 # mysql settings in case you're using it
 MySQL:
     host: "example.net:3306"

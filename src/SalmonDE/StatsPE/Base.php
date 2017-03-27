@@ -11,6 +11,8 @@ class Base extends \pocketmine\plugin\PluginBase
     private $provider = null;
     private $messages = [];
 
+    private $listener = null; // Needed because of the OnlineTime hack
+
     public static function getInstance() : Base{
         return self::$instance;
     }
@@ -20,18 +22,22 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->saveResource('config.yml');
         $this->saveResource('messages.yml');
         $this->initialize();
-        $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
-        $this->runUpdateManager();
+        if($this->isEnabled()){
+            $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
+            $this->runUpdateManager();
+        }
     }
 
     public function onDisable(){
         if(!$this->getServer()->isRunning()){
             foreach($this->getServer()->getOnlinePlayers() as $player){
-                $this->listener->onQuit(new \pocketmine\event\player\PlayerQuitEvent($player, ''));
+                $this->listener->onQuit(new \pocketmine\event\player\PlayerQuitEvent($player, '')); // Hacky, but prevents not saving online time of players on shutdown
             }
         }
         $this->listener = null;
-        $this->provider->saveAll();
+        if(isset($this->provider)){
+            $this->provider->saveAll();
+        }
     }
 
     private function initialize(){

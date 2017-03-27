@@ -56,7 +56,7 @@ class JSONProvider implements DataProvider
     }
 
     public function removeEntry(Entry $entry){
-        if($this->entryExists($entry->getName())){
+        if($this->entryExists($entry->getName()) && $entry->getName() !== 'Username'){
             unset($this->entries[$entry->getName()]);
         }
     }

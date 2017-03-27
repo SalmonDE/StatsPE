@@ -39,7 +39,7 @@ class EventListener implements \pocketmine\event\Listener
         }
     }
 
-    public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){ // This seems to fail when the server stops with /stop
+    public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
         $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
         if($this->dataProvider->entryExists('OnlineTime')){
             $this->dataProvider->saveData($name = $event->getPlayer()->getName(), $ent = $this->dataProvider->getEntry('OnlineTime'), intval($this->dataProvider->getData($name, $ent) + $time));
