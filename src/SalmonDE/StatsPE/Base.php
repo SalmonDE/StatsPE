@@ -45,9 +45,11 @@ class Base extends \pocketmine\plugin\PluginBase
             case 'json':
                 $this->provider = new Providers\JSONProvider($this->getDataFolder().'players.json');
                 break;
+                
             case 'mysql':
-                $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->get('host'), $c->get('username'), $c->get('password'), $c->get('database'));
+                $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'));
                 break;
+
             default:
                 $this->getLogger()->warning('Unknown provider: "'.$p.'", selecting JSON');
                 $this->provider = new Providers\JSONProvider($this->getDataFolder().'players.json');
