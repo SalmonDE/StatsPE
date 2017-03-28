@@ -2,8 +2,9 @@
 namespace SalmonDE\StatsPE\Providers;
 
 use SalmonDE\StatsPE\Base;
+use SalmonDE\StatsPE\Utils;
 
-class MySQLProvider implements DataProvider //ToDo if x changes -> save
+class MySQLProvider implements DataProvider
 {
 
     private $entries = [];
@@ -27,46 +28,130 @@ class MySQLProvider implements DataProvider //ToDo if x changes -> save
             Base::getInstance()->getLogger()->critical(trim($this->db->connect_error));
 
             Base::getInstance()->getServer()->getPluginManager()->disablePlugin(Base::getInstance());
-        }else{
-            Base::getInstance()->getLogger()->notice('Successfully connected to mysql server!');
+            return;
         }
+
+        Base::getInstance()->getLogger()->notice('Successfully connected to the MySQL server!');
+    }
+
+    public function prepareTable(){
+        $columns = ['Username VARCHAR(255) UNIQUE NOT NULL'];
+        foreach($this->entries as $entry){
+            if($entry->shouldSave() && $entry->getName() !== 'Username'){
+                switch($entry->getExpectedType()){ // I need help here!
+                    case Entry::INT:
+                        $type = 'INT(255)';
+                        break;
+
+                    case Entry::FLOAT:
+                        $type = 'DECIMAL(65, 3)';
+                        break;
+
+                    case Entry::STRING:
+                        $type = 'VARCHAR(255)';
+                        break;
+
+                    case Entry::ARRAY:
+                        $type = 'VARCHAR(255)';
+                        break;
+
+                    case Entry::BOOL:
+                        $type = 'BIT(1)';
+                        break;
+
+                    case Entry::MIXED:
+                        $type = 'VARCHAR(255)';
+                }
+                $columns[] = $entry->getName().' '.$type.' NOT NULL DEFAULT '.(is_numeric($def = $entry->getDefault()) ? $def : "'$def'");
+            }
+        }
+        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( '.implode(', ', $columns).') COLLATE utf8_general_ci');
     }
 
     public function addPlayer(\pocketmine\Player $player){
-
+        $this->queryDb("INSERT INTO StatsPE (Username) VALUES ('".$player->getName()."')");
     }
 
     public function getData(string $player, Entry $entry){
-
+        if($this->entryExists($entry->getName())){
+            if(!$entry->shouldSave()){
+                return;
+            }
+            $v = $this->queryDb('SELECT '.$entry->getName()." FROM StatsPE WHERE Username='$player'")->fetch_assoc()[$entry->getName()];
+            $v = Utils::convertValueGet($entry, $v);
+            if($entry->isValidType($v)){
+                return $v;
+            }
+            Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+        }
     }
 
-    public function getAllData(string $player = null) : array{
-
+    public function getAllData(string $player = null){
+        if($player !== null){
+            return $this->queryDb("SELECT * FROM StatsPE WHERE Username='$player'")->fetch_assoc();
+        }
+        return $this->queryDb('SELECT * FROM StatsPE')->fetch_assoc();
     }
 
     public function saveData(string $player, Entry $entry, $value){
-
+        if($this->entryExists($entry->getName()) && $entry->shouldSave()){
+            if($entry->isValidType($value)){
+                $value = Utils::convertValueSave($entry, $value);
+                $this->queryDb('UPDATE StatsPE SET '.$entry->getName().'='."'$value' WHERE Username='$player'");
+            }else{
+                Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+            }
+        }
     }
 
     public function addEntry(Entry $entry){
-
+        if(!$this->entryExists($entry->getName()) && $entry->isValid()){
+            $this->entries[$entry->getName()] = $entry;
+            return true;
+        }
+        return false;
     }
 
     public function removeEntry(Entry $entry){
-
+        if($this->entryExists($entry->getName()) && $entry->getName() !== 'Username'){
+            unset($this->entries[$entry->getName()]);
+        }
     }
 
     public function getEntries() : array{
         return $this->entries;
     }
 
-    public function entryExists(string $entry) : bool{
+    public function getEntry(string $entry){
+        if(isset($this->entries[$entry])){
+            return $this->entries[$entry];
+        }
+    }
 
+    public function entryExists(string $entry) : bool{
+        return isset($this->entries[$entry]);
     }
 
     public function saveAll(){
-        if(!$this->db->connect_error){
+        /*if(!$this->db->connect_error){
+            if($this->db->ping()){
 
+            }else{
+                Base::getInstance()->getLogger()->critical('Failed to connect to the database: ('.$this->db->errno.')');
+                Base::getInstance()->getLogger()->critical($this->db->error);
+            }
+        }
+        Not used yet, because it's for the former system I wanted to use
+        */
+    }
+
+    private function queryDb(string $query){
+        if(!($result = $this->db->query($query))){
+            Base::getInstance()->getLogger()->debug('Query: "'.$query.'"');
+            Base::getInstance()->getLogger()->error('Query to the database failed: ('.$this->db->errno.')');
+            Base::getInstance()->getLogger()->error($this->db->error);
+        }else{
+            return $result;
         }
     }
 }

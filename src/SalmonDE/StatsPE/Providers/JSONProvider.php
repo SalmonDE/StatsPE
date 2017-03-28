@@ -17,6 +17,12 @@ class JSONProvider implements DataProvider
         $this->dataConfig = new Config($data['path'], Config::JSON);
     }
 
+    public function addPlayer(\pocketmine\Player $player){
+        foreach($this->dataProvider->getEntries() as $entry){ // Run through all entries and save the default values
+            $this->dataProvider->saveData($player->getName(), $entry, $entry->getDefault());
+        }
+    }
+
     public function getData(string $player, Entry $entry){
         if($this->entryExists($entry->getName())){
             if(!$entry->shouldSave()){
@@ -76,6 +82,6 @@ class JSONProvider implements DataProvider
     }
 
     public function saveAll(){
-        $this->dataConfig->save(); // Save every 30 minutes?
+        $this->dataConfig->save();
     }
 }

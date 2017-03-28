@@ -1,6 +1,8 @@
 <?php
 namespace SalmonDE\StatsPE;
 
+use SalmonDE\StatsPE\Providers\Entry;
+
 class Utils
 {
 
@@ -22,6 +24,44 @@ class Utils
     }
 
     public static function getKD(int $kills, int $deaths) : float{
-        return round($kills / $deaths !== 0 ? $deaths : 1), 2);
+        return round($kills / ($deaths !== 0 ? $deaths : 1), 2);
+    }
+
+    public static function convertValueSave(Entry $entry, $value){
+        switch($entry->getExpectedType()){
+            case Entry::INT:
+            case Entry::FLOAT:
+            case Entry::STRING:
+            case Entry::MIXED:
+                return $value;
+
+            case Entry::ARRAY:
+                return serialize($value);
+                break;
+
+            case Entry::BOOL:
+                return (int) $value;
+        }
+    }
+
+    public static function convertValueGet(Entry $entry, $value){
+        switch($entry->getExpectedType()){
+            case Entry::INT:
+                return (int) $value;
+
+            case Entry::FLOAT:
+                return (float) $value;
+
+            case Entry::STRING:
+            case Entry::MIXED:
+                return $value;
+
+            case Entry::ARRAY:
+                return unserialize($value);
+                break;
+
+            case Entry::BOOL:
+                return $value === 0 ? false : true;
+        }
     }
 }

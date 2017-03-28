@@ -21,10 +21,33 @@ class Base extends \pocketmine\plugin\PluginBase
         self::$instance = $this;
         $this->saveResource('config.yml');
         $this->saveResource('messages.yml');
-        $this->initialize();
+        $this->initializeProvider();
         if($this->isEnabled()){
             $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
             $this->runUpdateManager();
+
+            if(!file_exists($this->getDataFolder().'messages.yml')){
+                if($this->getResource($lang = ($this->getConfig()->get('Language').'.yml')) === null){
+                    $lang = 'English.yml';
+                }
+                $this->saveResource($lang);
+                rename($this->getDataFolder().$lang, $this->getDataFolder().'messages.yml');
+            }
+
+            $msgConfig = new Config($this->getDataFolder().'messages.yml', Config::YAML);
+            $this->messages = $msgConfig->getAll();
+
+            $this->registerDefaultEntries();
+            if($this->provider instanceof Providers\MySQLProvider){
+                $this->provider->prepareTable();
+            }
+            $this->registerCommands();
+
+            if(($i = $this->getConfig()->get('Save-Interval')) >= 1){
+                $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new Tasks\SaveTask($this), $i *= 1200, $i);
+            }else{
+                $this->getLogger()->warning('The save interval is lower than 1! Please make sure to always properly shutdown the server in order to prevent data loss!');
+            }
         }
     }
 
@@ -40,34 +63,22 @@ class Base extends \pocketmine\plugin\PluginBase
         }
     }
 
-    private function initialize(){
+    private function initializeProvider(){
         switch($p = $this->getConfig()->get('Provider')){
             case 'json':
+                $this->getLogger()->info('Selecting JSON data provider ...');
                 $this->provider = new Providers\JSONProvider($this->getDataFolder().'players.json');
                 break;
-                
+
             case 'mysql':
+                $this->getLogger()->info('Selecting MySQL data provider ...');
                 $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'));
                 break;
 
             default:
-                $this->getLogger()->warning('Unknown provider: "'.$p.'", selecting JSON');
+                $this->getLogger()->warning('Unknown provider: "'.$p.'", selecting JSON data provider...');
                 $this->provider = new Providers\JSONProvider($this->getDataFolder().'players.json');
         }
-
-        if(!file_exists($this->getDataFolder().'messages.yml')){
-            if($this->getResource($lang = ($this->getConfig()->get('Language').'.yml')) === null){
-                $lang = 'English.yml';
-            }
-            $this->saveResource($lang);
-            rename($this->getDataFolder().$lang, $this->getDataFolder().'messages.yml');
-        }
-
-        $msgConfig = new Config($this->getDataFolder().'messages.yml', Config::YAML);
-        $this->messages = $msgConfig->getAll();
-
-        $this->registerDefaultEntries();
-        $this->registerCommands();
     }
 
     private function registerDefaultEntries(){
