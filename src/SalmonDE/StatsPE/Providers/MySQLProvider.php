@@ -30,6 +30,7 @@ class MySQLProvider implements DataProvider
             Base::getInstance()->getServer()->getPluginManager()->disablePlugin(Base::getInstance());
             return;
         }
+        $this->dbName = $data['db'];
 
         Base::getInstance()->getLogger()->notice('Successfully connected to the MySQL server!');
     }
@@ -38,34 +39,31 @@ class MySQLProvider implements DataProvider
         $columns = ['Username VARCHAR(255) UNIQUE NOT NULL'];
         foreach($this->entries as $entry){
             if($entry->shouldSave() && $entry->getName() !== 'Username'){
-                switch($entry->getExpectedType()){ // I need help here!
-                    case Entry::INT:
-                        $type = 'INT(255)';
-                        break;
-
-                    case Entry::FLOAT:
-                        $type = 'DECIMAL(65, 3)';
-                        break;
-
-                    case Entry::STRING:
-                        $type = 'VARCHAR(255)';
-                        break;
-
-                    case Entry::ARRAY:
-                        $type = 'VARCHAR(255)';
-                        break;
-
-                    case Entry::BOOL:
-                        $type = 'BIT(1)';
-                        break;
-
-                    case Entry::MIXED:
-                        $type = 'VARCHAR(255)';
-                }
+                $type = Utils::getMySQLDatatype($entry->getExpectedType());
                 $columns[] = $entry->getName().' '.$type.' NOT NULL DEFAULT '.(is_numeric($def = $entry->getDefault()) ? $def : "'$def'");
             }
         }
+
         $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( '.implode(', ', $columns).') COLLATE utf8_general_ci');
+
+        // Check if all entries have their columns
+        $existingColumns = $this->queryDb('DESCRIBE StatsPE')->fetch_all(); // Not always access to information_schema.columns
+        $limit = count($existingColumns);
+        for($k = 0; $k < $limit; $k++){
+            $existingColumns[$k] = $existingColumns[$k][0];
+        }
+
+        $missingColumns = [];
+        foreach($this->entries as $entry){
+            if(array_search($entry->getName(), $existingColumns) === false){
+                $missingColumns[] = $entry;
+            }
+        }
+        if(count($missingColumns) > 0){
+            foreach($missingColumns as $column){
+                $this->queryDb('ALTER TABLE StatsPE ADD '.$column->getName().' '.Utils::getMySQLDatatype($column->getExpectedType()).' NOT NULL DEFAULT '.(is_numeric($def = $entry->getDefault()) ? $def : "'$def'"));
+            }
+        }
     }
 
     public function addPlayer(\pocketmine\Player $player){
@@ -88,9 +86,15 @@ class MySQLProvider implements DataProvider
 
     public function getAllData(string $player = null){
         if($player !== null){
-            return $this->queryDb("SELECT * FROM StatsPE WHERE Username='$player'")->fetch_assoc();
+            $query = $this->queryDb("SELECT * FROM StatsPE WHERE Username='$player'");
         }
-        return $this->queryDb('SELECT * FROM StatsPE')->fetch_assoc();
+
+        $data = [];
+        $query = isset($query) ? $query : $this->queryDb('SELECT * FROM StatsPE');
+        while ($row = $query->fetch_assoc()){
+            $data[array_shift($row)] = $row;
+        }
+        return $data;
     }
 
     public function saveData(string $player, Entry $entry, $value){

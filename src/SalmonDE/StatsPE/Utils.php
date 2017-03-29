@@ -37,7 +37,6 @@ class Utils
 
             case Entry::ARRAY:
                 return serialize($value);
-                break;
 
             case Entry::BOOL:
                 return (int) $value;
@@ -58,10 +57,31 @@ class Utils
 
             case Entry::ARRAY:
                 return unserialize($value);
-                break;
 
             case Entry::BOOL:
                 return $value === 0 ? false : true;
+        }
+    }
+
+    public static function getMySQLDatatype(int $type) : string{
+        switch($type)){ // I need help here!
+            case Entry::INT:
+                return 'INT(255)';
+
+            case Entry::FLOAT:
+                return 'DECIMAL(65, 3)';
+
+            case Entry::STRING:
+                return 'VARCHAR(255)';
+
+            case Entry::ARRAY:
+                return 'VARCHAR(255)';
+
+            case Entry::BOOL:
+                return 'BIT(1)';
+
+            case Entry::MIXED:
+                return 'VARCHAR(255)';
         }
     }
 }
