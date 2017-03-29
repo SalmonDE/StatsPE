@@ -6,12 +6,12 @@ lines:
         stats:
             description: "Shows the statistics of a player"
             usage: "/stats [player]"
-            notFound: "Couldn't find any statistics for: {player}!"
+            notFound: "Couldn't find any statistics for: \"{player}\"!"
     general:
         header: "§c--- §dStatistics of §a{player} §c---"
         onlinetime:
             years: "y"
-            months: "months"
+            months: "month(s)"
             days: "d"
             hours: "h"
             minutes: "m"
