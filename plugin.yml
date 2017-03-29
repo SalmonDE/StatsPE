@@ -1,5 +1,5 @@
 name: StatsPE
-version: 3.2.0
+version: 3.2.1
 api: [3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4, 3.0.0-ALPHA5]
 main: SalmonDE\StatsPE\Base
 description: Playerstatistics for your server!
@@ -7,15 +7,18 @@ author: SalmonDE
 load: POSTWORLD
 permissions:
     statspe:
-        description: Main permission of StatsPE.
+        description: Main permission of StatsPE
         children:
             statspe.cmd:
-                description: Main permission of the StatsPE commands.
+                description: Main permission of the StatsPE commands
                 children:
-                statspe.cmd.floatingstats:
-                    description: Permission for /floatingstats.
+                statspe.cmd.statspe:
+                    description: Permission for /statspe
+                    children:
+                        statspe.cmd.statspe.floatingtexts:
+                        description: Permission for /statspe floatingtexts
                 statspe.cmd.stats:
-                    description: Permission for /stats.
+                    description: Permission for /stats
                     default: true
             statspe.entry:
                 description: Allows to see entries of the statistics

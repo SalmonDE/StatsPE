@@ -81,6 +81,10 @@ class JSONProvider implements DataProvider
         return isset($this->entries[$entry]);
     }
 
+    public function countDataRecords() : int{
+        return count($this->getAllData());
+    }
+
     public function saveAll(){
         $this->dataConfig->save();
     }

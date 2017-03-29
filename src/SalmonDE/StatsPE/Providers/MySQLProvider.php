@@ -132,6 +132,10 @@ class MySQLProvider implements DataProvider
         return isset($this->entries[$entry]);
     }
 
+    public function countDataRecords() : int{
+        return (int) $this->queryDb('SELECT COUNT(*) FROM StatsPE')->fetch_assoc()['COUNT(*)'];
+    }
+
     public function saveAll(){
         /*if(!$this->db->connect_error){
             if($this->db->ping()){

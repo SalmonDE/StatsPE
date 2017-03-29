@@ -193,7 +193,8 @@ class Base extends \pocketmine\plugin\PluginBase
     }
 
     private function registerCommands(){
-        $this->getServer()->getCommandMap()->register('stats', new Commands\StatsCommand($this));
+        $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsCommand($this));
+        $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsPECommand($this));
     }
 
     public function getDataProvider() : Providers\DataProvider{

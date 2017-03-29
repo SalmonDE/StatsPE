@@ -3,18 +3,16 @@ namespace SalmonDE\StatsPE\Commands;
 
 use pocketmine\Player;
 use pocketmine\utils\TextFormat as TF;
+use SalmonDE\StatsPE\Base;
 
 class StatsCommand extends \pocketmine\command\PluginCommand
 {
 
-    private $dataProvider = null;
-
-    public function __construct(\SalmonDE\StatsPE\Base $owner){
+    public function __construct(Base $owner){
         parent::__construct('stats', $owner);
         $this->setPermission('statspe.cmd.stats');
         $this->setDescription($owner->getMessage('commands.stats.description'));
         $this->setUsage($owner->getMessage('commands.stats.usage'));
-        $this->dataProvider = $owner->getDataProvider();
     }
 
     public function execute(\pocketmine\command\CommandSender $sender, $label, array $args){
@@ -25,9 +23,9 @@ class StatsCommand extends \pocketmine\command\PluginCommand
             $args[0] = $sender->getName();
         }
 
-        if(is_array($data = $this->dataProvider->getAllData($args[0]))){
+        if(is_array($data = Base::getInstance()->getDataProvider()->getAllData($args[0]))){
             $sender->sendMessage(str_replace('{player}', $data['Username'], $this->getPlugin()->getMessage('general.header')));
-            foreach($this->dataProvider->getEntries() as $entry){
+            foreach(Base::getInstance()->getDataProvider()->getEntries() as $entry){
                 if($sender->hasPermission('statspe.entry.'.$entry->getName())){
                     switch($entry->getName()){
                         case 'FirstJoin':

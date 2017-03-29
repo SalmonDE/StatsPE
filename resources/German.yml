@@ -7,6 +7,14 @@ lines:
             description: "Zeigt die Statistiken eines Spielers an"
             usage: "/stats [Spieler]"
             notFound: "Konnte keine Statistiken für folgenden Spieler finden: \"{player}\"!"
+        statspe:
+            description: "Zeigt Informationen über das StatsPE Plugin und kreiert schwebende Texte"
+            usage: "/statspe [floatingtexts <add|remove>]"
+            header: "§4~~~ §bInformationen über §d{full_name} §4~~~"
+            author: "§6Autor: §d{author}"
+            api: "§6Unterstützte API Versionen: §d{apis}"
+            datarecords: "§6Dateneinträge: §d{records_amount}"
+            entries: "§6Einträge: §d{entries}"
     general:
         header: "§c--- §dStatistiken von §a{player} §c---"
         onlinetime:

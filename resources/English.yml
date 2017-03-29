@@ -7,8 +7,17 @@ lines:
             description: "Shows the statistics of a player"
             usage: "/stats [player]"
             notFound: "Couldn't find any statistics for: \"{player}\"!"
+        statspe:
+            description: "Shows information about the statspe plugin and can set floatingtexts"
+            usage: "/statspe [floatingtexts <add|remove>]"
+            header: "§4~~~ §bInformation about §d{full_name} §4~~~"
+            author: "§6Author: §d{author}"
+            api: "§6Supported API versions: §d{apis}"
+            datarecords: "§6Data records: §d{records_amount}"
+            entries: "§6Entries: §d{entries}"
+
     general:
-        header: "§c--- §dStatistics of §a{player} §c---"
+        header: "§l§c--- §dStatistics of §a{player} §c---"
         onlinetime:
             years: "y"
             months: "month(s)"

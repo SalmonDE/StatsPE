@@ -6,6 +6,7 @@ interface DataProvider
 
     public function initialize(array $data);
 
+
     public function getData(string $player, Entry $entry);
 
     public function getAllData(string $player = null);
@@ -19,6 +20,8 @@ interface DataProvider
     public function getEntries() : array;
 
     public function entryExists(string $entry) : bool;
+
+    public function countDataRecords() : int;
 
     public function saveAll();
 }
