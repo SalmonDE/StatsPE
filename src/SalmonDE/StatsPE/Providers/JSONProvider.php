@@ -18,8 +18,8 @@ class JSONProvider implements DataProvider
     }
 
     public function addPlayer(\pocketmine\Player $player){
-        foreach($this->dataProvider->getEntries() as $entry){ // Run through all entries and save the default values
-            $this->dataProvider->saveData($player->getName(), $entry, $entry->getDefault());
+        foreach($this->getEntries() as $entry){ // Run through all entries and save the default values
+            $this->saveData($player->getName(), $entry, $entry->getDefault());
         }
     }
 
