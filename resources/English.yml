@@ -13,11 +13,12 @@ lines:
             header: "§4~~~ §bInformation about §d{full_name} §4~~~"
             author: "§6Author: §d{author}"
             api: "§6Supported API versions: §d{apis}"
+            provider: "§6Data provider: §d{provider}"
             datarecords: "§6Data records: §d{records_amount}"
             entries: "§6Entries: §d{entries}"
 
     general:
-        header: "§l§c--- §dStatistics of §a{player} §c---"
+        header: "§c--- §dStatistics of §a{player} §c---"
         onlinetime:
             years: "y"
             months: "month(s)"

@@ -17,6 +17,10 @@ class JSONProvider implements DataProvider
         $this->dataConfig = new Config($data['path'], Config::JSON);
     }
 
+    public function getName() : string{
+        return 'JSONProvider';
+    }
+
     public function addPlayer(\pocketmine\Player $player){
         foreach($this->getEntries() as $entry){ // Run through all entries and save the default values
             $this->saveData($player->getName(), $entry, $entry->getDefault());
@@ -38,7 +42,7 @@ class JSONProvider implements DataProvider
 
     public function getAllData(string $player = null){
         if($player !== null){
-            return $this->dataConfig->get(strtolower($player));
+            return $this->dataConfig->get(strtolower($player), null);
         }
         return $this->dataConfig->getAll();
     }

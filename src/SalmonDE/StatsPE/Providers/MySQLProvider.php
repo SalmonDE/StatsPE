@@ -34,6 +34,10 @@ class MySQLProvider implements DataProvider
         Base::getInstance()->getLogger()->notice('Successfully connected to the MySQL server!');
     }
 
+    public function getName() : string{
+        return 'MySQLProvider';
+    }
+
     public function prepareTable(){
         $columns = ['Username VARCHAR(255) UNIQUE NOT NULL'];
         foreach($this->entries as $entry){
@@ -86,10 +90,24 @@ class MySQLProvider implements DataProvider
     public function getAllData(string $player = null){
         if($player !== null){
             $query = $this->queryDb("SELECT * FROM StatsPE WHERE Username='$player'");
+
+            $data = [];
+
+            while ($row = $query->fetch_assoc()){
+                $data[array_shift($row)] = $row;
+            }
+
+            if($data === []){
+                return;
+            }else{
+                $name = array_keys($data)[0];
+                $data[$name]['Username'] = $name;
+                return $data[$name];
+            }
         }
 
-        $data = [];
-        $query = isset($query) ? $query : $this->queryDb('SELECT * FROM StatsPE');
+        $query = $this->queryDb('SELECT * FROM StatsPE');
+
         while ($row = $query->fetch_assoc()){
             $data[array_shift($row)] = $row;
         }

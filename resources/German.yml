@@ -13,6 +13,7 @@ lines:
             header: "§4~~~ §bInformationen über §d{full_name} §4~~~"
             author: "§6Autor: §d{author}"
             api: "§6Unterstützte API Versionen: §d{apis}"
+            provider: "§6Datenprovider: §d{provider}"
             datarecords: "§6Dateneinträge: §d{records_amount}"
             entries: "§6Einträge: §d{entries}"
     general:

@@ -12,6 +12,7 @@ class Base extends \pocketmine\plugin\PluginBase
     private $messages = [];
 
     private $listener = null; // Needed because of the OnlineTime hack
+    private $floatingTextManager = null;
 
     public static function getInstance() : Base{
         return self::$instance;
@@ -23,7 +24,6 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->saveResource('messages.yml');
         $this->initializeProvider();
         if($this->isEnabled()){
-            $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
             $this->runUpdateManager();
 
             if(!file_exists($this->getDataFolder().'messages.yml')){
@@ -48,6 +48,7 @@ class Base extends \pocketmine\plugin\PluginBase
             }else{
                 $this->getLogger()->warning('The save interval is lower than 1 min! Please make sure to always properly shutdown the server in order to prevent data loss!');
             }
+            $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
         }
     }
 
@@ -82,6 +83,7 @@ class Base extends \pocketmine\plugin\PluginBase
     }
 
     private function registerDefaultEntries(){
+        $this->provider->addEntry(new Entry('Username', 'undefined', Entry::STRING, true));
         foreach($this->getConfig()->get('Stats') as $statistic => $enabled){
             if($enabled){
                 switch($statistic){
@@ -189,7 +191,6 @@ class Base extends \pocketmine\plugin\PluginBase
                 $this->provider->addEntry(new Entry($statistic, $default, $expectedType, $save));
             }
         }
-        $this->provider->addEntry(new Entry('Username', 'undefined', Entry::STRING, true));
     }
 
     private function registerCommands(){

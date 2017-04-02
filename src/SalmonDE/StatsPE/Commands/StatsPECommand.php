@@ -28,6 +28,7 @@ class StatsPECommand extends \pocketmine\command\PluginCommand
                 Base::getInstance()->getMessage('commands.statspe.header'),
                 Base::getInstance()->getMessage('commands.statspe.author'),
                 Base::getInstance()->getMessage('commands.statspe.api'),
+                Base::getInstance()->getMessage('commands.statspe.provider'),
                 Base::getInstance()->getMessage('commands.statspe.datarecords'),
                 Base::getInstance()->getMessage('commands.statspe.entries')
             ];
@@ -40,6 +41,7 @@ class StatsPECommand extends \pocketmine\command\PluginCommand
                 '{full_name}' => Base::getInstance()->getDescription()->getFullName(),
                 '{author}' => implode(', ', Base::getInstance()->getDescription()->getAuthors()),
                 '{apis}' => implode(', ', Base::getInstance()->getDescription()->getCompatibleApis()),
+                '{provider}' => Base::getInstance()->getDataProvider()->getName(),
                 '{records_amount}' => Base::getInstance()->getDataProvider()->countDataRecords(),
                 '{entries}' => implode('; ', $entries)
             ];

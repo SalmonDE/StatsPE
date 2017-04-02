@@ -6,6 +6,7 @@ interface DataProvider
 
     public function initialize(array $data);
 
+    public function getName() : string;
 
     public function getData(string $player, Entry $entry);
 

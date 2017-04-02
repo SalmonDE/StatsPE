@@ -45,7 +45,7 @@ class EventListener implements \pocketmine\event\Listener
 
         if(Base::getInstance()->getDataProvider()->entryExists('KillCount')){
             if(($cause = $event->getPlayer()->getLastDamageCause()) instanceof \pocketmine\event\entity\EntityDamageByEntityEvent){
-                if($dmgr = $cause->getDamager() instanceof Player){
+                if(($dmgr = $cause->getDamager()) instanceof Player){
                     Base::getInstance()->getDataProvider()->saveData($dmgr->getName(), $ent = Base::getInstance()->getDataProvider()->getEntry('KillCount'), Base::getInstance()->getDataProvider()->getData($dmgr->getName(), $ent) + 1);
                 }
             }

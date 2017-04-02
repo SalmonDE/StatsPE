@@ -29,7 +29,7 @@ Provider: json
 # Time in minutes after which changes are saved
 Save-Interval: 20
 # Date format, for a further explanation see here: http://php.net/manual/de/function.date.php
-Date-Format: "d.M.Y"
+Date-Format: "d. M Y"
 # mysql settings in case you're using it
 MySQL:
     host: "example.net:3306"
