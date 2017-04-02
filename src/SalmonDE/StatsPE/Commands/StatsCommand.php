@@ -21,6 +21,11 @@ class StatsCommand extends \pocketmine\command\PluginCommand
                 $sender->sendMessage($this->getUsage());
             }
             $args[0] = $sender->getName();
+        }else{
+            if(!$sender->hasPermission('statspe.cmd.stats.others')){
+                $sender->sendMessage(new \pocketmine\event\TranslationContainer(TF::RED.'%commands.generic.permission'));
+                return;
+            }
         }
 
         if(is_array($data = Base::getInstance()->getDataProvider()->getAllData($args[0]))){

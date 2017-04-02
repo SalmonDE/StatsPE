@@ -1,5 +1,5 @@
 name: StatsPE
-version: 3.2.2
+version: 3.2.3
 api: [3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4, 3.0.0-ALPHA5]
 main: SalmonDE\StatsPE\Base
 description: Playerstatistics for your server!
@@ -20,6 +20,10 @@ permissions:
                 statspe.cmd.stats:
                     description: Permission for /stats
                     default: true
+                    children:
+                        statspe.cmd.stats.others:
+                            description: Permission for /stats [name]
+                            default: true
             statspe.entry:
                 description: Allows to see entries of the statistics
                 children:

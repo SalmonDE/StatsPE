@@ -17,54 +17,49 @@ _Optional_         | If you want to disable a statistic from showing on `/stats 
 
 **_MySQL Configuration_** | **_Using MySQL with StatsPE_**
 ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------
-Step 4                    | Put your MySQL Settings in [these](https://github.com/SalmonDE/StatsPE/blob/master/resources/config.yml#L41-L45) lines.
-Step 5                    | Change the data providers from JSON to MySQL in [this](https://github.com/SalmonDE/StatsPE/blob/master/resources/config.yml#L38) line.
+Step 4                    | Put your MySQL Settings in [these](https://github.com/SalmonDE/StatsPE/blob/master/resources/config.yml#L35-L38) lines.
+Step 5                    | Change the data providers from JSON to MySQL in [this](https://github.com/SalmonDE/StatsPE/blob/master/resources/config.yml#L28) line.
 
 --------------------------------------------------------------------------------
 
-**_Command_**                | **_Description_**                                                                          | **_Permission Node_**
----------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------
-/stats [player]              | Shows the player's stats, only for what is enabled in config.yml                           | statspe.cmd.stats
-/stats [player]              | Shows the player's stats along with advanced info, such as their ClientID and IP addresses | statspe.cmd.stats.advancedinfo
-/floatingstats add [name]    | Adds a floatingstat to your current person with a name specified by you                    | statspe.cmd.floatingstats
-/floatingstats list          | Lists all floatingstats on the server                                                      | statspe.cmd.floatingstats
-/floatingstats remove [name] | Removes a floatingstat                                                                  | statspe.cmd.floatingstats
-/fixtable                    | Tries to add or modify columns to an existing table (MySQL only!)                          | statspe.cmd.fixtable
+**_Command_**                       | **_Description_**                                                                          | **_Permission Node_**
+----------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------
+/stats                              | Shows the player's stats                                                                   | statspe.cmd.stats
+/stats [player]                     | Shows the stats of another player                                                          | statspe.cmd.stats.others
+/statspe                            | Shows statistics of the plugin                                                             | statspe.cmd.statspe
+/statspe floatingtext add [name]    | Adds a floatingtext to your server at your current position                                | statspe.cmd.statspe.floatingtext
+/statspe floatingtext remove [name] | Removes a floatingtext                                                                     | statspe.cmd.statspe.floatingtext
+/statspe floatingtext list          | Lists all floatingtexts on the server                                                      | statspe.cmd.statspe.floatingtext
+/statspe floatingtext info [name]   | Shows information about a floatingtext such as the position and shown stats                | statspe.cmd.statspe.floatingtext
 
 --------------------------------------------------------------------------------
 
-**FloatingStat Setting** | **Description**                                                                                       | **Example**
+**FloatingText Setting** | **Description**                                                                                       | **Example**
 ------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------
-Name                     | The name of the floating stat, specified by the creator                                               | Spawn
-Enabled                  | Specifies if the floating stat should be enabled (must be true or false)                              | false
+Name                     | The name of the floating stat, specified by the creator                                               | SpawnText
 Position                 | Contains information about the position of the floating stat (Array)                                  | X => '100' Y => '50' Z => '400' Level => 'Lobby'
-PlayerName               | If NOT false the associated floating stat will show the stats of the player specified in this setting | SalericioDE
-Stats                    | Contains settings to disable or enable single statistics for the floatingstat (Array)                 | KillCount => true DeathCount => false
+Text                     | Contains text lines with statistics which will be shown on the floating text (Array)                  | OnlineTime: "Was online for {value}"
 
 --------------------------------------------------------------------------------
 
-**_Statistic_**   | **_Description_**                             | **_Example_**                      | **_Type_**
------------------ | --------------------------------------------- | ---------------------------------- | ----------
-PlayerName        | Name of the player (case sensitive)           | SalericioDE                        | Normal
-ClientID          | ClientID of the MCPE installation             | -8655314918531                     | Advanced
-XBoxAuthenticated | If the user is authenticated with Xbox or not | true                               | Advanced
-LastIP            | Last used IP from the player                  | 192.168.1.45                       | Advanced
-UUID              | Player's UUID                                 | 3942e063-fa8f-3a43-8fc2-201dc6     | Advanced
-FirstJoin         | First time the player joined                  | 04:19:51 22.07.2016 (Configurable) | Normal
-LastJoin          | Last time the player joined                   | 04:23:01 22.07.2016 (Configurable) | Normal
-JoinCount         | How many times the player joined the server   | 10                                 | Normal
-KillCount         | How often the player killed another player    | 69                                 | Normal
-DeathCount        | How often the player died                     | 9                                  | Normal
-K/D               | Player's Kill/Death Ratio                     | 38%                                | Normal
-KickCount         | How often the player got kicked               | 1                                  | Normal
-OnlineTime        | How long the player played on the server      | Online for 5 hours, 23 minutes, and 33 seconds. | Normal
-BlocksBreaked     | How many blocks the player broke              | 3                                  | Normal
-BlocksPlaced      | How many blocks the placer placed             | 4                                  | Normal
-ChatMessages      | How many chat messages the player sent        | 78                                 | Normal
-FishCount         | How many fishes the player catched            | 1                                  | Normal
-EnterBedCount     | How often the player used a bed               | 2                                  | Normal
-EatCount          | How often the player consumed an item         | 13                                 | Normal
-CraftCount        | How often the player crafted something        | 6                                  | Normal
-Items dropped     | How many items the player dropped             | 294                                | Normal
-Money [EconomyAPI, PocketMoney] | How much money person has       | $4221                              | Normal
+**_Default Entries_**   | **_Description_**                             | **_Example_**                      | **_Does it save data?_**
+-----------------       | --------------------------------------------- | ---------------------------------- | ----------
+Username                | Name of the player (case sensitive)           | SalericioDE                        | Yes
+ClientID                | ClientID of the MCPE installation             | -8655314918531                     | Yes
+XBoxAuthenticated       | If the user is authenticated with Xbox or not | true                               | Yes
+LastIP                  | Last used IP from the player                  | 192.168.1.35                       | Yes
+UUID                    | Player's UUID                                 | 3942e063-fa8f-3a43-8fc2-201dc6     | Yes
+FirstJoin               | First time the player joined                  | 02. Apr 2017 20:50 (Configurable)  | No
+LastJoin                | Last time the player joined                   | 02. Apr 2017 20:50 (Configurable)  | No
+JoinCount               | How many times the player joined the server   | 10                                 | Yes
+KillCount               | How often the player killed another player    | 69                                 | Yes
+DeathCount              | How often the player died                     | 9                                  | Yes
+K/D                     | Player's Kill/Death Ratio                     | 2,5                                | No
+OnlineTime              | How long the player played on the server      | Online for 5h, 23m, and 33s.       | Yes
+BlockBreakCount         | How many blocks the player destroye           | 3                                  | Yes
+BlockPlaceCount         | How many blocks the placer placed             | 4                                  | Yes
+ChatCount               | How many chat messages the player sent        | 78                                 | Yes
+ItemConsumeCount        | How often the player consumed an item         | 13                                 | Yes
+ItemCraftCount          | How often the player crafted something        | 6                                  | Yes
+ItemsDropCount          | How many items the player dropped             | 294                                | Yes
 --------------------------------------------------------------------------------
