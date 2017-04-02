@@ -18,7 +18,7 @@ class StatsCommand extends \pocketmine\command\PluginCommand
     public function execute(\pocketmine\command\CommandSender $sender, $label, array $args){
         if(!isset($args[0])){
             if(!$sender instanceof Player){
-                return false;
+                $sender->sendMessage($this->getUsage());
             }
             $args[0] = $sender->getName();
         }
@@ -59,7 +59,6 @@ class StatsCommand extends \pocketmine\command\PluginCommand
             }
         }else{
             $sender->sendMessage(TF::RED.str_replace('{player}', $args[0], $this->getPlugin()->getMessage('commands.stats.notFound')));
-            return true;
         }
     }
 }
