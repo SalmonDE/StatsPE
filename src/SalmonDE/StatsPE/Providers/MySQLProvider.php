@@ -30,7 +30,6 @@ class MySQLProvider implements DataProvider
             Base::getInstance()->getServer()->getPluginManager()->disablePlugin(Base::getInstance());
             return;
         }
-        $this->dbName = $data['db'];
 
         Base::getInstance()->getLogger()->notice('Successfully connected to the MySQL server!');
     }
@@ -55,7 +54,7 @@ class MySQLProvider implements DataProvider
 
         $missingColumns = [];
         foreach($this->entries as $entry){
-            if(array_search($entry->getName(), $existingColumns) === false){
+            if(array_search($entry->getName(), $existingColumns) === false && $entry->shouldSave()){
                 $missingColumns[] = $entry;
             }
         }
