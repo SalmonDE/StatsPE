@@ -1,5 +1,5 @@
 name: StatsPE
-version: 3.2.1
+version: 3.2.2
 api: [3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4, 3.0.0-ALPHA5]
 main: SalmonDE\StatsPE\Base
 description: Playerstatistics for your server!
@@ -15,8 +15,8 @@ permissions:
                 statspe.cmd.statspe:
                     description: Permission for /statspe
                     children:
-                        statspe.cmd.statspe.floatingtexts:
-                        description: Permission for /statspe floatingtexts
+                        statspe.cmd.statspe.floatingtext:
+                        description: Permission for /statspe floatingtext
                 statspe.cmd.stats:
                     description: Permission for /stats
                     default: true

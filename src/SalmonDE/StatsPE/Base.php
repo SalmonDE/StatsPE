@@ -48,6 +48,7 @@ class Base extends \pocketmine\plugin\PluginBase
             }else{
                 $this->getLogger()->warning('The save interval is lower than 1 min! Please make sure to always properly shutdown the server in order to prevent data loss!');
             }
+            $this->floatingTextManager = $this->floatingTextManager instanceof FloatingTexts\FloatingTextManager ? $this->floatingTextManager : new FloatingTexts\FloatingTextManager();
             $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
         }
     }
@@ -205,6 +206,11 @@ class Base extends \pocketmine\plugin\PluginBase
     public function setDataProvider(Providers\DataProvider $provider){
         $this->provider = $provider;
     }
+
+    public function getFloatingTextManager() : FloatingTexts\FloatingTextManager{
+        return $this->floatingTextManager;
+    }
+
 
     public function getMessage(string $k){
         $keys = explode('.', $k);

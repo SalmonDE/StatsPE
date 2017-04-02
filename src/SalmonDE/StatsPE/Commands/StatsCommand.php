@@ -24,7 +24,7 @@ class StatsCommand extends \pocketmine\command\PluginCommand
         }
 
         if(is_array($data = Base::getInstance()->getDataProvider()->getAllData($args[0]))){
-            $sender->sendMessage(str_replace('{player}', $data['Username'], $this->getPlugin()->getMessage('general.header')));
+            $text = str_replace('{value}', $data['Username'], $this->getPlugin()->getMessage('general.header'));
             foreach(Base::getInstance()->getDataProvider()->getEntries() as $entry){
                 if($sender->hasPermission('statspe.entry.'.$entry->getName())){
                     switch($entry->getName()){
@@ -54,9 +54,10 @@ class StatsCommand extends \pocketmine\command\PluginCommand
                         default:
                             $value = $data[$entry->getName()];
                     }
-                    $sender->sendMessage(TF::AQUA.$entry->getName().': '.TF::GOLD.$value);
+                    $text .= TF::RESET."\n".TF::AQUA.$entry->getName().': '.TF::GOLD.$value;
                 }
             }
+            $sender->sendMessage($text);
         }else{
             $sender->sendMessage(TF::RED.str_replace('{player}', $args[0], $this->getPlugin()->getMessage('commands.stats.notFound')));
         }

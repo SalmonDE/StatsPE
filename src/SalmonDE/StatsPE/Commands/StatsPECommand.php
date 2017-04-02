@@ -4,6 +4,7 @@ namespace SalmonDE\StatsPE\Commands;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat as TF;
 use SalmonDE\StatsPE\Base;
+use SalmonDE\StatsPE\FloatingTexts\FloatingTextManager;
 
 class StatsPECommand extends \pocketmine\command\PluginCommand
 {
@@ -19,9 +20,82 @@ class StatsPECommand extends \pocketmine\command\PluginCommand
 
     public function execute(\pocketmine\command\CommandSender $sender, $label, array $args){
         if(isset($args[0])){
-            switch($args[0]){
-                case 'floatingtexts':
-                    break;
+            if(strtolower($args[0]) === 'floatingtext' && isset($args[1])){
+                if(!$sender->hasPermission('statspe.cmd.statspe.floatingtext')){
+                    $sender->sendMessage(new \pocketmine\event\TranslationContainer(TF::RED.'%commands.generic.permission'));
+                    return;
+                }
+
+                switch(strtolower($args[1])){
+                    case 'add':
+                        if(!$sender instanceof Player){
+                            Base::getInstance()->getMessage('commands.statspe.floatingtext.senderNotPlayer');
+                        }
+                        if(isset($args[2])){
+                            if(FloatingTextManager::getInstance()->addFloatingText($args[2], $sender->x, $sender->y, $sender->z, $sender->getLevel())){
+                                $sender->sendMessage(str_replace('{name}', $args[2], Base::getInstance()->getMessage('commands.statspe.floatingtext.addSuccess')));
+                            }else{
+                                $sender->sendMessage(str_replace('{name}', $args[2], Base::getInstance()->getMessage('commands.statspe.floatingtext.alreadyExists')));
+                            }
+                        }else{
+                            $sender->sendMessage(Base::getInstance()->getMessage('commands.statspe.floatingtext.missingName'));
+                        }
+                        break;
+
+                    case 'remove':
+                        if(isset($args[2])){
+                            if(FloatingTextManager::getInstance()->removeFloatingText($args[2])){
+                                $sender->sendMessage(str_replace('{name}', $args[2], Base::getInstance()->getMessage('commands.statspe.floatingtext.removeSuccess')));
+                            }else{
+                                $sender->sendMessage(Base::getInstance()->getMessage(str_replace('{name}', $args[2], 'commands.statspe.floatingtext.notFound')));
+                            }
+                        }else{
+                            $sender->sendMessage(Base::getInstance()->getMessage('commands.statspe.floatingtext.missingName'));
+                        }
+                        break;
+
+                    case 'list':
+                        foreach(FloatingTextManager::getInstance()->getAllFloatingTexts() as $levelList){
+                            foreach($levelList as $floatingText){
+                                $texts[] = $floatingText->getName();
+                            }
+                        }
+
+                        $sender->sendMessage(str_replace(['{count}', '{names}'], [count($texts), implode(', ', $texts)], Base::getInstance()->getMessage('commands.statspe.floatingtext.listAll')));
+                        break;
+
+                    case 'info':
+                        if(isset($args[2])){
+                            if(($ft = FloatingTextManager::getInstance()->getFloatingText($args[2])) instanceof \SalmonDE\StatsPE\FloatingTexts\FloatingText){
+                                $info = [
+                                    '{name}' => $ft->getName(),
+                                    '{x}' => $ft->x,
+                                    '{y}' => $ft->y,
+                                    '{z}' => $ft->z,
+                                    '{level}' => $ft->getLevelName(),
+                                    '{entries}' => implode(', ', array_keys($ft->getFloatingText()))
+                                ];
+
+                                $lines = [
+                                    Base::getInstance()->getMessage('commands.statspe.floatingtext.info.name'),
+                                    Base::getInstance()->getMessage('commands.statspe.floatingtext.info.position'),
+                                    Base::getInstance()->getMessage('commands.statspe.floatingtext.info.entries')
+                                ];
+                                $lines = implode(TF::RESET."\n", $lines);
+
+                                $sender->sendMessage(str_replace(array_keys($info), array_values($info), $lines));
+                            }else{
+                                $sender->sendMessage(Base::getInstance()->getMessage(str_replace('{name}', $args[2], 'commands.statspe.floatingtext.notFound')));
+                            }
+                        }else{
+                            $sender->sendMessage(Base::getInstance()->getMessage('commands.statspe.floatingtext.missingName'));
+                        }
+                        break;
+                    default:
+                        $sender->sendMessage($this->getUsage());
+                }
+            }else{
+                $sender->sendMessage($this->getUsage());
             }
         }else{
             $messages = [

@@ -6,7 +6,7 @@ Language: English
 # Enable Stats: true/false
 Stats:
   ClientID: true
-  LastIP: false
+  LastIP: true
   UUID: true
   XBoxAuthenticated: false
   FirstJoin: true
