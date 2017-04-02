@@ -19,13 +19,12 @@ before_script:
  - cp -rf SalmonDE/StatsPE/plugin.yml PocketMine-MP/plugins/StatsPE-src
  - cp -rf SalmonDE/StatsPE/LICENSE PocketMine-MP/plugins/StatsPE-src
  - cp -rf SalmonDE/StatsPE/build.php PocketMine-MP/
- - cp -rf SalmonDE/StatsPE/check.php PocketMine-MP/
- - cd PocketMine-MP/plugins/
- - wget -O DevTools.phar https://github.com/pmmp/PocketMine-DevTools/releases/download/v1.11.2/PocketMine-DevTools_v1.11.2.phar
- - cd /home/travis/build/PocketMine-MP
+ - git clone https://github.com/pmmp/PocketMine-DevTools.git
+ - cp SalmonDE/StatsPE/compiledevtools.php /home/travis/build/
+ - php compiledevtools.php
+ - cd PocketMine-MP/
 
 script:
- - php check.php
  - php build.php
 
 deploy:
