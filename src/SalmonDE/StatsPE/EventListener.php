@@ -14,6 +14,9 @@ class EventListener implements \pocketmine\event\Listener
                 Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('JoinCount'), ++$data['JoinCount']);
             }
         }
+        if(Base::getInstance()->getDataProvider()->entryExists('Online')){
+            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('Online'), true);
+        }
         if(Base::getInstance()->getDataProvider()->entryExists('ClientID')){
             Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ClientID'), (string) $event->getPlayer()->getClientId());
         }
@@ -32,9 +35,12 @@ class EventListener implements \pocketmine\event\Listener
     }
 
     public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
-        $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
         if(Base::getInstance()->getDataProvider()->entryExists('OnlineTime')){
+            $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
             Base::getInstance()->getDataProvider()->saveData($name = $event->getPlayer()->getName(), $ent = Base::getInstance()->getDataProvider()->getEntry('OnlineTime'), intval(Base::getInstance()->getDataProvider()->getData($name, $ent) + $time));
+        }
+        if(Base::getInstance()->getDataProvider()->entryExists('Online')){
+            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('Online'), true);
         }
     }
 

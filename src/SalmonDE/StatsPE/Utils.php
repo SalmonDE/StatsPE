@@ -64,7 +64,7 @@ class Utils
     }
 
     public static function getMySQLDatatype(int $type) : string{
-        switch($type){ // I need help here!
+        switch($type){
             case Entry::INT:
                 return 'INT(255)';
 

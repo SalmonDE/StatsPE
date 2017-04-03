@@ -56,6 +56,10 @@ class StatsCommand extends \pocketmine\command\PluginCommand
                             $value = \SalmonDE\StatsPE\Utils::getKD($data['KillCount'], $data['DeathCount']);
                             break;
 
+                        case 'Online':
+                            $value = $data['Online'] ? Base::getInstance()->getMessage('commands.stats.true') : Base::getInstance()->getMessage('commands.stats.false');
+                            break;
+
                         default:
                             $value = $data[$entry->getName()];
                     }

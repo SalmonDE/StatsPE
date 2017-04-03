@@ -5,6 +5,7 @@ Language: English
 
 # Enable Stats: true/false
 Stats:
+  Online: true
   ClientID: true
   LastIP: true
   UUID: true

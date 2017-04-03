@@ -88,6 +88,12 @@ class Base extends \pocketmine\plugin\PluginBase
         foreach($this->getConfig()->get('Stats') as $statistic => $enabled){
             if($enabled){
                 switch($statistic){
+                    case 'Online':
+                        $default = false;
+                        $expectedType = Entry::BOOL;
+                        $save = true;
+                        break;
+
                     case 'ClientID':
                         $default = 'undefined';
                         $expectedType = Entry::STRING;

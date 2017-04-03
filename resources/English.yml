@@ -7,6 +7,8 @@ lines:
             description: "Shows the statistics of a player"
             usage: "/stats [player]"
             notFound: "Couldn't find any statistics for: \"{player}\"!"
+            "true": "Yes"
+            "false": "No"
         statspe:
             description: "Shows information about the statspe plugin and manages floating texts"
             usage: "/statspe [floatingtext <add|remove|list|info> [name]]"
