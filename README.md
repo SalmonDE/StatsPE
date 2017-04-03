@@ -45,6 +45,7 @@ Text                     | Contains text lines with statistics which will be sho
 **_Default Entries_**   | **_Description_**                             | **_Example_**                      | **_Does it save data?_**
 -----------------       | --------------------------------------------- | ---------------------------------- | ----------
 Username                | Name of the player (case sensitive)           | SalericioDE                        | Yes
+Online                  | Is the player online                          | No                                 | Yes
 ClientID                | ClientID of the MCPE installation             | -8655314918531                     | Yes
 XBoxAuthenticated       | If the user is authenticated with Xbox or not | true                               | Yes
 LastIP                  | Last used IP from the player                  | 192.168.1.35                       | Yes
