@@ -1,5 +1,5 @@
 name: StatsPE
-version: 3.2.3
+version: 3.2.4
 api: [3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4, 3.0.0-ALPHA5]
 main: SalmonDE\StatsPE\Base
 description: Playerstatistics for your server!

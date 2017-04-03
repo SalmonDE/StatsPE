@@ -118,7 +118,8 @@ class MySQLProvider implements DataProvider
         if($this->entryExists($entry->getName()) && $entry->shouldSave()){
             if($entry->isValidType($value)){
                 $value = Utils::convertValueSave($entry, $value);
-                $this->queryDb('UPDATE StatsPE SET '.$entry->getName().'='."'$value' WHERE Username='$player'");
+                $value = is_numeric($value) ? $value : "'$value'";
+                $this->queryDb('UPDATE StatsPE SET '.$entry->getName().'='."$value WHERE Username='$player'");
             }else{
                 Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }

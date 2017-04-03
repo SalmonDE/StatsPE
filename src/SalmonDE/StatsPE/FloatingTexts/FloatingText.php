@@ -31,6 +31,7 @@ class FloatingText extends \pocketmine\level\particle\FloatingTextParticle
     }
 
     public function sendTextToPlayer(\pocketmine\Player $player){
+        $data = Base::getInstance()->getDataProvider()->getAllData($player->getName());
         $text = [];
         foreach(array_keys($this->floatingText) as $key){
             if(Base::getInstance()->getDataProvider()->entryExists($key)){
@@ -44,18 +45,22 @@ class FloatingText extends \pocketmine\level\particle\FloatingTextParticle
                         break;
 
                     case 'OnlineTime':
-                        $seconds = Base::getInstance()->getDataProvider()->getData($player->getName(), Base::getInstance()->getDataProvider()->getEntry($key));
+                        $seconds = $data['OnlineTime'];
                         $seconds += round(time() - ($player->getLastPlayed() / 1000));
 
                         $value = Utils::getPeriodFromSeconds($seconds);
                         break;
 
                     case 'K/D':
-                        $value = Utils::getKD(Base::getInstance()->getDataProvider()->getData($player->getName(), Base::getInstance()->getDataProvider()->getEntry('KillCount')), Base::getInstance()->getDataProvider()->getData($player->getName(), Base::getInstance()->getDataProvider()->getEntry('DeathCount')));
+                        $value = Utils::getKD($data['KillCount'], $data['DeathCount']);
+                        break;
+
+                    case 'Online':
+                        $value = $data['Online'] ? Base::getInstance()->getMessage('commands.stats.true') : Base::getInstance()->getMessage('commands.stats.false');
                         break;
 
                     default:
-                        $value = Base::getInstance()->getDataProvider()->getData($player->getName(), Base::getInstance()->getDataProvider()->getEntry($key));
+                        $value = $data[$key];
                 }
                 $text[] = str_replace('{value}', $value, $this->floatingText[$key]);
             }
