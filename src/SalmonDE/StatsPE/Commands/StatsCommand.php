@@ -19,6 +19,7 @@ class StatsCommand extends \pocketmine\command\PluginCommand
         if(!isset($args[0])){
             if(!$sender instanceof Player){
                 $sender->sendMessage($this->getUsage());
+                return;
             }
             $args[0] = $sender->getName();
         }else{
