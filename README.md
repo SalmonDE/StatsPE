@@ -45,18 +45,18 @@ Text                     | Contains text lines with statistics which will be sho
 **_Default Entries_**   | **_Description_**                             | **_Example_**                      | **_Does it save data?_**
 -----------------       | --------------------------------------------- | ---------------------------------- | ----------
 Username                | Name of the player (case sensitive)           | SalericioDE                        | Yes
-Online                  | Is the player online                          | No                                 | Yes
+Online                  | Is the player online                          | true (OR 1 in MySQL)               | Yes
 ClientID                | ClientID of the MCPE installation             | -8655314918531                     | Yes
-XBoxAuthenticated       | If the user is authenticated with Xbox or not | true                               | Yes
+XBoxAuthenticated       | If the user is authenticated with Xbox or not | false (OR 0 in MySQL)              | Yes
 LastIP                  | Last used IP from the player                  | 192.168.1.35                       | Yes
 UUID                    | Player's UUID                                 | 3942e063-fa8f-3a43-8fc2-201dc6     | Yes
-FirstJoin               | First time the player joined                  | 02. Apr 2017 20:50 (Configurable)  | No
-LastJoin                | Last time the player joined                   | 02. Apr 2017 20:50 (Configurable)  | No
+FirstJoin               | First time the player joined                  | 1491293910.542 (Unix timestamp)    | Yes
+LastJoin                | Last time the player joined                   | 149129395750.641 (Unix timestamp)  | Yes
 JoinCount               | How many times the player joined the server   | 10                                 | Yes
 KillCount               | How often the player killed another player    | 69                                 | Yes
 DeathCount              | How often the player died                     | 9                                  | Yes
 K/D                     | Player's Kill/Death Ratio                     | 2,5                                | No
-OnlineTime              | How long the player played on the server      | Online for 5h, 23m, and 33s.       | Yes
+OnlineTime              | How long the player played on the server      | 321 (seconds)                      | Yes
 BlockBreakCount         | How many blocks the player destroye           | 3                                  | Yes
 BlockPlaceCount         | How many blocks the placer placed             | 4                                  | Yes
 ChatCount               | How many chat messages the player sent        | 78                                 | Yes
