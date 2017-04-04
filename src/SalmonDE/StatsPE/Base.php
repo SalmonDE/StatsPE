@@ -125,15 +125,15 @@ class Base extends \pocketmine\plugin\PluginBase
                         break;
 
                     case 'FirstJoin':
-                        $default = 0;
-                        $expectedType = Entry::INT;
-                        $save = false;
+                        $default = 0.0;
+                        $expectedType = Entry::FLOAT;
+                        $save = true;
                         break;
 
                     case 'LastJoin':
-                        $default = 0;
-                        $expectedType = Entry::INT;
-                        $save = false;
+                        $default = 0.0;
+                        $expectedType = Entry::FLOAT;
+                        $save = true;
                         break;
 
                     case 'K/D':

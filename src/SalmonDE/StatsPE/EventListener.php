@@ -19,6 +19,14 @@ class EventListener implements \pocketmine\event\Listener
             Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('Online'), true);
         }
 
+        if(Base::getInstance()->getDataProvider()->entryExists('FirstJoin')){ // I'd like to do this only once in $dataProvider()->addPlayer();
+            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('FirstJoin'), $event->getPlayer()->getFirstPlayed() / 1000);
+        }
+
+        if(Base::getInstance()->getDataProvider()->entryExists('LastJoin')){
+            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('LastJoin'), $event->getPlayer()->getLastPlayed() / 1000);
+        }
+
         if(Base::getInstance()->getDataProvider()->entryExists('ClientID')){
             Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ClientID'), (string) $event->getPlayer()->getClientId());
         }
