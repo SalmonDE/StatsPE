@@ -1,13 +1,13 @@
-### ***General***
 #### **What does the PR do?**
-###### Fixes a bug? Enhancement?
+<!-- Does your Pull Request fix a bug? Enhancements to the plugin? -->
 
 #### **Why should this PR be merged?**
-###### Explain! It can't be that hard right...?
+<!-- Why should we merge your Pull Request? -->
 
-#### **Are the changes in this PR tested**? 
-###### It is recommended that you test it before making a pull request.
+#### **Are the changes in this PR tested**?
+<!-- Please test the Pull Request yourself before submitting a pull request. -->
 - [ ] Yes
 - [ ] No
 
-### ***Extra Information***
+#### **Extra Information**
+<!-- Anything else we should know? -->
