@@ -198,6 +198,12 @@ class Base extends \pocketmine\plugin\PluginBase
                 $this->provider->addEntry(new Entry($statistic, $default, $expectedType, $save));
             }
         }
+        if($this->getDataProvider()->entryExists('K/D')){
+            if(!$this->getDataProvider()->entryExists('KillCount') || !$this->getDataProvider()->entryExists('DeathCount')){
+                $this->getLogger()->warning('Disabled K/D entry due to error prevention! Did you enable KillCount and DeathCount in the config?');
+                $this->getDataProvider()->removeEntry($this->getDataProvider()->getEntry('K/D'));
+            }
+        }
     }
 
     private function registerCommands(){
