@@ -24,7 +24,6 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->saveResource('messages.yml');
         $this->initializeProvider();
         if($this->isEnabled()){
-            $this->runUpdateManager();
 
             if(!file_exists($this->getDataFolder().'messages.yml')){
                 if($this->getResource($lang = ($this->getConfig()->get('Language').'.yml')) === null){
