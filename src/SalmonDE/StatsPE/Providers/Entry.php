@@ -14,9 +14,9 @@ class Entry
     private $defaultValue;
     private $expectedType;
     private $valid = false;
-    private $shouldSave = false;
+    private $shouldSave;
 
-    public function __construct(string $name, $default, int $type = self::MIXED, $shouldSave = true){
+    public function __construct(string $name, $default, int $type, bool $shouldSave){
         $this->name = $name;
         $this->expectedType = $type;
         if($this->isValidType($default)){
