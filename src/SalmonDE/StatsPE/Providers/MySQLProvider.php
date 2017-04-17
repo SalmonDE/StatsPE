@@ -47,10 +47,10 @@ class MySQLProvider implements DataProvider
             }
         }
 
-        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( '.implode(', ', $columns).') COLLATE utf8_general_ci');
+        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( ? ) COLLATE utf8_general_ci', [implode(', ', $columns)]);
 
         // Check if all entries have their columns
-        $existingColumns = $this->queryDb('DESCRIBE StatsPE')->fetch_all(); // Not always access to information_schema.columns
+        $existingColumns = $this->queryDb('DESCRIBE StatsPE', [])->fetch_all(); // Not always access to information_schema.columns
         $limit = count($existingColumns);
         for($k = 0; $k < $limit; $k++){
             $existingColumns[$k] = $existingColumns[$k][0];
@@ -64,13 +64,13 @@ class MySQLProvider implements DataProvider
         }
         if(count($missingColumns) > 0){
             foreach($missingColumns as $column){
-                $this->queryDb('ALTER TABLE StatsPE ADD '.$column->getName().' '.Utils::getMySQLDatatype($column->getExpectedType()).' NOT NULL DEFAULT '.(is_numeric($def = $entry->getDefault()) ? $def : "'$def'"));
+                $this->queryDb('ALTER TABLE StatsPE ADD ? ? NOT NULL DEFAULT ', [$column->getName(), Utils::getMySQLDatatype($column->getExpectedType()), $column->getDefault()]);
             }
         }
     }
 
     public function addPlayer(\pocketmine\Player $player){
-        $this->queryDb("INSERT INTO StatsPE (Username) VALUES ('".$player->getName()."')");
+        $this->queryDb('INSERT INTO StatsPE (Username) VALUES ( ? )', [$player->getName()]);
     }
 
     public function getData(string $player, Entry $entry){
@@ -78,7 +78,7 @@ class MySQLProvider implements DataProvider
             if(!$entry->shouldSave()){
                 return;
             }
-            $v = $this->queryDb('SELECT '.$entry->getName()." FROM StatsPE WHERE Username='$player'")->fetch_assoc()[$entry->getName()];
+            $v = $this->queryDb('SELECT ? FROM StatsPE WHERE Username=?', [$entry->getName(), $player])->fetch_assoc()[$entry->getName()];
             $v = Utils::convertValueGet($entry, $v);
             if($entry->isValidType($v)){
                 return $v;
@@ -89,7 +89,7 @@ class MySQLProvider implements DataProvider
 
     public function getAllData(string $player = null){
         if($player !== null){
-            $query = $this->queryDb("SELECT * FROM StatsPE WHERE Username='$player'");
+            $query = $this->queryDb('SELECT * FROM StatsPE WHERE Username=?', [$player]);
 
             $data = [];
 
@@ -106,7 +106,7 @@ class MySQLProvider implements DataProvider
             }
         }
 
-        $query = $this->queryDb('SELECT * FROM StatsPE');
+        $query = $this->queryDb('SELECT * FROM StatsPE', []);
 
         while ($row = $query->fetch_assoc()){
             $data[array_shift($row)] = $row;
@@ -118,8 +118,10 @@ class MySQLProvider implements DataProvider
         if($this->entryExists($entry->getName()) && $entry->shouldSave()){
             if($entry->isValidType($value)){
                 $value = Utils::convertValueSave($entry, $value);
-                $value = is_numeric($value) ? $value : "'$value'";
-                $this->queryDb('UPDATE StatsPE SET '.$entry->getName().'='."$value WHERE Username='$player'");
+                $valueType = is_numeric($value) ? (is_float() ? 'd' : 'i') : 's';
+                $statement = $this->database->prepare('UPDATE StatsPE SET ?=? WHERE Username=?');
+                $statement->bind_param('s'.$valueType.'s');
+                $this->queryDb('UPDATE StatsPE SET ?=? WHERE Username=?', [$entry->getName(), $value, $player]);
             }else{
                 Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }
@@ -155,7 +157,7 @@ class MySQLProvider implements DataProvider
     }
 
     public function countDataRecords() : int{
-        return (int) $this->queryDb('SELECT COUNT(*) FROM StatsPE')->fetch_assoc()['COUNT(*)'];
+        return (int) $this->queryDb('SELECT COUNT(*) FROM StatsPE', [])->fetch_assoc()['COUNT(*)'];
     }
 
     public function saveAll(){
@@ -171,8 +173,17 @@ class MySQLProvider implements DataProvider
         */
     }
 
-    private function queryDb(string $query){
-        if(!($result = $this->db->query($query))){
+    private function queryDb(string $query, array $values){
+        $valueTypes = '';
+        foreach($values as $value){
+            $valueTypes .= is_numeric($value) ? (is_float() ? 'd' : 'i') : 's';
+        }
+
+        $statement = $this->database->prepare($query);
+        $statement->bind_param($valueTypes, ...$values);
+        $statement->execute();
+
+        if(!($result = $statement->get_result())){
             Base::getInstance()->getLogger()->debug('Query: "'.$query.'"');
             Base::getInstance()->getLogger()->error('Query to the database failed: ('.$this->db->errno.')');
             Base::getInstance()->getLogger()->error($this->db->error);
