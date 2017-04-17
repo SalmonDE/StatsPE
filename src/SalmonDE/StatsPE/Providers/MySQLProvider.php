@@ -47,7 +47,7 @@ class MySQLProvider implements DataProvider
             }
         }
 
-        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( ? ) COLLATE utf8_general_ci', [implode(', ', $columns)]);
+        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( '.implode(', ', $columns).' ) COLLATE utf8_general_ci', []);
 
         // Check if all entries have their columns
         $existingColumns = $this->queryDb('DESCRIBE StatsPE', [])->fetch_all(); // Not always access to information_schema.columns
@@ -78,7 +78,7 @@ class MySQLProvider implements DataProvider
             if(!$entry->shouldSave()){
                 return;
             }
-            $v = $this->queryDb('SELECT ? FROM StatsPE WHERE Username=?', [$entry->getName(), $player])->fetch_assoc()[$entry->getName()];
+            $v = $this->queryDb('SELECT '.$this->db->real_escape_string($entry->getName()).' FROM StatsPE WHERE Username=?', [$player])->fetch_assoc()[$entry->getName()];
             $v = Utils::convertValueGet($entry, $v);
             if($entry->isValidType($v)){
                 return $v;
@@ -117,11 +117,7 @@ class MySQLProvider implements DataProvider
     public function saveData(string $player, Entry $entry, $value){
         if($this->entryExists($entry->getName()) && $entry->shouldSave()){
             if($entry->isValidType($value)){
-                $value = Utils::convertValueSave($entry, $value);
-                $valueType = is_numeric($value) ? (is_float() ? 'd' : 'i') : 's';
-                $statement = $this->database->prepare('UPDATE StatsPE SET ?=? WHERE Username=?');
-                $statement->bind_param('s'.$valueType.'s');
-                $this->queryDb('UPDATE StatsPE SET ?=? WHERE Username=?', [$entry->getName(), $value, $player]);
+                $this->queryDb('UPDATE StatsPE SET '.$this->db->real_escape_string($entry->getName()).'=? WHERE Username=?', [$value, $player]);
             }else{
                 Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }
@@ -176,19 +172,21 @@ class MySQLProvider implements DataProvider
     private function queryDb(string $query, array $values){
         $valueTypes = '';
         foreach($values as $value){
-            $valueTypes .= is_numeric($value) ? (is_float() ? 'd' : 'i') : 's';
+            $valueTypes .= is_numeric($value) ? (is_float($value) ? 'd' : 'i') : 's';
         }
 
-        $statement = $this->database->prepare($query);
-        $statement->bind_param($valueTypes, ...$values);
-        $statement->execute();
+        $statement = $this->db->prepare($query);
+        if(strpos($query, '?') !== false){
+            $statement->bind_param($valueTypes, ...$values);
+        }
 
-        if(!($result = $statement->get_result())){
+        if($statement->execute()){
+            return $statement->get_result();
+        }else{
             Base::getInstance()->getLogger()->debug('Query: "'.$query.'"');
             Base::getInstance()->getLogger()->error('Query to the database failed: ('.$this->db->errno.')');
             Base::getInstance()->getLogger()->error($this->db->error);
-        }else{
-            return $result;
+            return false;
         }
     }
 }
