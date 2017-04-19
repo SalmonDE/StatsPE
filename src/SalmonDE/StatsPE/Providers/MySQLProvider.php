@@ -28,10 +28,11 @@ class MySQLProvider implements DataProvider
             Base::getInstance()->getLogger()->critical(trim($this->db->connect_error));
 
             Base::getInstance()->getServer()->getPluginManager()->disablePlugin(Base::getInstance());
-            return;
+            return false;
         }
 
         Base::getInstance()->getLogger()->notice('Successfully connected to the MySQL server!');
+        return true;
     }
 
     public function getName() : string{
@@ -88,10 +89,10 @@ class MySQLProvider implements DataProvider
     }
 
     public function getAllData(string $player = null){
+        $data = [];
+
         if($player !== null){
             $query = $this->queryDb('SELECT * FROM StatsPE WHERE Username=?', [$player]);
-
-            $data = [];
 
             while ($row = $query->fetch_assoc()){
                 $data[array_shift($row)] = $row;
@@ -156,18 +157,7 @@ class MySQLProvider implements DataProvider
         return (int) $this->queryDb('SELECT COUNT(*) FROM StatsPE', [])->fetch_assoc()['COUNT(*)'];
     }
 
-    public function saveAll(){
-        /*if(!$this->db->connect_error){
-            if($this->db->ping()){
-
-            }else{
-                Base::getInstance()->getLogger()->critical('Failed to connect to the database: ('.$this->db->errno.')');
-                Base::getInstance()->getLogger()->critical($this->db->error);
-            }
-        }
-        Not used yet, because it's for the former system I wanted to use
-        */
-    }
+    public function saveAll(){}
 
     private function queryDb(string $query, array $values){
         $valueTypes = '';
@@ -175,7 +165,22 @@ class MySQLProvider implements DataProvider
             $valueTypes .= is_numeric($value) ? (is_float($value) ? 'd' : 'i') : 's';
         }
 
-        $statement = $this->db->prepare($query);
+        @$statement = $this->db->prepare($query);
+
+        if($statement === false){
+            if(!@$this->db->ping()){
+                if(!$this->initialize(Base::getInstance()->getConfig()->get('MySQL'))){
+                    Base::getInstance()->getServer()->getPluginManager()->disablePlugin(Base::getInstance());
+                }else{
+                    $statement = $this->db->prepare($query);
+                }
+                return false;
+            }else{
+                Base::getInstance()->getLogger()->error('Syntax error in query to database: "'.$query.'"');
+                return false;
+            }
+        }
+
         if(strpos($query, '?') !== false){
             $statement->bind_param($valueTypes, ...$values);
         }
