@@ -5,28 +5,15 @@ use pocketmine\Player;
 use pocketmine\utils\TextFormat as TF;
 use SalmonDE\StatsPE\Base;
 
-class StatsCommand extends \pocketmine\command\PluginCommand
+class StatsCmdExecutor implements \pocketmine\command\CommandExecutor
 {
 
-    public function __construct(Base $owner){
-        parent::__construct('stats', $owner);
-        $this->setPermission('statspe.cmd.stats');
-        $this->setDescription($owner->getMessage('commands.stats.description'));
-        $this->setUsage($owner->getMessage('commands.stats.usage'));
-    }
-
-    public function execute(\pocketmine\command\CommandSender $sender, $label, array $args){
+    public function onCommand(\pocketmine\command\CommandSender $sender, \pocketmine\command\Command $cmd, $label, array $args){
         if(!isset($args[0])){
             if(!$sender instanceof Player){
-                $sender->sendMessage($this->getUsage());
-                return;
+                return false;
             }
             $args[0] = $sender->getName();
-        }else{
-            if(!$sender->hasPermission('statspe.cmd.stats.others')){
-                $sender->sendMessage(new \pocketmine\event\TranslationContainer(TF::RED.'%commands.generic.permission'));
-                return;
-            }
         }
 
         if(is_array($data = Base::getInstance()->getDataProvider()->getAllData($args[0]))){
@@ -71,5 +58,6 @@ class StatsCommand extends \pocketmine\command\PluginCommand
         }else{
             $sender->sendMessage(TF::RED.str_replace('{player}', $args[0], $this->getPlugin()->getMessage('commands.stats.notFound')));
         }
+        return true;
     }
 }

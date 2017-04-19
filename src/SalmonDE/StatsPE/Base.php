@@ -59,10 +59,10 @@ class Base extends \pocketmine\plugin\PluginBase
                 $this->listener->onQuit(new \pocketmine\event\player\PlayerQuitEvent($player, '')); // Hacky, but prevents not saving online time of players on shutdown
             }
         }
-        $this->listener = null;
         if(isset($this->provider)){
             $this->provider->saveAll();
         }
+        $this->listener = null;
     }
 
     private function initializeProvider(){
@@ -207,9 +207,15 @@ class Base extends \pocketmine\plugin\PluginBase
     }
 
     private function registerCommands(){
-        $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsCommand($this));
-        $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsPECommand($this));
+        $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsCmd($this));
+        $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsPECmd($this));
     }
+
+    /*private function unregisterCommands(){
+        $cmdMap = $this->getServer()->getCommandMap();
+        $cmdMap->getCommand('statspe:stats')->unregister($cmdMap);
+        $cmdMap->getCommand('statspe:statspe')->unregister($cmdMap);
+    }*/
 
     public function getDataProvider() : Providers\DataProvider{
         return $this->provider;

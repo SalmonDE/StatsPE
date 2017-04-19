@@ -6,24 +6,15 @@ use pocketmine\utils\TextFormat as TF;
 use SalmonDE\StatsPE\Base;
 use SalmonDE\StatsPE\FloatingTexts\FloatingTextManager;
 
-class StatsPECommand extends \pocketmine\command\PluginCommand
+class StatsPECmdExecutor implements \pocketmine\command\CommandExecutor
 {
 
-    private $dataProvider = null;
-
-    public function __construct(\SalmonDE\StatsPE\Base $owner){
-        parent::__construct('statspe', $owner);
-        $this->setPermission('statspe.cmd.statspe');
-        $this->setDescription($owner->getMessage('commands.statspe.description'));
-        $this->setUsage($owner->getMessage('commands.statspe.usage'));
-    }
-
-    public function execute(\pocketmine\command\CommandSender $sender, $label, array $args){
+    public function onCommand(\pocketmine\command\CommandSender $sender, \pocketmine\command\Command $cmd, $label, array $args){
         if(isset($args[0])){
             if(strtolower($args[0]) === 'floatingtext' && isset($args[1])){
                 if(!$sender->hasPermission('statspe.cmd.statspe.floatingtext')){
                     $sender->sendMessage(new \pocketmine\event\TranslationContainer(TF::RED.'%commands.generic.permission'));
-                    return;
+                    return true;
                 }
 
                 switch(strtolower($args[1])){
@@ -92,10 +83,10 @@ class StatsPECommand extends \pocketmine\command\PluginCommand
                         }
                         break;
                     default:
-                        $sender->sendMessage($this->getUsage());
+                        return false;
                 }
             }else{
-                $sender->sendMessage($this->getUsage());
+                return false;
             }
         }else{
             $messages = [
@@ -122,5 +113,6 @@ class StatsPECommand extends \pocketmine\command\PluginCommand
 
             $sender->sendMessage(str_replace(array_keys($values), array_values($values), implode(TF::RESET."\n", $messages)));
         }
+        return true;
     }
 }
