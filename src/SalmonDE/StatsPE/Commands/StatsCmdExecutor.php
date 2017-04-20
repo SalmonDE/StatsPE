@@ -17,18 +17,18 @@ class StatsCmdExecutor implements \pocketmine\command\CommandExecutor
         }
 
         if(is_array($data = Base::getInstance()->getDataProvider()->getAllData($args[0]))){
-            $text = str_replace('{value}', $data['Username'], $this->getPlugin()->getMessage('general.header'));
+            $text = str_replace('{value}', $data['Username'], Base::getInstance()->getMessage('general.header'));
             foreach(Base::getInstance()->getDataProvider()->getEntries() as $entry){
                 if($sender->hasPermission('statspe.entry.'.$entry->getName())){
                     switch($entry->getName()){
                         case 'FirstJoin':
                             $p = $sender->getServer()->getOfflinePlayer($args[0]);
-                            $value = date($this->getPlugin()->getConfig()->get('Date-Format'), $p->getFirstPlayed() / 1000);
+                            $value = date(Base::getInstance()->getConfig()->get('Date-Format'), $p->getFirstPlayed() / 1000);
                             break;
 
                         case 'LastJoin':
                             $p = $sender->getServer()->getOfflinePlayer($args[0]);
-                            $value = date($this->getPlugin()->getConfig()->get('Date-Format'), $p->getLastPlayed() / 1000);
+                            $value = date(Base::getInstance()->getConfig()->get('Date-Format'), $p->getLastPlayed() / 1000);
                             break;
 
                         case 'OnlineTime':
@@ -56,7 +56,7 @@ class StatsCmdExecutor implements \pocketmine\command\CommandExecutor
             }
             $sender->sendMessage($text);
         }else{
-            $sender->sendMessage(TF::RED.str_replace('{player}', $args[0], $this->getPlugin()->getMessage('commands.stats.notFound')));
+            $sender->sendMessage(TF::RED.str_replace('{player}', $args[0], Base::getInstance()->getMessage('commands.stats.notFound')));
         }
         return true;
     }

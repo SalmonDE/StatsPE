@@ -57,6 +57,12 @@ class JSONProvider implements DataProvider
         }
     }
 
+    public function incrementValue(string $player, Entry $entry, int $int = 1){
+        if($this->entryExists($entry->getName()) && $entry->shouldSave() && $entry->getExpectedType() === Entry::INT){
+            $this->saveData($player, $entry, $this->getData($player, $entry) + $int);
+        }
+    }
+
     public function addEntry(Entry $entry){
         if(!$this->entryExists($entry->getName()) && $entry->isValid()){
             $this->entries[$entry->getName()] = $entry;

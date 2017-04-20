@@ -44,14 +44,15 @@ class MySQLProvider implements DataProvider
         foreach($this->entries as $entry){
             if($entry->shouldSave() && $entry->getName() !== 'Username'){
                 $type = Utils::getMySQLDatatype($entry->getExpectedType());
-                $columns[] = $entry->getName().' '.$type.' NOT NULL DEFAULT '.(is_numeric($def = $entry->getDefault()) ? $def : "'$def'");
+                $columns[] = $this->db->real_escape_string($entry->getName()).' '.$type.' NOT NULL DEFAULT ?';
+                $values[] = $entry->getDefault();
             }
         }
 
-        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( '.implode(', ', $columns).' ) COLLATE utf8_general_ci', []);
+        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( '.implode(', ', $columns).' ) COLLATE utf8_general_ci', $values);
 
         // Check if all entries have their columns
-        $existingColumns = $this->queryDb('DESCRIBE StatsPE', [])->fetch_all(); // Not always access to information_schema.columns
+        $existingColumns = $this->queryDb('DESCRIBE StatsPE', [])->fetch_all();
         $limit = count($existingColumns);
         for($k = 0; $k < $limit; $k++){
             $existingColumns[$k] = $existingColumns[$k][0];
@@ -122,6 +123,12 @@ class MySQLProvider implements DataProvider
             }else{
                 Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }
+        }
+    }
+
+    public function incrementValue(string $player, Entry $entry, int $int = 1){
+        if($this->entryExists($entry->getName()) && $entry->shouldSave() && $entry->getExpectedType() === Entry::INT){
+            $this->queryDb('UDATE StatsPE SET '.$entryName = $this->db->real_escape_string($entry->getName()).' = '.$entryName.' + '.$int.' WHERE Username=?', [$player]);
         }
     }
 

@@ -14,6 +14,8 @@ interface DataProvider
 
     public function saveData(string $player, Entry $entry, $value);
 
+    public function incrementValue(string $player, Entry $entry, int $int = 1);
+
     public function addEntry(Entry $entry);
 
     public function removeEntry(Entry $entry);
