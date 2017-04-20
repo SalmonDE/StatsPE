@@ -40,16 +40,15 @@ class MySQLProvider implements DataProvider
     }
 
     public function prepareTable(){
-        $columns = ['Username VARCHAR(255) UNIQUE NOT NULL'];
+        $columns = ['Username VARCHAR(16) UNIQUE NOT NULL'];
         foreach($this->entries as $entry){
             if($entry->shouldSave() && $entry->getName() !== 'Username'){
                 $type = Utils::getMySQLDatatype($entry->getExpectedType());
-                $columns[] = $this->db->real_escape_string($entry->getName()).' '.$type.' NOT NULL DEFAULT ?';
-                $values[] = $entry->getDefault();
+                $columns[] = $this->db->real_escape_string($entry->getName()).' '.$type.' NOT NULL DEFAULT '.(is_string($value = $this->db->real_escape_string(Utils::convertValueSave($entry, $entry->getDefault()))) ? "'$value'" : $value);
             }
         }
 
-        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( '.implode(', ', $columns).' ) COLLATE utf8_general_ci', $values);
+        $this->queryDb('CREATE TABLE IF NOT EXISTS StatsPE( '.implode(', ', $columns).' ) COLLATE utf8_general_ci', []);
 
         // Check if all entries have their columns
         $existingColumns = $this->queryDb('DESCRIBE StatsPE', [])->fetch_all();
@@ -66,7 +65,7 @@ class MySQLProvider implements DataProvider
         }
         if(count($missingColumns) > 0){
             foreach($missingColumns as $column){
-                $this->queryDb('ALTER TABLE StatsPE ADD '.$this->db->real_escape_string($column->getName()).' '.Utils::getMySQLDatatype($column->getExpectedType()).' NOT NULL DEFAULT ?', [$column->getDefault()]);
+                $this->queryDb('ALTER TABLE StatsPE ADD '.$this->db->real_escape_string($column->getName()).' '.Utils::getMySQLDatatype($column->getExpectedType()).' NOT NULL DEFAULT ?', [$this->db->real_escape_string(Utils::convertValueSave($entry, $entry->getDefault()))]);
             }
         }
     }
@@ -128,7 +127,7 @@ class MySQLProvider implements DataProvider
 
     public function incrementValue(string $player, Entry $entry, int $int = 1){
         if($this->entryExists($entry->getName()) && $entry->shouldSave() && $entry->getExpectedType() === Entry::INT){
-            $this->queryDb('UDATE StatsPE SET '.$entryName = $this->db->real_escape_string($entry->getName()).' = '.$entryName.' + '.$int.' WHERE Username=?', [$player]);
+            $this->queryDb('UPDATE StatsPE SET '.($entryName = $this->db->real_escape_string($entry->getName())).' = '.$entryName.' + '.$int.' WHERE Username=?', [$player]);
         }
     }
 
@@ -173,7 +172,6 @@ class MySQLProvider implements DataProvider
         }
 
         @$statement = $this->db->prepare($query);
-
         if($statement === false){
             if(!@$this->db->ping()){
                 if(!$this->initialize(Base::getInstance()->getConfig()->get('MySQL'))){
