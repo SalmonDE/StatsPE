@@ -4,6 +4,7 @@ namespace SalmonDE\StatsPE\FloatingTexts;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 use SalmonDE\StatsPE\Base;
+use SalmonDE\StatsPE\FloatingTexts\Events\FloatingTextEvent;
 
 class FloatingTextManager
 {
@@ -52,24 +53,30 @@ class FloatingTextManager
         }
         $text['Username'] = Base::getInstance()->getMessage('general.header');
 
-        $this->floatingTexts[$level->getFolderName()][$name] = new FloatingText($name, $x, $y, $z, $level->getFolderName(), $text);
-        foreach($level->getPlayers() as $player){
-            $this->floatingTexts[$level->getFolderName()][$name]->sendTextToPlayer($player);
+        $event = new FloatingTextEvent(Base::getInstance(), new FloatingText($name, $x, $y, $z, $level->getFolderName(), $text), FloatingTextEvent::ADD);
+        Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+
+        if(!$event->isCancelled()){
+            $this->floatingTexts[$level->getFolderName()][$name] = $event->getFloatinText();
+            foreach($level->getPlayers() as $player){
+                $this->floatingTexts[$level->getFolderName()][$name]->sendTextToPlayer($player);
+            }
+
+            $data = [
+                'Position' => [
+                    'X' => $x,
+                    'Y' => $y,
+                    'Z' => $z,
+                    'Level' => $level->getFolderName()
+                ],
+                'Text' => $text
+            ];
+
+            $this->floatingTextConfig->__set($name, $data);
+            $this->floatingTextConfig->save(true);
+            return true;
         }
-
-        $data = [
-            'Position' => [
-                'X' => $x,
-                'Y' => $y,
-                'Z' => $z,
-                'Level' => $level->getFolderName()
-            ],
-            'Text' => $text
-        ];
-
-        $this->floatingTextConfig->__set($name, $data);
-        $this->floatingTextConfig->save(true);
-        return true;
+        return false;
     }
 
     public function removeFloatingText(string $name){
@@ -77,13 +84,19 @@ class FloatingTextManager
             return false;
         }
 
-        foreach(Base::getInstance()->getServer()->getLevelByName($floatingText->getLevelName())->getPlayers() as $player){
-            $this->floatingTexts[$player->getLevel()->getFolderName()][$name]->removeTextForPlayer($player);
-        }
-        unset($this->floatingTexts[$player->getLevel()->getFolderName()][$name]);
+        $event = new FloatingTextEvent(Base::getInstance(), $floatingText, FloatingTextEvent::REMOVE);
+        Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
 
-        $this->floatingTextConfig->__unset($name);
-        $this->floatingTextConfig->save(true);
-        return true;
+        if(!$event->isCancelled()){
+            foreach(Base::getInstance()->getServer()->getLevelByName($floatingText->getLevelName())->getPlayers() as $player){
+                $this->floatingTexts[$player->getLevel()->getFolderName()][$name]->removeTextForPlayer($player);
+            }
+            unset($this->floatingTexts[$player->getLevel()->getFolderName()][$name]);
+
+            $this->floatingTextConfig->__unset($name);
+            $this->floatingTextConfig->save(true);
+            return true;
+        }
+        return false;
     }
 }

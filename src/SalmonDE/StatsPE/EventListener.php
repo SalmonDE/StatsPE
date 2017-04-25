@@ -2,9 +2,16 @@
 namespace SalmonDE\StatsPE;
 
 use pocketmine\Player;
+use SalmonDE\StatsPE\Events\EntryEvent;
 
 class EventListener implements \pocketmine\event\Listener
 {
+
+    public function onEntryEvent(EntryEvent $event){
+        if($event->getType() === EntryEvent::REMOVE && $event->getEntry()->getName() === 'Username'){
+            $event->setCancelled();
+        }
+    }
 
     public function onJoin(\pocketmine\event\player\PlayerJoinEvent $event){
         if(!is_array($data = Base::getInstance()->getDataProvider()->getAllData($event->getPlayer()->getName()))){

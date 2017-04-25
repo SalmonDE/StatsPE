@@ -3,6 +3,7 @@ namespace SalmonDE\StatsPE\Providers;
 
 use SalmonDE\StatsPE\Base;
 use SalmonDE\StatsPE\Utils;
+use SalmonDE\StatsPE\Events\EntryEvent;
 
 class MySQLProvider implements DataProvider
 {
@@ -81,9 +82,13 @@ class MySQLProvider implements DataProvider
             }
             $v = $this->queryDb('SELECT '.$this->db->real_escape_string($entry->getName()).' FROM StatsPE WHERE Username=?', [$player])->fetch_assoc()[$entry->getName()];
             $v = Utils::convertValueGet($entry, $v);
+
             if($entry->isValidType($v)){
-                return $v;
+                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $v, $player, $entry);
+                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+                return $event->getData();
             }
+
             Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
         }
     }
@@ -103,7 +108,10 @@ class MySQLProvider implements DataProvider
             }else{
                 $name = array_keys($data)[0];
                 $data[$name]['Username'] = $name;
-                return $data[$name];
+
+                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $data[$name]);
+                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+                return $event->getData();
             }
         }
 
@@ -112,13 +120,21 @@ class MySQLProvider implements DataProvider
         while ($row = $query->fetch_assoc()){
             $data[array_shift($row)] = $row;
         }
-        return $data;
+
+        $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $data);
+        Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+        return $event->getData();
     }
 
     public function saveData(string $player, Entry $entry, $value){
         if($this->entryExists($entry->getName()) && $entry->shouldSave()){
             if($entry->isValidType($value)){
-                $this->queryDb('UPDATE StatsPE SET '.$this->db->real_escape_string($entry->getName()).'=? WHERE Username=?', [$value, $player]);
+                $event = new \SalmonDE\StatsPE\Events\DataSaveEvent(Base::getInstance(), $value, $player, $entry);
+                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+
+                if(!$event->isCancelled()){
+                    $this->queryDb('UPDATE StatsPE SET '.$this->db->real_escape_string($entry->getName()).'=? WHERE Username=?', [$event->getData(), $player]);
+                }
             }else{
                 Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }
@@ -127,21 +143,37 @@ class MySQLProvider implements DataProvider
 
     public function incrementValue(string $player, Entry $entry, int $int = 1){
         if($this->entryExists($entry->getName()) && $entry->shouldSave() && $entry->getExpectedType() === Entry::INT){
-            $this->queryDb('UPDATE StatsPE SET '.($entryName = $this->db->real_escape_string($entry->getName())).' = '.$entryName.' + '.$int.' WHERE Username=?', [$player]);
+
+            $event = new \SalmonDE\StatsPE\Events\DataSaveEvent(Base::getInstance(), $int, $player, $entry);
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+
+            if(!$event->isCancelled()){
+                $this->queryDb('UPDATE StatsPE SET '.($entryName = $this->db->real_escape_string($entry->getName())).' = '.$entryName.' + '.$event->getData().' WHERE Username=?', [$player]); // Previous value PLUS $int
+            }
         }
     }
 
     public function addEntry(Entry $entry){
         if(!$this->entryExists($entry->getName()) && $entry->isValid()){
-            $this->entries[$entry->getName()] = $entry;
-            return true;
+            $event = new EntryEvent(Base::getInstance(), $entry, EntryEvent::ADD);
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+
+            if(!$event->isCancelled()){
+                $this->entries[$entry->getName()] = $entry;
+                return true;
+            }
         }
         return false;
     }
 
     public function removeEntry(Entry $entry){
-        if($this->entryExists($entry->getName()) && $entry->getName() !== 'Username'){
-            unset($this->entries[$entry->getName()]);
+        if($this->entryExists($entry->getName())){
+            $event = new EntryEvent(Base::getInstance(), $entry, EntryEvent::REMOVE);
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+
+            if(!$event->isCancelled()){
+                unset($this->entries[$entry->getName()]);
+            }
         }
     }
 

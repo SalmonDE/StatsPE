@@ -3,6 +3,7 @@ namespace SalmonDE\StatsPE\Providers;
 
 use pocketmine\utils\Config;
 use SalmonDE\StatsPE\Base;
+use SalmonDE\StatsPE\Events\EntryEvent;
 
 class JSONProvider implements DataProvider
 {
@@ -33,8 +34,11 @@ class JSONProvider implements DataProvider
                 return;
             }
             $v = $this->dataConfig->getNested(strtolower($player).'.'.$entry->getName());
+
             if($entry->isValidType($v)){
-                return $v;
+                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $v, $player, $entry);
+                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+                return $event->getData();
             }
             Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
         }
@@ -42,15 +46,26 @@ class JSONProvider implements DataProvider
 
     public function getAllData(string $player = null){
         if($player !== null){
-            return $this->dataConfig->get(strtolower($player), null);
+
+            $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $this->dataConfig->get(strtolower($player), null));
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+            return $event->getData();
         }
-        return $this->dataConfig->getAll();
+
+        $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $this->dataConfig->getAll());
+        Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+        return $event->getData();
     }
 
     public function saveData(string $player, Entry $entry, $value){
         if($this->entryExists($entry->getName()) && $entry->shouldSave()){
             if($entry->isValidType($value)){
-                $this->dataConfig->setNested(strtolower($player).'.'.$entry->getName(), $value);
+
+                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $value, $player, $entry);
+                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+                if(!$event->isCancelled()){
+                    $this->dataConfig->setNested(strtolower($player).'.'.$entry->getName(), $value);
+                }
             }else{
                 Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }
@@ -65,15 +80,25 @@ class JSONProvider implements DataProvider
 
     public function addEntry(Entry $entry){
         if(!$this->entryExists($entry->getName()) && $entry->isValid()){
-            $this->entries[$entry->getName()] = $entry;
-            return true;
+            $event = new EntryEvent(Base::getInstance(), $entry, EntryEvent::ADD);
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+
+            if(!$event->isCancelled()){
+                $this->entries[$entry->getName()] = $entry;
+                return true;
+            }
         }
         return false;
     }
 
     public function removeEntry(Entry $entry){
-        if($this->entryExists($entry->getName()) && $entry->getName() !== 'Username'){
-            unset($this->entries[$entry->getName()]);
+        if($this->entryExists($entry->getName())){
+            $event = new EntryEvent(Base::getInstance(), $entry, EntryEvent::REMOVE);
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+
+            if(!$event->isCancelled()){
+                unset($this->entries[$entry->getName()]);
+            }
         }
     }
 
