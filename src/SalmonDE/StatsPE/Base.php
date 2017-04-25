@@ -24,7 +24,7 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->saveResource('messages.yml');
         $this->initializeProvider();
         if($this->isEnabled()){
-            $this->runUpdateManager();
+            $updateManager = new \SalmonDE\Updater\UpdateManager($this);
 
             if(!file_exists($this->getDataFolder().'messages.yml')){
                 if($this->getResource($lang = ($this->getConfig()->get('Language').'.yml')) === null){
@@ -237,9 +237,5 @@ class Base extends \pocketmine\plugin\PluginBase
             $message = $message[$k];
         }
         return $message;
-    }
-
-    public function runUpdateManager(){
-        \SalmonDE\Updater\UpdateManager::getNew($this->getFile(), $this, $this->getConfig()->get('Auto-Update'))->start();
     }
 }
