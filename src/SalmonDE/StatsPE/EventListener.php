@@ -7,6 +7,9 @@ use SalmonDE\StatsPE\Events\EntryEvent;
 class EventListener implements \pocketmine\event\Listener
 {
 
+    /**
+    * @priority HIGHEST
+    */
     public function onEntryEvent(EntryEvent $event){
         if($event->getType() === EntryEvent::REMOVE && $event->getEntry()->getName() === 'Username'){
             $event->setCancelled();
