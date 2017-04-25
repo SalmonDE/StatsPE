@@ -61,7 +61,7 @@ class JSONProvider implements DataProvider
         if($this->entryExists($entry->getName()) && $entry->shouldSave()){
             if($entry->isValidType($value)){
 
-                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $value, $player, $entry);
+                $event = new \SalmonDE\StatsPE\Events\DataSaveEvent(Base::getInstance(), $value, $player, $entry);
                 Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
                 if(!$event->isCancelled()){
                     $this->dataConfig->setNested(strtolower($player).'.'.$entry->getName(), $value);
