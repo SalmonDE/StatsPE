@@ -1,7 +1,7 @@
 <?php
 namespace SalmonDE\StatsPE\Events;
 
-class DataReceiveEvent extends StatsPE_Event
+class DataReceiveEvent extends DataEvent
 {
 
     public static $handlerList = null;

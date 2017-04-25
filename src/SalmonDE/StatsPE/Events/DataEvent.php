@@ -35,7 +35,7 @@ class DataEvent extends StatsPE_Event
 
     public function setData($data){
         if($this->entry === null || $this->entry->isValidType($data)){
-            $this->data = $data
+            $this->data = $data;
         }
     }
 }

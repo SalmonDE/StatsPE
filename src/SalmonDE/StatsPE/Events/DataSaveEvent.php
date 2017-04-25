@@ -1,7 +1,7 @@
 <?php
 namespace SalmonDE\StatsPE\Events;
 
-class DataSaveEvent extends StatsPE_Event implements \pocketmine\event\Cancellable
+class DataSaveEvent extends DataEvent implements \pocketmine\event\Cancellable
 {
 
     public static $handlerList = null;
