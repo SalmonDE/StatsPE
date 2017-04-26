@@ -45,7 +45,7 @@ class MySQLProvider implements DataProvider
         foreach($this->entries as $entry){
             if($entry->shouldSave() && $entry->getName() !== 'Username'){
                 $type = Utils::getMySQLDatatype($entry->getExpectedType());
-                $columns[] = $this->db->real_escape_string($entry->getName()).' '.$type.' NOT NULL DEFAULT '.(is_string($value = $this->db->real_escape_string(Utils::convertValueSave($entry, $entry->getDefault()))) ? "'$value'" : $value);
+                $columns[] = $this->db->real_escape_string($entry->getName()).' '.$type.' NOT NULL DEFAULT '.(is_string($value = Utils::convertValueSave($entry, $entry->getDefault())) ? "'".$this->db->real_escape_string($value)."'" : $value);
             }
         }
 
