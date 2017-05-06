@@ -66,7 +66,7 @@ class Utils
     public static function getMySQLDatatype(int $type) : string{
         switch($type){
             case Entry::INT:
-                return 'INT(255)';
+                return 'BIGINT(255)';
 
             case Entry::FLOAT:
                 return 'DECIMAL(65, 3)';
