@@ -46,7 +46,7 @@ class FloatingText extends \pocketmine\level\particle\FloatingTextParticle
 
                     case 'OnlineTime':
                         $seconds = $data['OnlineTime'];
-                        $seconds += round(time() - ($player->getLastPlayed() / 1000));
+                        $seconds += ceil(microtime(true) - ($player->getLastPlayed() / 1000));
 
                         $value = Utils::getPeriodFromSeconds($seconds);
                         break;

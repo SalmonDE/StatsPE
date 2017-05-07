@@ -29,7 +29,7 @@ class EventListener implements \pocketmine\event\Listener
             Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('Online'), true);
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('FirstJoin')){ // I'd like to do this only once in $dataProvider()->addPlayer();
+        if(Base::getInstance()->getDataProvider()->entryExists('FirstJoin')){
             Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('FirstJoin'), $event->getPlayer()->getFirstPlayed() / 1000);
         }
 
@@ -60,8 +60,13 @@ class EventListener implements \pocketmine\event\Listener
 
     public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
         if(Base::getInstance()->getDataProvider()->entryExists('OnlineTime')){
-            $time = round(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
-            Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('OnlineTime'), $time);
+            $time = ceil(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
+
+            if((microtime(true) - \pocketmine\START_TIME) > $time){
+                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('OnlineTime'), $time);
+            }else{
+                Base::getInstance()->getLogger()->warning('Couldn\'t save online time for player "'.$event->getPlayer()->getName().'" because it exceeds the server running time!');
+            }
         }
 
         if(Base::getInstance()->getDataProvider()->entryExists('Online')){
