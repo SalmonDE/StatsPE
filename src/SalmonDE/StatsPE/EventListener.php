@@ -60,9 +60,8 @@ class EventListener implements \pocketmine\event\Listener
 
     public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
         if(Base::getInstance()->getDataProvider()->entryExists('OnlineTime')){
-            $time = ceil(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
-
-            if((microtime(true) - \pocketmine\START_TIME) > $time){
+            if(\pocketmine\START_TIME < ($event->getPlayer()->getLastPlayed() / 1000)){
+                $time = ceil(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
                 Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('OnlineTime'), $time);
             }else{
                 Base::getInstance()->getLogger()->warning('Couldn\'t save online time for player "'.$event->getPlayer()->getName().'" because it exceeds the server running time!');
