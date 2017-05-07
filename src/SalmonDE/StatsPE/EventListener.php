@@ -134,7 +134,7 @@ class EventListener implements \pocketmine\event\Listener
     public function onCraftItem(\pocketmine\event\inventory\CraftItemEvent $event){
         if(!$event->isCancelled()){
             if(Base::getInstance()->getDataProvider()->entryExists('ItemCraftCount')){
-                Base::getInstance()->getDataProvider()->incrementValue($name = $event->getPlayer()->getName(), $ent = Base::getInstance()->getDataProvider()->getEntry('ItemCraftCount'), Base::getInstance()->getDataProvider()->getData($name, $ent) + 1);
+                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ItemCraftCount'));
             }
         }
     }
