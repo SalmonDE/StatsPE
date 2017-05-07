@@ -15,8 +15,9 @@ class Entry
     private $expectedType;
     private $valid = false;
     private $shouldSave;
+    private $unsigned;
 
-    public function __construct(string $name, $default, int $type, bool $shouldSave){
+    public function __construct(string $name, $default, int $type, bool $shouldSave, $unsigned = false){
         $this->name = $name;
         $this->expectedType = $type;
         if($this->isValidType($default)){
@@ -74,6 +75,10 @@ class Entry
                 return true;
         }
         return false;
+    }
+
+    public function isUnsigned() : bool{
+        return ($this->unsigned && $this->expectedType === self::INT);
     }
 
     public function isValid() : bool{

@@ -37,5 +37,3 @@ MySQL:
     username: "ExampleUser"
     password: "123456789"
     database: "StatsPE"
-# Enables self updating of the plugin
-Auto-Update: true

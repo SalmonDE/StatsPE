@@ -24,7 +24,7 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->saveResource('messages.yml');
         $this->initializeProvider();
         if($this->isEnabled()){
-            $this->runUpdateManager();
+            $updateManager = new \SalmonDE\Updater\UpdateManager($this);
 
             if(!file_exists($this->getDataFolder().'messages.yml')){
                 if($this->getResource($lang = ($this->getConfig()->get('Language').'.yml')) === null){
@@ -87,6 +87,8 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->provider->addEntry(new Entry('Username', 'undefined', Entry::STRING, true));
         foreach($this->getConfig()->get('Stats') as $statistic => $enabled){
             if($enabled){
+                $unsigned = false;
+
                 switch($statistic){
                     case 'Online':
                         $default = false;
@@ -122,6 +124,7 @@ class Base extends \pocketmine\plugin\PluginBase
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'FirstJoin':
@@ -146,56 +149,65 @@ class Base extends \pocketmine\plugin\PluginBase
                         $default = 1;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'KillCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'DeathCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'BlockBreakCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'BlockPlaceCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'ChatCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'ItemConsumeCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'ItemCraftCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                         break;
 
                     case 'ItemDropCount':
                         $default = 0;
                         $expectedType = Entry::INT;
                         $save = true;
+                        $unsigned = true;
                 }
-                $this->provider->addEntry(new Entry($statistic, $default, $expectedType, $save));
+                $this->provider->addEntry(new Entry($statistic, $default, $expectedType, $save, $unsigned));
             }
         }
         if($this->getDataProvider()->entryExists('K/D')){
@@ -237,9 +249,5 @@ class Base extends \pocketmine\plugin\PluginBase
             $message = $message[$k];
         }
         return $message;
-    }
-
-    public function runUpdateManager(){
-        \SalmonDE\Updater\UpdateManager::getNew($this->getFile(), $this, $this->getConfig()->get('Auto-Update'))->start();
     }
 }
