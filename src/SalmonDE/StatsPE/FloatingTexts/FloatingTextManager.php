@@ -57,7 +57,7 @@ class FloatingTextManager
         Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
 
         if(!$event->isCancelled()){
-            $this->floatingTexts[$level->getFolderName()][$name] = $event->getFloatinText();
+            $this->floatingTexts[$level->getFolderName()][$name] = $event->getFloatingText();
             foreach($level->getPlayers() as $player){
                 $this->floatingTexts[$level->getFolderName()][$name]->sendTextToPlayer($player);
             }
