@@ -12,12 +12,15 @@ class MySQLProvider implements DataProvider
     private $db = null;
 
     private $changes = [];
+    private $cacheLimit = 0;
 
     public function __construct($host, $username, $pw, $db){
         $this->initialize(['host' => $host, 'username' => $username, 'pw' => $pw, 'db' => $db]);
     }
 
     public function initialize(array $data){
+        $this->cacheLimit = $data['cacheLimit'];
+
         $host = explode(':', $data['host']);
         $data['host'] = $host[0];
         $data['port'] = isset($host[1]) ? $host[1] : 3306;
@@ -75,25 +78,27 @@ class MySQLProvider implements DataProvider
         $this->queryDb('INSERT INTO StatsPE (Username) VALUES ( ? )', [$player->getName()]);
     }
 
-    public function getData(string $player, Entry $entry){
+    public function getData(string $playerName, Entry $entry){
         if($this->entryExists($entry->getName())){
             if(!$entry->shouldSave()){
                 return;
             }
-            $v = $this->queryDb('SELECT '.$this->db->real_escape_string($entry->getName()).' FROM StatsPE WHERE Username=?', [$player])->fetch_assoc()[$entry->getName()];
-            $v = Utils::convertValueGet($entry, $v);
+            $value = $this->queryDb('SELECT '.$this->db->real_escape_string($entry->getName()).' FROM StatsPE WHERE Username=?', [$playerName])->fetch_assoc()[$entry->getName()];
+            $value = Utils::convertValueGet($entry, $value);
 
-            if($entry->isValidType($v)){
-                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $v, $player, $entry);
+            $this->addChanges($playerName, $entry, $value);
+
+            if($entry->isValidType($value)){
+                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $value, $playerName, $entry);
                 Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
                 return $event->getData();
             }
 
-            Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+            Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($value).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
         }
     }
 
-    public function getAllData(string $player = null){
+    public function getAllData(string $player = null){ // ADD CACHE SUPPORT
         $data = [];
 
         if($player !== null){
@@ -126,15 +131,30 @@ class MySQLProvider implements DataProvider
         return $event->getData();
     }
 
-    public function saveData(string $player, Entry $entry, $value){
+    private function addChanges(string $playerName, Entry $entry, &$value){
+        $playerName = $this->db->real_escape_string($playerName);
+        $entryName = $this->db->real_escape_string($entry->getName());
+        $value = $this->db->real_escape_string($value);
+
+        if(isset($this->changes['data'][$playerName][$entryName])){
+            if(($data = $this->changes['data'][$playerName][$entryName])['isIncrement']){
+                $value += $data['value'];
+            }else{
+                $value = $data['value'];
+            }
+        }
+    }
+
+    public function saveData(string $playerName, Entry $entry, $value){
         if($this->entryExists($entry->getName()) && $entry->shouldSave()){
             if($entry->isValidType($value)){
-                $event = new \SalmonDE\StatsPE\Events\DataSaveEvent(Base::getInstance(), $value, $player, $entry);
+                $event = new \SalmonDE\StatsPE\Events\DataSaveEvent(Base::getInstance(), $value, $playerName, $entry);
                 Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
 
                 if(!$event->isCancelled()){
-                    $this->queryDb('UPDATE StatsPE SET '.$this->db->real_escape_string($entry->getName()).'=? WHERE Username=?', [$event->getData(), $player]);
+                    $this->addChange($playerName, $entry, $value, false);
                 }
+
             }else{
                 Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }
@@ -148,8 +168,24 @@ class MySQLProvider implements DataProvider
             Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
 
             if(!$event->isCancelled()){
-                $this->queryDb('UPDATE StatsPE SET '.($entryName = $this->db->real_escape_string($entry->getName())).' = '.$entryName.' + '.$event->getData().' WHERE Username=?', [$player]); // Previous value PLUS $int
+                $this->addChange($playerName, $entry, $value, false);
             }
+        }
+    }
+
+    private function addChange(string $playerName, Entry $entry, $value, bool $isIncrement){
+        $playerName = $this->db->real_escape_string($playerName);
+        $entryName = $this->db->real_escape_string($entry->getName());
+        $value = $this->db->real_escape_string($value);
+
+        if($isIncrement && isset($this->changes['data'][$playerName][$entryName]['value'])){
+            $this->changes['data'][$playerName][$entryName]['value'] += $value;
+        }else{
+            $this->changes['data'][$playerName][$entryName] = ['value' => $value, 'isIncrement' => $isIncrement];
+        }
+
+        if(count(++$this->changes['amount']) > $this->cacheLimit){
+            $this->saveAll();
         }
     }
 
@@ -195,9 +231,23 @@ class MySQLProvider implements DataProvider
         return (int) $this->queryDb('SELECT COUNT(*) FROM StatsPE', [])->fetch_assoc()['COUNT(*)'];
     }
 
-    public function saveAll(){}
+    public function saveAll(){
+        $query = '';
+        foreach($this->changes['data'] as $playerName => $changedData){
+            foreach($changedData as $entryName => $data){
+                if($data['isIncrement']){
+                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$entryName.' + '.$data['value'].' WHERE Username='.$playerName;
+                }else{
+                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$data['value'].' WHERE Username='.$playerName;
+                }
+            }
+        }
 
-    private function queryDb(string $query, array $values){
+        $this->changes['amount'] = 0;
+        $this->changes['data'] = [];
+    }
+
+    private function queryDb(string $query, array $values, bool $multiQuery = false){
         $valueTypes = '';
         foreach($values as $value){
             $valueTypes .= is_numeric($value) ? (is_float($value) ? 'd' : 'i') : 's';

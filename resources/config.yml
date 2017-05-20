@@ -37,3 +37,4 @@ MySQL:
     username: "ExampleUser"
     password: "123456789"
     database: "StatsPE"
+    cacheLimit: 100
