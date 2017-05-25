@@ -43,7 +43,7 @@ class Base extends \pocketmine\plugin\PluginBase
             }
             $this->registerCommands();
 
-            if(($i = $this->getConfig()->get('Save-Interval')) >= 1){
+            if(($i = $this->getConfig()->getNested('JSON.saveInterval')) >= 1){
                 $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new Tasks\SaveTask($this), $i *= 1200, $i);
             }else{
                 $this->getLogger()->warning('The save interval is lower than 1 min! Please make sure to always properly shutdown the server in order to prevent data loss!');
