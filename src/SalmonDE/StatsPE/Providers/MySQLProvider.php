@@ -242,7 +242,6 @@ class MySQLProvider implements DataProvider
     private function addChange(string $playerName, Entry $entry, $value, bool $isIncrement){
         $playerName = $this->db->real_escape_string($playerName);
         $entryName = $this->db->real_escape_string($entry->getName());
-        $value = $this->db->real_escape_string($value);
 
         if($isIncrement && isset($this->changes['data'][$playerName][$entryName]['value'])){
             $this->changes['data'][$playerName][$entryName]['value'] += $value;
@@ -302,19 +301,21 @@ class MySQLProvider implements DataProvider
         foreach($this->changes['data'] as $playerName => $changedData){
             foreach($changedData as $entryName => $data){
                 if($data['isIncrement']){
-                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$entryName.' + '.$data['value'].' WHERE Username='.$playerName.'; ';
+                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$entryName.' + '.$data['value'].' WHERE Username='."'".$playerName."'".'; ';
                 }else{
-                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$data['value'].' WHERE Username='.$playerName.'; ';
+                    $data['value'] = Utils::convertValueSave($this->getEntry($entryName), $data['value']);
+                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.(is_string($data['value']) ? "'".$this->db->real_escape_string($data['value'])."'" : $data['value']).' WHERE Username='."'".$playerName."'".'; ';
                 }
             }
         }
+
+        Base::getInstance()->getServer()->getScheduler()->scheduleAsyncTask(new \SalmonDE\StatsPE\Tasks\SaveToDbTask(Base::getInstance()->getConfig()->get('MySQL'), $this->changes['data'], $this));
 
         $this->changes['amount'] = 0;
         $this->changes['data'] = [];
     }
 
-    private function queryDb(string $query, array $values, bool $multiQuery = false){
-
+    private function queryDb(string $query, array $values){
         $valueTypes = '';
         foreach($values as $value){
             $valueTypes .= is_numeric($value) ? (is_float($value) ? 'd' : 'i') : 's';

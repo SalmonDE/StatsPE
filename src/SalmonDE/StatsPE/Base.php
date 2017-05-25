@@ -66,6 +66,10 @@ class Base extends \pocketmine\plugin\PluginBase
     }
 
     private function initializeProvider(){
+        if($this->provider instanceof Providers\DataProvider){
+            return;
+        }
+
         switch($p = $this->getConfig()->get('Provider')){
             case 'json':
                 $this->getLogger()->info('Selecting JSON data provider ...');
