@@ -234,7 +234,7 @@ class MySQLProvider implements DataProvider
             Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
 
             if(!$event->isCancelled()){
-                $this->addChange($playerName, $entry, $int, false);
+                $this->addChange($playerName, $entry, $int, true);
             }
         }
     }
@@ -302,9 +302,9 @@ class MySQLProvider implements DataProvider
         foreach($this->changes['data'] as $playerName => $changedData){
             foreach($changedData as $entryName => $data){
                 if($data['isIncrement']){
-                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$entryName.' + '.$data['value'].' WHERE Username='.$playerName;
+                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$entryName.' + '.$data['value'].' WHERE Username='.$playerName.'; ';
                 }else{
-                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$data['value'].' WHERE Username='.$playerName;
+                    $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$data['value'].' WHERE Username='.$playerName.'; ';
                 }
             }
         }
