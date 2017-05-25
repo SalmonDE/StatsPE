@@ -315,7 +315,7 @@ class MySQLProvider implements DataProvider
         $this->changes['data'] = [];
     }
 
-    private function queryDb(string $query, array $values){
+    private function queryDb(string $query, array $values){ // reconnecting?
         $valueTypes = '';
         foreach($values as $value){
             $valueTypes .= is_numeric($value) ? (is_float($value) ? 'd' : 'i') : 's';

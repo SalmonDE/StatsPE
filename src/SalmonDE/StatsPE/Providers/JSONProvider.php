@@ -44,7 +44,7 @@ class JSONProvider implements DataProvider
         }
     }
 
-    public function getDataWhere(Entry $needleEntry, $needle, array $wantedEntries){ // Needs testing!
+    public function getDataWhere(Entry $needleEntry, $needle, array $wantedEntries){
         if($this->entryExists($needleEntry->getName()) && $needleEntry->shouldSave()){
             if($wantedEntries === []){
                 return [];
