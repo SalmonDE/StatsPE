@@ -74,7 +74,7 @@ class Base extends \pocketmine\plugin\PluginBase
 
             case 'mysql':
                 $this->getLogger()->info('Selecting MySQL data provider ...');
-                $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'));
+                $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'), $c->getNested('MySQL.cacheLimit'));
                 break;
 
             default:

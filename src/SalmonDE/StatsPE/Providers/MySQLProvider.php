@@ -14,8 +14,8 @@ class MySQLProvider implements DataProvider
     private $changes = [];
     private $cacheLimit = 0;
 
-    public function __construct($host, $username, $pw, $db){
-        $this->initialize(['host' => $host, 'username' => $username, 'pw' => $pw, 'db' => $db]);
+    public function __construct($host, $username, $pw, $db, $cacheLimit){
+        $this->initialize(['host' => $host, 'username' => $username, 'pw' => $pw, 'db' => $db, 'cacheLimit' => $cacheLimit]);
     }
 
     public function initialize(array $data){
