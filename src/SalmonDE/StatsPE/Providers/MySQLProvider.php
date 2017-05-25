@@ -86,7 +86,7 @@ class MySQLProvider implements DataProvider
             $value = $this->queryDb('SELECT '.$this->db->real_escape_string($entry->getName()).' FROM StatsPE WHERE Username=?', [$playerName])->fetch_assoc()[$entry->getName()];
             $value = Utils::convertValueGet($entry, $value);
 
-            $this->addChanges($playerName, $entry, $value);
+            $this->applyChanges($playerName, $entry, $value);
 
             if($entry->isValidType($value)){
                 $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $value, $playerName, $entry);
@@ -106,7 +106,7 @@ class MySQLProvider implements DataProvider
 
             foreach($wantedEntries as $entry){
                 if($entry->shouldSave()){
-                    $entryList[] = $this->db->real_escape_string($entry->getName());
+                    $entryList[$entry] = $this->db->real_escape_string($entry->getName());
                 }else{
                     $missingEntries[] = $entry->getName();
                 }
@@ -118,6 +118,12 @@ class MySQLProvider implements DataProvider
 
             while ($row = $query->fetch_assoc()){
                 $resultData[array_shift($row)] = $row;
+            }
+
+            foreach($resultData as $player => $playerData){
+                foreach($playerData as $entryName => $value){
+                    $resultData[$player][$entryName] = Utils::convertValueGet($wantedEntries[$entryName], $value);
+                }
             }
 
             if(isset($missingEntries)){
@@ -133,7 +139,7 @@ class MySQLProvider implements DataProvider
         }
     }
 
-    public function getAllData(string $player = null){ // ADD CACHE SUPPORT
+    public function getAllData(string $player = null){
         $data = [];
 
         if($player !== null){
@@ -149,7 +155,17 @@ class MySQLProvider implements DataProvider
                 $name = array_keys($data)[0];
                 $data[$name]['Username'] = $name;
 
-                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $data[$name]);
+                foreach($data[$name] as $entryName => $value){
+                    if($this->entryExists($entryName)){
+                        $value = Utils::convertValueGet($this->getEntry($entryName), $value);
+                        $this->applyChanges($name, $this->getEntry($entryName), $value);
+                    }
+
+                    $data[$entryName] = $value;
+                }
+                unset($data[$name]);
+
+                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $data);
                 Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
                 return $event->getData();
             }
@@ -161,12 +177,23 @@ class MySQLProvider implements DataProvider
             $data[array_shift($row)] = $row;
         }
 
+        foreach($data as $playerName => $playerData){
+            foreach($playerData as $entryName => $value){
+                if($this->entryExists($entryName)){
+                    $value = Utils::convertValueGet($this->getEntry($entryName), $value);
+                    $this->applyChanges($playerName, $this->getEntry($entryName), $value);
+                }
+
+                $data[$playerName][$entryName] = $value;
+            }
+        }
+
         $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $data);
         Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
         return $event->getData();
     }
 
-    private function addChanges(string $playerName, Entry $entry, &$value){
+    private function applyChanges(string $playerName, Entry $entry, &$value){
         $playerName = $this->db->real_escape_string($playerName);
         $entryName = $this->db->real_escape_string($entry->getName());
         $value = $this->db->real_escape_string($value);
