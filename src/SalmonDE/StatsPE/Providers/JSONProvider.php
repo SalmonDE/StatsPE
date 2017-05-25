@@ -35,12 +35,9 @@ class JSONProvider implements DataProvider
             }
             $v = $this->dataConfig->getNested(strtolower($player).'.'.$entry->getName());
 
-            if($entry->isValidType($v)){
-                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $v, $player, $entry);
-                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
-                return $event->getData();
-            }
-            Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+            $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $v, $player, $entry);
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+            return $event->getData();
         }
     }
 

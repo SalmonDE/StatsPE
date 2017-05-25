@@ -92,13 +92,9 @@ class MySQLProvider implements DataProvider
 
             $this->applyChanges($playerName, $entry, $value);
 
-            if($entry->isValidType($value)){
-                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $value, $playerName, $entry);
-                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
-                return $event->getData();
-            }
-
-            Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($value).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+            $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $value, $playerName, $entry);
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+            return $event->getData();
         }
     }
 
