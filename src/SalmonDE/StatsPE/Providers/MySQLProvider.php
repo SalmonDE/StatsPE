@@ -246,7 +246,7 @@ class MySQLProvider implements DataProvider
             $this->changes['data'][$playerName][$entryName] = ['value' => $value, 'isIncrement' => $isIncrement];
         }
 
-        if(count(++$this->changes['amount']) > $this->cacheLimit){
+        if(++$this->changes['amount'] > $this->cacheLimit){
             $this->saveAll();
         }
     }
