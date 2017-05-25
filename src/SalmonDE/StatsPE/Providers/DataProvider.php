@@ -10,6 +10,8 @@ interface DataProvider
 
     public function getData(string $player, Entry $entry);
 
+    public function getDataWhere(Entry $needleEntry, $needle, array $wantedEntries);
+
     public function getAllData(string $player = null);
 
     public function saveData(string $player, Entry $entry, $value);

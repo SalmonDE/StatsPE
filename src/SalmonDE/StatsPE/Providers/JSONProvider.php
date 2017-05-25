@@ -44,6 +44,26 @@ class JSONProvider implements DataProvider
         }
     }
 
+    public function getDataWhere(Entry $needleEntry, $needle, array $wantedEntries){ // Needs testing!
+        if($this->entryExists($needleEntry->getName()) && $needleEntry->shouldSave()){
+            if($wantedEntries === []){
+                return [];
+            }
+
+            foreach($this->getAllData() as $player => $playerData){
+                foreach($wantedEntries as $entry){
+                    if(!$entry->shouldSave()){
+                        $resultData[$player][$entry->getName()] = null;
+                        continue;
+                    }
+
+                    $resultData[$player][$entry->getName()] = $playerData[$entry->getName()];
+                }
+            }
+            return $resultData;
+        }
+    }
+
     public function getAllData(string $player = null){
         if($player !== null){
 

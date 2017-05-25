@@ -98,6 +98,41 @@ class MySQLProvider implements DataProvider
         }
     }
 
+    public function getDataWhere(Entry $needleEntry, $needle, array $wantedEntries){
+        if($this->entryExists($needleEntry->getName()) && $needleEntry->shouldSave()){
+            if($wantedEntries === []){
+                return [];
+            }
+
+            foreach($wantedEntries as $entry){
+                if($entry->shouldSave()){
+                    $entryList[] = $this->db->real_escape_string($entry->getName());
+                }else{
+                    $missingEntries[] = $entry->getName();
+                }
+            }
+
+            $query = 'SELECT '.implode(', ', $entryList).' FROM StatsPE WHERE '.$this->db->real_escape_string($needleEntry->getName()).' = ?';
+
+            $query = $this->queryDb($query, [$needle]);
+
+            while ($row = $query->fetch_assoc()){
+                $resultData[array_shift($row)] = $row;
+            }
+
+            if(isset($missingEntries)){
+
+                foreach($resultData as $player => $playerData){
+                    foreach($missingEntries as $entryName){
+                        $resultData[$player][$entryName] = null;
+                    }
+                }
+            }
+
+            return $resultData;
+        }
+    }
+
     public function getAllData(string $player = null){ // ADD CACHE SUPPORT
         $data = [];
 
