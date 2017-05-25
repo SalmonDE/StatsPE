@@ -106,7 +106,7 @@ class MySQLProvider implements DataProvider
 
             foreach($wantedEntries as $entry){
                 if($entry->shouldSave()){
-                    $entryList[$entry] = $this->db->real_escape_string($entry->getName());
+                    $entryList[] = $this->db->real_escape_string($entry->getName());
                 }else{
                     $missingEntries[] = $entry->getName();
                 }
