@@ -11,7 +11,11 @@ class MySQLProvider implements DataProvider
     private $entries = [];
     private $db = null;
 
-    private $changes = [];
+    private $changes = [
+        'amount' => 0,
+        'data' => []
+    ];
+
     private $cacheLimit = 0;
 
     public function __construct($host, $username, $pw, $db, $cacheLimit){
@@ -223,14 +227,14 @@ class MySQLProvider implements DataProvider
         }
     }
 
-    public function incrementValue(string $player, Entry $entry, int $int = 1){
+    public function incrementValue(string $playerName, Entry $entry, int $int = 1){
         if($this->entryExists($entry->getName()) && $entry->shouldSave() && $entry->getExpectedType() === Entry::INT){
 
-            $event = new \SalmonDE\StatsPE\Events\DataSaveEvent(Base::getInstance(), $int, $player, $entry);
+            $event = new \SalmonDE\StatsPE\Events\DataSaveEvent(Base::getInstance(), $int, $playerName, $entry);
             Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
 
             if(!$event->isCancelled()){
-                $this->addChange($playerName, $entry, $value, false);
+                $this->addChange($playerName, $entry, $int, false);
             }
         }
     }
@@ -310,6 +314,7 @@ class MySQLProvider implements DataProvider
     }
 
     private function queryDb(string $query, array $values, bool $multiQuery = false){
+
         $valueTypes = '';
         foreach($values as $value){
             $valueTypes .= is_numeric($value) ? (is_float($value) ? 'd' : 'i') : 's';
