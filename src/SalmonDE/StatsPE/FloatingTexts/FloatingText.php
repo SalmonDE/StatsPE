@@ -37,11 +37,11 @@ class FloatingText extends \pocketmine\level\particle\FloatingTextParticle
             if(Base::getInstance()->getDataProvider()->entryExists($key)){
                 switch($key){
                     case 'FirstJoin':
-                        $value = date(Base::getInstance()->getConfig()->get('Date-Format'), $player->getFirstPlayed() / 1000);
+                        $value = date(Base::getInstance()->getConfig()->get('dateFormat'), $player->getFirstPlayed() / 1000);
                         break;
 
                     case 'LastJoin':
-                        $value = date(Base::getInstance()->getConfig()->get('Date-Format'), $player->getLastPlayed() / 1000);
+                        $value = date(Base::getInstance()->getConfig()->get('dateFormat'), $player->getLastPlayed() / 1000);
                         break;
 
                     case 'OnlineTime':

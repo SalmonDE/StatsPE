@@ -35,12 +35,29 @@ class JSONProvider implements DataProvider
             }
             $v = $this->dataConfig->getNested(strtolower($player).'.'.$entry->getName());
 
-            if($entry->isValidType($v)){
-                $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $v, $player, $entry);
-                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
-                return $event->getData();
+            $event = new \SalmonDE\StatsPE\Events\DataReceiveEvent(Base::getInstance(), $v, $player, $entry);
+            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+            return $event->getData();
+        }
+    }
+
+    public function getDataWhere(Entry $needleEntry, $needle, array $wantedEntries){
+        if($this->entryExists($needleEntry->getName()) && $needleEntry->shouldSave()){
+            if($wantedEntries === []){
+                return [];
             }
-            Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype returned "'.gettype($v).'" for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+
+            foreach($this->getAllData() as $player => $playerData){
+                foreach($wantedEntries as $entry){
+                    if(!$entry->shouldSave()){
+                        $resultData[$player][$entry->getName()] = null;
+                        continue;
+                    }
+
+                    $resultData[$player][$entry->getName()] = $playerData[$entry->getName()];
+                }
+            }
+            return $resultData;
         }
     }
 

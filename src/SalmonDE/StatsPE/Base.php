@@ -43,7 +43,7 @@ class Base extends \pocketmine\plugin\PluginBase
             }
             $this->registerCommands();
 
-            if(($i = $this->getConfig()->get('Save-Interval')) >= 1){
+            if(($i = $this->getConfig()->getNested('JSON.saveInterval')) >= 1){
                 $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new Tasks\SaveTask($this), $i *= 1200, $i);
             }else{
                 $this->getLogger()->warning('The save interval is lower than 1 min! Please make sure to always properly shutdown the server in order to prevent data loss!');
@@ -66,6 +66,10 @@ class Base extends \pocketmine\plugin\PluginBase
     }
 
     private function initializeProvider(){
+        if($this->provider instanceof Providers\DataProvider){
+            return;
+        }
+
         switch($p = $this->getConfig()->get('Provider')){
             case 'json':
                 $this->getLogger()->info('Selecting JSON data provider ...');
@@ -74,7 +78,7 @@ class Base extends \pocketmine\plugin\PluginBase
 
             case 'mysql':
                 $this->getLogger()->info('Selecting MySQL data provider ...');
-                $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'));
+                $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'), $c->getNested('MySQL.cacheLimit'));
                 break;
 
             default:

@@ -30,12 +30,12 @@ class StatsCmd extends \pocketmine\command\PluginCommand implements \pocketmine\
                     switch($entry->getName()){
                         case 'FirstJoin':
                             $p = $sender->getServer()->getOfflinePlayer($args[0]);
-                            $value = date($this->getPlugin()->getConfig()->get('Date-Format'), $p->getFirstPlayed() / 1000);
+                            $value = date($this->getPlugin()->getConfig()->get('dateFormat'), $p->getFirstPlayed() / 1000);
                             break;
 
                         case 'LastJoin':
                             $p = $sender->getServer()->getOfflinePlayer($args[0]);
-                            $value = date($this->getPlugin()->getConfig()->get('Date-Format'), $p->getLastPlayed() / 1000);
+                            $value = date($this->getPlugin()->getConfig()->get('dateFormat'), $p->getLastPlayed() / 1000);
                             break;
 
                         case 'OnlineTime':
