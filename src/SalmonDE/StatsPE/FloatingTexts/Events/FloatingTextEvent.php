@@ -14,7 +14,7 @@ class FloatingTextEvent extends \SalmonDE\StatsPE\Events\StatsPE_Event implement
     private $floatingText;
     private $type;
 
-    public function __construct(\pocketmine\plugin\Plugin $plugin, FloatingText $floatingText, int $types){
+    public function __construct(\pocketmine\plugin\Plugin $plugin, FloatingText $floatingText, int $type){
         parent::__construct($plugin);
         $this->floatingText = $floatingText;
         $this->type = $type;
