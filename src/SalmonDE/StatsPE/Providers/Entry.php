@@ -17,7 +17,7 @@ class Entry
     private $shouldSave;
     private $unsigned;
 
-    public function __construct(string $name, $default, int $type, bool $shouldSave, $unsigned = false){
+    public function __construct(string $name, $default, int $type, bool $shouldSave, bool $unsigned = false){
         $this->name = $name;
         $this->expectedType = $type;
         if($this->isValidType($default)){
