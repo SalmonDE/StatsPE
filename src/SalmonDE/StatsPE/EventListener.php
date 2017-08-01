@@ -38,7 +38,7 @@ class EventListener implements \pocketmine\event\Listener
         }
 
         if(Base::getInstance()->getDataProvider()->entryExists('ClientID')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ClientID'), (string) $event->getPlayer()->getClientId());
+            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ClientID'), (string) $event->getPlayer()->getClientId()); // getClientID() is deprecated
         }
 
         if(Base::getInstance()->getDataProvider()->entryExists('LastIP')){

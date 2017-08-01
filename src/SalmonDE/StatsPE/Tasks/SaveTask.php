@@ -8,7 +8,7 @@ class SaveTask extends \pocketmine\scheduler\PluginTask
         parent::__construct($owner);
     }
 
-    public function onRun($ct){
+    public function onRun(int $ct){
         $this->getOwner()->getDataProvider()->saveAll();
     }
 }
