@@ -1,6 +1,6 @@
 name: StatsPE
-version: 3.5.2
-api: [3.0.0-ALPHA5, 3.0.0-ALPHA6]
+version: 3.6.0
+api: 3.0.0-ALPHA7
 main: SalmonDE\StatsPE\Base
 description: Playerstatistics for your server!
 author: SalmonDE

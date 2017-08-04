@@ -17,7 +17,7 @@ class StatsPECmd extends \pocketmine\command\PluginCommand implements \pocketmin
         $this->setExecutor($this);
     }
 
-    public function onCommand(\pocketmine\command\CommandSender $sender, \pocketmine\command\Command $cmd, $label, array $args){
+    public function onCommand(\pocketmine\command\CommandSender $sender, \pocketmine\command\Command $cmd, string $label, array $args): bool{
         if(isset($args[0])){
             if(strtolower($args[0]) === 'floatingtext' && isset($args[1])){
                 if(!$sender->hasPermission('statspe.cmd.statspe.floatingtext')){

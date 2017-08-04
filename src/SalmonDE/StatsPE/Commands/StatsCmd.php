@@ -15,7 +15,7 @@ class StatsCmd extends \pocketmine\command\PluginCommand implements \pocketmine\
         $this->setExecutor($this);
     }
 
-    public function onCommand(\pocketmine\command\CommandSender $sender, \pocketmine\command\Command $cmd, $label, array $args){
+    public function onCommand(\pocketmine\command\CommandSender $sender, \pocketmine\command\Command $cmd, string $label, array $args): bool{
         if(!isset($args[0])){
             if(!$sender instanceof Player){
                 return false;
