@@ -3,7 +3,7 @@ version: 3.6.0
 api: 3.0.0-ALPHA7
 main: SalmonDE\StatsPE\Base
 description: Playerstatistics for your server!
-author: SalmonDE
+author: Lewis
 load: POSTWORLD
 permissions:
     statspe:
