@@ -56,7 +56,7 @@ class StatsCmd extends \pocketmine\command\PluginCommand implements \pocketmine\
                             break;
 
                         default:
-                            $value = $data[$entry->getName()];
+                            $value = $data[$entry->getName()] ?? $entry->getDefault();
                     }
                     $text .= TF::RESET."\n".TF::AQUA.$entry->getName().': '.TF::GOLD.$value;
                 }
