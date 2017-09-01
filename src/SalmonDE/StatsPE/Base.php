@@ -7,17 +7,28 @@ use SalmonDE\StatsPE\Providers\Entry;
 class Base extends \pocketmine\plugin\PluginBase
 {
 
+    /** @var Base */
     private static $instance = null;
+    /** @var Providers\JSONProvider|Providers\MySQLProvider */
     private $provider = null;
+    /** @var string[] */
     private $messages = [];
 
+    /** @var EventListener */
     private $listener = null; // Needed because of the OnlineTime hack
+    /** @var FloatingTexts\FloatingTextManager */
     private $floatingTextManager = null;
 
+    /**
+     * @return Base
+     */
     public static function getInstance() : Base{
         return self::$instance;
     }
 
+    /**
+     * @return void
+     */
     public function onEnable(){
         self::$instance = $this;
         $this->saveResource('config.yml');
@@ -52,6 +63,9 @@ class Base extends \pocketmine\plugin\PluginBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function onDisable(){
         if(!$this->getServer()->isRunning()){
             foreach($this->getServer()->getOnlinePlayers() as $player){
@@ -64,6 +78,9 @@ class Base extends \pocketmine\plugin\PluginBase
         $this->listener = null;
     }
 
+    /**
+     * @return void
+     */
     private function initializeProvider(){
         if($this->provider instanceof Providers\DataProvider){
             return;
@@ -86,6 +103,9 @@ class Base extends \pocketmine\plugin\PluginBase
         }
     }
 
+    /**
+     * @return void
+     */
     private function registerDefaultEntries(){
         $this->provider->addEntry(new Entry('Username', 'undefined', Entry::STRING, true));
         foreach($this->getConfig()->get('Stats') as $statistic => $enabled){
@@ -221,6 +241,9 @@ class Base extends \pocketmine\plugin\PluginBase
         }
     }
 
+    /**
+     * @return void
+     */
     private function registerCommands(){
         $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsCmd($this));
         $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsPECmd($this));
@@ -232,19 +255,35 @@ class Base extends \pocketmine\plugin\PluginBase
         $cmdMap->getCommand('statspe:statspe')->unregister($cmdMap);
     }*/
 
+    /**
+     * @return Providers\DataProvider
+     */
     public function getDataProvider() : Providers\DataProvider{
         return $this->provider;
     }
 
+    /**
+     * @param Providers\DataProvider $provider
+     *
+     * @return void
+     */
     public function setDataProvider(Providers\DataProvider $provider){
         $this->provider = $provider;
     }
 
+    /**
+     * @return FloatingTexts\FloatingTextManager
+     */
     public function getFloatingTextManager() : FloatingTexts\FloatingTextManager{
         return $this->floatingTextManager;
     }
 
 
+    /**
+     * @param string $k
+     *
+     * @return string
+     */
     public function getMessage(string $k){
         $keys = explode('.', $k);
         $message = $this->messages['lines'];
