@@ -71,9 +71,10 @@ class MySQLProvider implements DataProvider
                 $missingColumns[] = $entry;
             }
         }
+
         if(count($missingColumns) > 0){
             foreach($missingColumns as $column){
-                $this->queryDb('ALTER TABLE StatsPE ADD '.$this->db->real_escape_string($column->getName()).' '.Utils::getMySQLDatatype($column->getExpectedType()).' NOT NULL DEFAULT ?', [$this->db->real_escape_string(Utils::convertValueSave($entry, $entry->getDefault()))]);
+                $this->queryDb('ALTER TABLE StatsPE ADD '.$this->db->real_escape_string($column->getName()).' '.Utils::getMySQLDatatype($column->getExpectedType()).' NOT NULL DEFAULT ?', [$this->db->real_escape_string(Utils::convertValueSave($column, $column->getDefault()))]);
             }
         }
     }
