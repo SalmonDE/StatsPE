@@ -69,7 +69,7 @@ class Base extends \pocketmine\plugin\PluginBase
     public function onDisable(){
         if(!$this->getServer()->isRunning()){
             foreach($this->getServer()->getOnlinePlayers() as $player){
-                $this->listener->onQuit(new \pocketmine\event\player\PlayerQuitEvent($player, '')); // Hacky, but prevents not saving online time of players on shutdown
+                $this->listener->onQuit(new \pocketmine\event\player\PlayerQuitEvent($player, '', '')); // Hacky, but prevents not saving online time of players on shutdown
             }
         }
         if(isset($this->provider)){
