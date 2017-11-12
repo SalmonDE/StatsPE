@@ -1,12 +1,17 @@
 <?php
 namespace SalmonDE\StatsPE\Events;
 
-class DataSaveEvent extends DataEvent implements \pocketmine\event\Cancellable
-{
+use pocketmine\event\Cancellable;
+use pocketmine\plugin\Plugin;
+use SalmonDE\StatsPE\Events\DataEvent;
+use SalmonDE\StatsPE\Providers\Entry;
+
+class DataSaveEvent extends DataEvent implements Cancellable {
 
     public static $handlerList = null;
 
-    public function __construct(\pocketmine\plugin\Plugin $plugin, $data, string $player, \SalmonDE\StatsPE\Providers\Entry $entry){
+    public function __construct(Plugin $plugin, $data, string $player, Entry $entry){
         parent::__construct($plugin, $data, $player, $entry);
     }
+
 }

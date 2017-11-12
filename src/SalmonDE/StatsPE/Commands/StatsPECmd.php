@@ -1,13 +1,16 @@
 <?php
 namespace SalmonDE\StatsPE\Commands;
 
+use pocketmine\command\Command;
+use pocketmine\command\CommandExecutor;
+use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
+use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
-use pocketmine\utils\TextFormat as TF;
+use SalmonDE\StatsPE\FloatingTexts\FloatingText;
 use SalmonDE\StatsPE\FloatingTexts\FloatingTextManager;
 
-
-class StatsPECmd extends \pocketmine\command\PluginCommand implements \pocketmine\command\CommandExecutor
-{
+class StatsPECmd extends PluginCommand implements CommandExecutor {
 
     public function __construct(\SalmonDE\StatsPE\Base $owner){
         parent::__construct('statspe', $owner);
@@ -17,11 +20,11 @@ class StatsPECmd extends \pocketmine\command\PluginCommand implements \pocketmin
         $this->setExecutor($this);
     }
 
-    public function onCommand(\pocketmine\command\CommandSender $sender, \pocketmine\command\Command $cmd, string $label, array $args): bool{
+    public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args): bool{
         if(isset($args[0])){
             if(strtolower($args[0]) === 'floatingtext' && isset($args[1])){
                 if(!$sender->hasPermission('statspe.cmd.statspe.floatingtext')){
-                    $sender->sendMessage(new \pocketmine\event\TranslationContainer(TF::RED.'%commands.generic.permission'));
+                    $sender->sendMessage(new TranslationContainer(TF::RED.'%commands.generic.permission'));
                     return true;
                 }
 
@@ -60,12 +63,13 @@ class StatsPECmd extends \pocketmine\command\PluginCommand implements \pocketmin
                             }
                         }
 
-                        $sender->sendMessage(str_replace(['{count}', '{names}'], [count($texts), implode(', ', $texts)], $this->getPlugin()->getMessage('commands.statspe.floatingtext.listAll')));
+                        $sender->sendMessage(str_replace(['{count}', '{names}'], [
+                            count($texts), implode(', ', $texts)], $this->getPlugin()->getMessage('commands.statspe.floatingtext.listAll')));
                         break;
 
                     case 'info':
                         if(isset($args[2])){
-                            if(($ft = FloatingTextManager::getInstance()->getFloatingText($args[2])) instanceof \SalmonDE\StatsPE\FloatingTexts\FloatingText){
+                            if(($ft = FloatingTextManager::getInstance()->getFloatingText($args[2])) instanceof FloatingText){
                                 $info = [
                                     '{name}' => $ft->getName(),
                                     '{x}' => $ft->x,
@@ -123,4 +127,5 @@ class StatsPECmd extends \pocketmine\command\PluginCommand implements \pocketmin
         }
         return true;
     }
+
 }

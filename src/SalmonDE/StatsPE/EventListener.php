@@ -10,7 +10,7 @@ class EventListener implements \pocketmine\event\Listener
     /**
     * @priority HIGHEST
     */
-    public function onEntryEvent(EntryEvent $event){
+    public function onEntryEvent(EntryEvent $event): void{
         if($event->getType() === EntryEvent::REMOVE && $event->getEntry()->getName() === 'Username'){
             $event->setCancelled();
         }

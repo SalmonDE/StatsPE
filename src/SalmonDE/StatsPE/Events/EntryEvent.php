@@ -1,10 +1,12 @@
 <?php
 namespace SalmonDE\StatsPE\Events;
 
+use pocketmine\event\Cancellable;
+use pocketmine\plugin\Plugin;
+use SalmonDE\StatsPE\Events\StatsPE_Event;
 use SalmonDE\StatsPE\Providers\Entry;
 
-class EntryEvent extends StatsPE_Event implements \pocketmine\event\Cancellable
-{
+class EntryEvent extends StatsPE_Event implements Cancellable {
 
     public static $handlerList = null;
 
@@ -12,19 +14,20 @@ class EntryEvent extends StatsPE_Event implements \pocketmine\event\Cancellable
     const REMOVE = 1;
 
     private $entry;
-    private $type;
+    private $eventType;
 
-    public function __construct(\pocketmine\plugin\Plugin $plugin, Entry $entry, int $type){
+    public function __construct(Plugin $plugin, Entry $entry, int $eventType){
         parent::__construct($plugin);
         $this->entry = $entry;
-        $this->$type = $type;
+        $this->eventType = $eventType;
     }
 
-    public function getEntry() : Entry{
+    public function getEntry(): Entry{
         return $this->entry;
     }
 
-    public function getType() : int{
-        return $this->type;
+    public function getEventType(): int{
+        return $this->eventType;
     }
+
 }

@@ -1,12 +1,13 @@
 <?php
+declare(strict_types = 1);
+
 namespace SalmonDE\StatsPE;
 
 use SalmonDE\StatsPE\Providers\Entry;
 
-class Utils
-{
+class Utils {
 
-    public static function getPeriodFromSeconds(int $seconds) : string{
+    public static function getPeriodFromSeconds(int $seconds): string{
         $ref = new \DateTime(date('Y-m-d H:i:s', 0));
         $time = $ref->diff(new \DateTime(date('Y-m-d H:i:s', $seconds)));
 
@@ -23,65 +24,27 @@ class Utils
         return str_replace(['y', 'm', 'd', 'h', 'i', 's'], $units, $time);
     }
 
-    public static function getKD(int $kills, int $deaths) : float{
+    public static function getKD(int $kills, int $deaths): float{
         return round($kills / ($deaths !== 0 ? $deaths : 1), 2);
     }
 
-    public static function convertValueSave(Entry $entry, $value){
-        switch($entry->getExpectedType()){
-            case Entry::INT:
-            case Entry::FLOAT:
-            case Entry::STRING:
-            case Entry::MIXED:
-                return $value;
-
-            case Entry::ARRAY:
-                return serialize($value);
-
-            case Entry::BOOL:
-                return (int) $value;
-        }
-    }
-
-    public static function convertValueGet(Entry $entry, $value){
-        switch($entry->getExpectedType()){
-            case Entry::INT:
-                return (int) $value;
-
-            case Entry::FLOAT:
-                return (float) $value;
-
-            case Entry::STRING:
-            case Entry::MIXED:
-                return $value;
-
-            case Entry::ARRAY:
-                return unserialize($value);
-
-            case Entry::BOOL:
-                return $value === 0 ? false : true;
-        }
-    }
-
-    public static function getMySQLDatatype(int $type) : string{
+    public static function getMySQLDatatype(int $type): string{
         switch($type){
-            case Entry::INT:
+            case Entry::TYPE_INT:
                 return 'BIGINT(255)';
 
-            case Entry::FLOAT:
+            case Entry::TYPE_FLOAT:
                 return 'DECIMAL(65, 3)';
 
-            case Entry::STRING:
+            case Entry::TYPE_STRING:
                 return 'VARCHAR(255)';
 
-            case Entry::ARRAY:
+            case Entry::TYPE_ARRAY:
                 return 'VARCHAR(255)';
 
-            case Entry::BOOL:
+            case Entry::TYPE_BOOL:
                 return 'BIT(1)';
-
-            case Entry::MIXED:
-                return 'VARCHAR(255)';
         }
     }
+
 }

@@ -1,7 +1,7 @@
 name: StatsPE
-version: 3.6.0
+version: 4.0.0
 api: [3.0.0-ALPHA9]
-main: SalmonDE\StatsPE\Base
+main: SalmonDE\StatsPE\StatsBase
 description: Playerstatistics for your server!
 author: SalmonDE
 load: POSTWORLD
@@ -27,10 +27,8 @@ permissions:
             statspe.entry:
                 description: Allows to see entries of the statistics
                 children:
-                    statspe.entry.ClientID:
-                    statspe.entry.LastIP:
-                    statspe.entry.UUID:
-                    statspe.entry.XBoxAuthenticated:
+                    statspe.entry.Username:
+                        default: true
                     statspe.entry.OnlineTime:
                         default: true
                     statspe.entry.FirstJoin:
@@ -57,3 +55,6 @@ permissions:
                         default: true
                     statspe.entry.ItemDropCount:
                         default: true
+                    statspe.entry.ClientID:
+                    statspe.entry.LastIP:
+                    statspe.entry.UUID:

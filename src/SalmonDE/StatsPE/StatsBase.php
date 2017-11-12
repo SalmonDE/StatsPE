@@ -1,39 +1,43 @@
 <?php
+declare(strict_types = 1);
+
 namespace SalmonDE\StatsPE;
 
+use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
-use SalmonDE\StatsPE\Providers\Entry;
+use SalmonDE\StatsPE\Commands\StatsCmd;
+use SalmonDE\StatsPE\Commands\StatsPECmd;
+use SalmonDE\StatsPE\DataProviders\DataProvider;
+use SalmonDE\StatsPE\DataProviders\JSONProvider;
+use SalmonDE\StatsPE\DataProviders\MySQLProvider;
+use SalmonDE\StatsPE\Entries\Entry;
+use SalmonDE\StatsPE\Entries\EntryManager;
+use SalmonDE\StatsPE\FloatingTexts\FloatingTextManager;
+use SalmonDE\StatsPE\Tasks\SaveTask;
 
-class Base extends \pocketmine\plugin\PluginBase
-{
+class StatsBase extends PluginBase {
 
-    /** @var Base */
-    private static $instance = null;
-    /** @var Providers\JSONProvider|Providers\MySQLProvider */
+    /** @var JSONProvider|MySQLProvider */
     private $provider = null;
+
     /** @var string[] */
     private $messages = [];
 
     /** @var EventListener */
     private $listener = null; // Needed because of the OnlineTime hack
-    /** @var FloatingTexts\FloatingTextManager */
+    /** @var FloatingTextManager */
     private $floatingTextManager = null;
 
-    /**
-     * @return Base
-     */
-    public static function getInstance() : Base{
-        return self::$instance;
-    }
+    private static $entryManager;
 
     /**
      * @return void
      */
-    public function onEnable(){
-        self::$instance = $this;
+    public function onEnable(): void{
         $this->saveResource('config.yml');
         $this->saveResource('messages.yml');
-        $this->initializeProvider();
+
         if($this->isEnabled()){
 
             if(!file_exists($this->getDataFolder().'messages.yml')){
@@ -47,18 +51,20 @@ class Base extends \pocketmine\plugin\PluginBase
             $msgConfig = new Config($this->getDataFolder().'messages.yml', Config::YAML);
             $this->messages = $msgConfig->getAll();
 
-            $this->registerDefaultEntries();
-            if($this->provider instanceof Providers\MySQLProvider){
-                $this->provider->prepareTable();
-            }
+            self::$entryManager = new EntryManager($this);
+
+            $this->registerEntries();
+            $this->initializeProvider();
             $this->registerCommands();
 
             if(($i = $this->getConfig()->getNested('JSON.saveInterval')) >= 1){
-                $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new Tasks\SaveTask($this), $i *= 1200, $i);
+                $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new SaveTask($this), $i *= 1200, $i); // one minute in ticks (60 * 20)
             }else{
-                $this->getLogger()->warning('The save interval is lower than 1 min! Please make sure to always properly shutdown the server in order to prevent data loss!');
+                $this->getLogger()->warning('The save interval is lower than 1 minute! Please make sure to always properly shutdown the server in order to prevent data loss!');
             }
-            $this->floatingTextManager = $this->floatingTextManager instanceof FloatingTexts\FloatingTextManager ? $this->floatingTextManager : new FloatingTexts\FloatingTextManager();
+
+            $this->floatingTextManager = $this->floatingTextManager ?? new FloatingTextManager($this);
+
             $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
         }
     }
@@ -66,47 +72,57 @@ class Base extends \pocketmine\plugin\PluginBase
     /**
      * @return void
      */
-    public function onDisable(){
+    public function onDisable(): void{
         if(!$this->getServer()->isRunning()){
             foreach($this->getServer()->getOnlinePlayers() as $player){
-                $this->listener->onQuit(new \pocketmine\event\player\PlayerQuitEvent($player, '', '')); // Hacky, but prevents not saving online time of players on shutdown
+                $this->listener->onQuit(new PlayerQuitEvent($player, '', '')); // Hacky, but prevents not saving online time of players on shutdown
             }
         }
-        if(isset($this->provider)){
+
+        if(($this->provider ?? null) instanceof DataProvider){
             $this->provider->saveAll();
         }
+
         $this->listener = null;
     }
 
     /**
      * @return void
      */
-    private function initializeProvider(){
-        if($this->provider instanceof Providers\DataProvider){
+    private function initializeProvider(): void{
+        if($this->provider instanceof DataProvider){
             return;
         }
 
         switch($p = $this->getConfig()->get('Provider')){
             case 'json':
                 $this->getLogger()->info('Selecting JSON data provider ...');
-                $this->provider = new Providers\JSONProvider($this->getDataFolder().'players.json');
+
+                $this->provider = new JSONProvider($this->getDataFolder().'players.json');
                 break;
 
             case 'mysql':
                 $this->getLogger()->info('Selecting MySQL data provider ...');
-                $this->provider = new Providers\MySQLProvider(($c = $this->getConfig())->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'), $c->getNested('MySQL.cacheLimit'));
+
+                $c = $this->getConfig();
+                $this->provider = new MySQLProvider($c->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'), $c->getNested('MySQL.cacheLimit'));
                 break;
 
             default:
                 $this->getLogger()->warning('Unknown provider: "'.$p.'", selecting JSON data provider...');
-                $this->provider = new Providers\JSONProvider($this->getDataFolder().'players.json');
+
+                $this->provider = new JSONProvider($this->getDataFolder().'players.json');
         }
+    }
+
+    public static function getEntryManager(): EntryManager{
+        return self::$entryManager;
     }
 
     /**
      * @return void
      */
-    private function registerDefaultEntries(){
+    private function registerEntries(): void{
         $this->provider->addEntry(new Entry('Username', 'undefined', Entry::STRING, true));
         foreach($this->getConfig()->get('Stats') as $statistic => $enabled){
             if($enabled){
@@ -244,52 +260,50 @@ class Base extends \pocketmine\plugin\PluginBase
     /**
      * @return void
      */
-    private function registerCommands(){
-        $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsCmd($this));
-        $this->getServer()->getCommandMap()->register('statspe', new Commands\StatsPECmd($this));
+    private function registerCommands(): void{
+        $this->getServer()->getCommandMap()->register('statspe', new StatsCmd($this));
+        $this->getServer()->getCommandMap()->register('statspe', new StatsPECmd($this));
     }
 
-    /*private function unregisterCommands(){
-        $cmdMap = $this->getServer()->getCommandMap();
-        $cmdMap->getCommand('statspe:stats')->unregister($cmdMap);
-        $cmdMap->getCommand('statspe:statspe')->unregister($cmdMap);
-    }*/
-
     /**
-     * @return Providers\DataProvider
+     * @return DataProvider
      */
-    public function getDataProvider() : Providers\DataProvider{
+    public function getDataProvider(): DataProvider{
         return $this->provider;
     }
 
     /**
-     * @param Providers\DataProvider $provider
+     * @param DataProvider $provider
      *
      * @return void
      */
-    public function setDataProvider(Providers\DataProvider $provider){
+    public function setDataProvider(DataProvider $provider): void{
+        $this->provider->saveAll();
+
         $this->provider = $provider;
     }
 
     /**
-     * @return FloatingTexts\FloatingTextManager
+     * @return FloatingTextManager
      */
-    public function getFloatingTextManager() : FloatingTexts\FloatingTextManager{
+    public function getFloatingTextManager(): FloatingTextManager{
         return $this->floatingTextManager;
     }
-
 
     /**
      * @param string $k
      *
      * @return string
      */
-    public function getMessage(string $k){
+    public function getMessage(string $k): ?string{
         $keys = explode('.', $k);
         $message = $this->messages['lines'];
+
         foreach($keys as $k){
             $message = $message[$k];
         }
+
         return $message;
     }
+
 }

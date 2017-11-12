@@ -1,14 +1,15 @@
 <?php
 namespace SalmonDE\StatsPE\Events;
 
-use SalmonDE\StatsPE\Providers\Entry;
+use pocketmine\event\plugin\PluginEvent;
+use pocketmine\plugin\Plugin;
 
-class StatsPE_Event extends \pocketmine\event\plugin\PluginEvent
+class StatsPE_Event extends PluginEvent
 {
 
     public static $handlerList = null;
 
-    public function __construct(\pocketmine\plugin\Plugin $plugin){
+    public function __construct(Plugin $plugin){
         parent::__construct($plugin);
     }
 }

@@ -1,12 +1,13 @@
 <?php
-namespace SalmonDE\StatsPE\Providers;
+namespace SalmonDE\StatsPE\DataProviders;
 
-interface DataProvider
-{
+abstract class DataProvider {
 
     public function initialize(array $data);
 
-    public function getName() : string;
+    public final function getName(): string{
+        return get_class();
+    }
 
     public function getData(string $player, Entry $entry);
 
@@ -18,15 +19,7 @@ interface DataProvider
 
     public function incrementValue(string $player, Entry $entry, int $int = 1);
 
-    public function addEntry(Entry $entry);
-
-    public function removeEntry(Entry $entry);
-
-    public function getEntries() : array;
-
-    public function entryExists(string $entry) : bool;
-
-    public function countDataRecords() : int;
+    public function countDataRecords(): int;
 
     public function saveAll();
 }

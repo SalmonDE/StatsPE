@@ -3,8 +3,7 @@ namespace SalmonDE\StatsPE\Tasks;
 
 use pocketmine\Server;
 
-class SaveToDbTask extends \pocketmine\scheduler\AsyncTask
-{
+class SaveToDbTask extends \pocketmine\scheduler\AsyncTask {
 
     private $credentials;
     private $changes;
@@ -59,4 +58,5 @@ class SaveToDbTask extends \pocketmine\scheduler\AsyncTask
             }
         }
     }
+
 }

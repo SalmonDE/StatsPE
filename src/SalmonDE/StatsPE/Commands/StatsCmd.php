@@ -1,11 +1,14 @@
 <?php
 namespace SalmonDE\StatsPE\Commands;
 
+use pocketmine\command\Command;
+use pocketmine\command\CommandExecutor;
+use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
 use pocketmine\Player;
-use pocketmine\utils\TextFormat as TF;
+use SalmonDE\StatsPE\Utils;
 
-class StatsCmd extends \pocketmine\command\PluginCommand implements \pocketmine\command\CommandExecutor
-{
+class StatsCmd extends PluginCommand implements CommandExecutor {
 
     public function __construct(\SalmonDE\StatsPE\Base $owner){
         parent::__construct('stats', $owner);
@@ -15,7 +18,7 @@ class StatsCmd extends \pocketmine\command\PluginCommand implements \pocketmine\
         $this->setExecutor($this);
     }
 
-    public function onCommand(\pocketmine\command\CommandSender $sender, \pocketmine\command\Command $cmd, string $label, array $args): bool{
+    public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args): bool{
         if(!isset($args[0])){
             if(!$sender instanceof Player){
                 return false;
@@ -25,8 +28,10 @@ class StatsCmd extends \pocketmine\command\PluginCommand implements \pocketmine\
 
         if(is_array($data = $this->getPlugin()->getDataProvider()->getAllData($args[0]))){
             $text = str_replace('{value}', $data['Username'], $this->getPlugin()->getMessage('general.header'));
+
             foreach($this->getPlugin()->getDataProvider()->getEntries() as $entry){
                 if($sender->hasPermission('statspe.entry.'.$entry->getName())){
+
                     switch($entry->getName()){
                         case 'FirstJoin':
                             $p = $sender->getServer()->getOfflinePlayer($args[0]);
@@ -44,11 +49,11 @@ class StatsCmd extends \pocketmine\command\PluginCommand implements \pocketmine\
                                 $seconds += round(time() - ($p->getLastPlayed() / 1000));
                             }
 
-                            $value = \SalmonDE\StatsPE\Utils::getPeriodFromSeconds($seconds);
+                            $value = Utils::getPeriodFromSeconds($seconds);
                             break;
 
                         case 'K/D':
-                            $value = \SalmonDE\StatsPE\Utils::getKD($data['KillCount'], $data['DeathCount']);
+                            $value = Utils::getKD($data['KillCount'], $data['DeathCount']);
                             break;
 
                         case 'Online':
@@ -65,6 +70,8 @@ class StatsCmd extends \pocketmine\command\PluginCommand implements \pocketmine\
         }else{
             $sender->sendMessage(TF::RED.str_replace('{player}', $args[0], $this->getPlugin()->getMessage('commands.stats.notFound')));
         }
+
         return true;
     }
+
 }

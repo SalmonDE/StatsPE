@@ -1,10 +1,12 @@
 <?php
 namespace SalmonDE\StatsPE\FloatingTexts\Events;
 
+use pocketmine\event\Cancellable;
+use pocketmine\plugin\Plugin;
+use SalmonDE\StatsPE\Events\StatsPE_Event;
 use SalmonDE\StatsPE\FloatingTexts\FloatingText;
 
-class FloatingTextEvent extends \SalmonDE\StatsPE\Events\StatsPE_Event implements \pocketmine\event\Cancellable
-{
+class FloatingTextEvent extends StatsPE_Event implements Cancellable {
 
     public static $handlerList = null;
 
@@ -14,18 +16,18 @@ class FloatingTextEvent extends \SalmonDE\StatsPE\Events\StatsPE_Event implement
     private $floatingText;
     private $type;
 
-    public function __construct(\pocketmine\plugin\Plugin $plugin, FloatingText $floatingText, int $type){
+    public function __construct(Plugin $plugin, FloatingText $floatingText, int $type){
         parent::__construct($plugin);
         $this->floatingText = $floatingText;
         $this->type = $type;
     }
 
-
-    public function getFloatingText() : FloatingText{
+    public function getFloatingText(): FloatingText{
         return $this->floatingText;
     }
 
-    public function getType() : int{
+    public function getType(): int{
         return $this->type;
     }
+
 }
