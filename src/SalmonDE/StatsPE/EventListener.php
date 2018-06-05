@@ -1,12 +1,21 @@
 <?php
 namespace SalmonDE\StatsPE;
 
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\inventory\CraftItemEvent;
+use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerChatEvent;
+use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
+use pocketmine\event\player\PlayerItemConsumeEvent;
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
 use SalmonDE\StatsPE\Events\EntryEvent;
 
-class EventListener implements \pocketmine\event\Listener
+class EventListener implements Listener
 {
-
     /**
     * @priority HIGHEST
     */
@@ -16,9 +25,10 @@ class EventListener implements \pocketmine\event\Listener
         }
     }
 
-    public function onJoin(\pocketmine\event\player\PlayerJoinEvent $event){
+    public function onJoin(PlayerJoinEvent $event){
         if(!is_array($data = Base::getInstance()->getDataProvider()->getAllData($event->getPlayer()->getName()))){
             Base::getInstance()->getDataProvider()->addPlayer($event->getPlayer());
+
         }else{ // Prevent setting the join counter to 2 on first join
             if(Base::getInstance()->getDataProvider()->entryExists('JoinCount')){
                 Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('JoinCount'), ++$data['JoinCount']);
@@ -58,7 +68,7 @@ class EventListener implements \pocketmine\event\Listener
         }
     }
 
-    public function onQuit(\pocketmine\event\player\PlayerQuitEvent $event){
+    public function onQuit(PlayerQuitEvent $event){
         if(Base::getInstance()->getDataProvider()->entryExists('OnlineTime')){
             if(\pocketmine\START_TIME < ($event->getPlayer()->getLastPlayed() / 1000)){
                 $time = ceil(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
@@ -73,7 +83,7 @@ class EventListener implements \pocketmine\event\Listener
         }
     }
 
-    public function onPlayerDeath(\pocketmine\event\player\PlayerDeathEvent $event){
+    public function onPlayerDeath(PlayerDeathEvent $event){
         if(Base::getInstance()->getDataProvider()->entryExists('DeathCount')){
             Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('DeathCount'));
         }
@@ -91,7 +101,7 @@ class EventListener implements \pocketmine\event\Listener
     /**
     * @priority MONITOR
     */
-    public function onBlockBreak(\pocketmine\event\block\BlockBreakEvent $event){
+    public function onBlockBreak(BlockBreakEvent $event){
         if(!$event->isCancelled()){
             if(Base::getInstance()->getDataProvider()->entryExists('BlockBreakCount')){
                 Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('BlockBreakCount'));
@@ -102,7 +112,7 @@ class EventListener implements \pocketmine\event\Listener
     /**
     * @priority MONITOR
     */
-    public function onBlockPlace(\pocketmine\event\block\BlockPlaceEvent $event){
+    public function onBlockPlace(BlockPlaceEvent $event){
         if(!$event->isCancelled()){
             if(Base::getInstance()->getDataProvider()->entryExists('BlockPlaceCount')){
                 Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('BlockPlaceCount'));
@@ -113,7 +123,7 @@ class EventListener implements \pocketmine\event\Listener
     /**
     * @priority MONITOR
     */
-    public function onChat(\pocketmine\event\player\PlayerChatEvent $event){
+    public function onChat(PlayerChatEvent $event){
         if(!$event->isCancelled()){
             if(Base::getInstance()->getDataProvider()->entryExists('ChatCount')){
                 Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ChatCount'));
@@ -124,7 +134,7 @@ class EventListener implements \pocketmine\event\Listener
     /**
     * @priority MONITOR
     */
-    public function onItemConsume(\pocketmine\event\player\PlayerItemConsumeEvent $event){
+    public function onItemConsume(PlayerItemConsumeEvent $event){
         if(!$event->isCancelled()){
             if(Base::getInstance()->getDataProvider()->entryExists('ItemConsumeCount')){
                 Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ItemConsumeCount'));
@@ -135,7 +145,7 @@ class EventListener implements \pocketmine\event\Listener
     /**
     * @priority MONITOR
     */
-    public function onCraftItem(\pocketmine\event\inventory\CraftItemEvent $event){
+    public function onCraftItem(CraftItemEvent $event){
         if(!$event->isCancelled()){
             if(Base::getInstance()->getDataProvider()->entryExists('ItemCraftCount')){
                 Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ItemCraftCount'));
@@ -146,7 +156,7 @@ class EventListener implements \pocketmine\event\Listener
     /**
     * @priority MONITOR
     */
-    public function onDropItem(\pocketmine\event\player\PlayerDropItemEvent $event){
+    public function onDropItem(PlayerDropItemEvent $event){
         if(!$event->isCancelled()){
             if(Base::getInstance()->getDataProvider()->entryExists('ItemDropCount')){
                 Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ItemDropCount'));

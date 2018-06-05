@@ -2,7 +2,7 @@
 namespace SalmonDE\StatsPE\Events;
 
 use pocketmine\plugin\Plugin;
-use SalmonDE\StatsPE\Providers\Entry;
+use SalmonDE\StatsPE\Entries\Entry;
 
 class DataReceiveEvent extends DataEvent {
 

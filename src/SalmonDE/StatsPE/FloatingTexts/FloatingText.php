@@ -4,6 +4,7 @@ namespace SalmonDE\StatsPE\FloatingTexts;
 use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
+use pocketmine\utils\TextFormat as TF;
 use SalmonDE\StatsPE\Utils;
 
 class FloatingText extends FloatingTextParticle {

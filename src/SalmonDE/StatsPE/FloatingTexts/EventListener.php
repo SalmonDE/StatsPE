@@ -5,7 +5,6 @@ use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\Player;
-use SalmonDE\StatsPE\FloatingTexts\FloatingTextManager;
 
 class EventListener implements Listener {
 

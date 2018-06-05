@@ -3,8 +3,7 @@ namespace SalmonDE\StatsPE\Events;
 
 use pocketmine\event\Cancellable;
 use pocketmine\plugin\Plugin;
-use SalmonDE\StatsPE\Events\DataEvent;
-use SalmonDE\StatsPE\Providers\Entry;
+use SalmonDE\StatsPE\Entries\Entry;
 
 class DataSaveEvent extends DataEvent implements Cancellable {
 

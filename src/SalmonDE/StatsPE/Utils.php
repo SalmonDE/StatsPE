@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace SalmonDE\StatsPE;
 
-use SalmonDE\StatsPE\Providers\Entry;
+use SalmonDE\StatsPE\Entries\Entry;
 
 class Utils {
 
@@ -46,5 +46,4 @@ class Utils {
                 return 'BIT(1)';
         }
     }
-
 }

@@ -1,5 +1,5 @@
 <?php
-namespace SalmonDE\StatsPE\Providers;
+namespace SalmonDE\StatsPE\Entries;
 
 class Entry {
 
@@ -93,7 +93,7 @@ class Entry {
     }
 
     public function isUnsigned(): bool{
-        return ($this->unsigned && $this->expectedType === self::INT);
+        return ($this->unsigned && $this->expectedType === self::TYPE_INT);
     }
 
     public function storesData(): bool{

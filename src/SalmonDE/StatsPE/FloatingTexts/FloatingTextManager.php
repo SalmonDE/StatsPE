@@ -21,7 +21,6 @@ class FloatingTextManager {
             $data = $this->floatingTextConfig->get($key);
             $this->floatingTexts[$data['Position']['Level']][$key] = new FloatingText($key, $data['Position']['X'], $data['Position']['Y'], $data['Position']['Z'], $data['Position']['Level'], $data['Text']);
         }
-
         $owner->getServer()->getPluginManager()->registerEvents(new EventListener(), $owner);
     }
 

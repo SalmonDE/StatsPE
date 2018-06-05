@@ -10,7 +10,7 @@ use SalmonDE\StatsPE\Utils;
 
 class StatsCmd extends PluginCommand implements CommandExecutor {
 
-    public function __construct(\SalmonDE\StatsPE\Base $owner){
+    public function __construct(\SalmonDE\StatsPE\StatsBase $owner){
         parent::__construct('stats', $owner);
         $this->setPermission('statspe.cmd.stats');
         $this->setDescription($owner->getMessage('commands.stats.description'));

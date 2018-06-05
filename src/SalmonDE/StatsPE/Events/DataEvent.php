@@ -1,6 +1,9 @@
 <?php
 namespace SalmonDE\StatsPE\Events;
 
+use pocketmine\plugin\Plugin;
+use SalmonDE\StatsPE\Entries\Entry;
+
 class DataEvent extends StatsPE_Event
 {
     /*
@@ -14,14 +17,14 @@ class DataEvent extends StatsPE_Event
     private $entry;
     private $data;
 
-    public function __construct(\pocketmine\plugin\Plugin $plugin, $data, string $player = null, \SalmonDE\StatsPE\Providers\Entry $entry = null){
+    public function __construct(Plugin $plugin, $data, string $player = null, Entry $entry = null){
         parent::__construct($plugin);
         $this->player = $player;
         $this->entry = $entry;
         $this->data = $data;
     }
 
-    public function getPlayerName() : string{
+    public function getPlayerName(): string{
         return $this->player;
     }
 

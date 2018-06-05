@@ -131,118 +131,118 @@ class StatsBase extends PluginBase {
                 switch($statistic){
                     case 'Online':
                         $default = false;
-                        $expectedType = Entry::BOOL;
+                        $expectedType = Entry::TYPE_BOOL;
                         $save = true;
                         break;
 
                     case 'ClientID':
                         $default = 'undefined';
-                        $expectedType = Entry::STRING;
+                        $expectedType = Entry::TYPE_STRING;
                         $save = true;
                         break;
 
                     case 'LastIP':
                         $default = 'undefined';
-                        $expectedType = Entry::STRING;
+                        $expectedType = Entry::TYPE_STRING;
                         $save = true;
                         break;
 
                     case 'UUID':
                         $default = 'undefined';
-                        $expectedType = Entry::STRING;
+                        $expectedType = Entry::TYPE_STRING;
                         $save = true;
                         break;
 
                     case 'XBoxAuthenticated':
                         $default = false;
-                        $expectedType = Entry::BOOL;
+                        $expectedType = Entry::TYPE_BOOL;
                         $save = false; //Not yet
                         break;
 
                     case 'OnlineTime':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'FirstJoin':
                         $default = 0.0;
-                        $expectedType = Entry::FLOAT;
+                        $expectedType = Entry::TYPE_FLOAT;
                         $save = true;
                         break;
 
                     case 'LastJoin':
                         $default = 0.0;
-                        $expectedType = Entry::FLOAT;
+                        $expectedType = Entry::TYPE_FLOAT;
                         $save = true;
                         break;
 
                     case 'K/D':
                         $default = 0.0;
-                        $expectedType = Entry::FLOAT;
+                        $expectedType = Entry::TYPE_FLOAT;
                         $save = false;
                         break;
 
                     case 'JoinCount':
                         $default = 1;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'KillCount':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'DeathCount':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'BlockBreakCount':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'BlockPlaceCount':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'ChatCount':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'ItemConsumeCount':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'ItemCraftCount':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                         break;
 
                     case 'ItemDropCount':
                         $default = 0;
-                        $expectedType = Entry::INT;
+                        $expectedType = Entry::TYPE_INT;
                         $save = true;
                         $unsigned = true;
                 }

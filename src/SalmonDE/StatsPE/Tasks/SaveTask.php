@@ -1,10 +1,13 @@
 <?php
 namespace SalmonDE\StatsPE\Tasks;
 
-class SaveTask extends \pocketmine\scheduler\PluginTask
+use pocketmine\scheduler\PluginTask;
+use SalmonDE\StatsPE\StatsBase;
+
+class SaveTask extends PluginTask
 {
 
-    public function __construct(\SalmonDE\StatsPE\Base $owner){
+    public function __construct(StatsBase $owner){
         parent::__construct($owner);
     }
 

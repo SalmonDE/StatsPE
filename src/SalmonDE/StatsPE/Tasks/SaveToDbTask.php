@@ -1,15 +1,18 @@
 <?php
 namespace SalmonDE\StatsPE\Tasks;
 
+use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+use SalmonDE\StatsPE\DataProviders\MySQLProvider;
+use SalmonDE\StatsPE\Utils;
 
-class SaveToDbTask extends \pocketmine\scheduler\AsyncTask {
+class SaveToDbTask extends AsyncTask {
 
     private $credentials;
     private $changes;
     private $provider;
 
-    public function __construct(array $credentials, array $changes, \SalmonDE\StatsPE\Providers\MySQLProvider $provider){
+    public function __construct(array $credentials, array $changes, MySQLProvider $provider){
         $this->credentials = $credentials;
         $this->changes = $changes;
         $this->provider = $provider;
@@ -28,7 +31,7 @@ class SaveToDbTask extends \pocketmine\scheduler\AsyncTask {
                 if($data['isIncrement']){
                     $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$entryName.' + '.$data['value'].' WHERE Username='."'".$playerName."'".'; ';
                 }else{
-                    $data['value'] = \SalmonDE\StatsPE\Utils::convertValueSave($this->provider->getEntry($entryName), $data['value']);
+                    $data['value'] = Utils::convertValueSave($this->provider->getEntry($entryName), $data['value']);
                     $query .= 'UPDATE StatsPE SET '.$entryName.' = '.(is_string($data['value']) ? "'".$db->real_escape_string($data['value'])."'" : $data['value']).' WHERE Username='."'".$playerName."'".'; ';
                 }
             }

@@ -3,8 +3,7 @@ namespace SalmonDE\StatsPE\Events;
 
 use pocketmine\event\Cancellable;
 use pocketmine\plugin\Plugin;
-use SalmonDE\StatsPE\Events\StatsPE_Event;
-use SalmonDE\StatsPE\Providers\Entry;
+use SalmonDE\StatsPE\Entries\Entry;
 
 class EntryEvent extends StatsPE_Event implements Cancellable {
 

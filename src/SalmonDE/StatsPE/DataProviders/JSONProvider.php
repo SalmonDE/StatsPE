@@ -3,10 +3,9 @@ namespace SalmonDE\StatsPE\DataProviders;
 
 use pocketmine\Player;
 use pocketmine\utils\Config;
-use SalmonDE\StatsPE\DataProviders\DataProvider;
 use SalmonDE\StatsPE\Events\DataReceiveEvent;
 use SalmonDE\StatsPE\Events\DataSaveEvent;
-use SalmonDE\StatsPE\Providers\Entry;
+use SalmonDE\StatsPE\Entries\Entry;
 
 class JSONProvider extends DataProvider {
 

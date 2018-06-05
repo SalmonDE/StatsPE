@@ -2,6 +2,7 @@
 namespace SalmonDE\StatsPE\DataProviders;
 
 use pocketmine\Player;
+use SalmonDE\StatsPE\Entries\Entry;
 use SalmonDE\StatsPE\StatsBase;
 use SalmonDE\StatsPE\Events\DataReceiveEvent;
 use SalmonDE\StatsPE\Events\DataSaveEvent;
