@@ -98,7 +98,7 @@ class StatsBase extends PluginBase {
             case 'json':
                 $this->getLogger()->info('Selecting JSON data provider ...');
 
-                $this->provider = new JSONProvider($this->getDataFolder().'players.json');
+                $this->provider = new JSONProvider($this, $this->getDataFolder().'players.json');
                 break;
 
             case 'mysql':
@@ -111,7 +111,7 @@ class StatsBase extends PluginBase {
             default:
                 $this->getLogger()->warning('Unknown provider: "'.$p.'", selecting JSON data provider...');
 
-                $this->provider = new JSONProvider($this->getDataFolder().'players.json');
+                $this->provider = new JSONProvider($this, $this->getDataFolder().'players.json');
         }
     }
 

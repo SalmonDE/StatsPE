@@ -32,7 +32,7 @@ class SaveToDbTask extends AsyncTask {
                 if($data['isIncrement']){
                     $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$entryName.' + '.$data['value'].' WHERE Username='."'".$playerName."'".'; ';
                 }else{
-                    $data['value'] = StatsBase::getEntryManager()->getEntry($entryName);
+                    $data['value'] = Utils::convertValueSave(StatsBase::getEntryManager()->getEntry($entryName), $data['value']);
                     $query .= 'UPDATE StatsPE SET '.$entryName.' = '.(is_string($data['value']) ? "'".$db->real_escape_string($data['value'])."'" : $data['value']).' WHERE Username='."'".$playerName."'".'; ';
                 }
             }
