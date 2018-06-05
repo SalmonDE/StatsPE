@@ -1,10 +1,8 @@
-![Alt text](https://salmonde.de/MCPE-Plugins/Pictures/StatsPE/StatsPE.png "StatsPE Icon")
+![StatsPE Icon](https://projects.aericio.net/github/StatsPE/StatsPE.png)
 
-# StatsPE - Advanced Stats Plugin [![Travis-CI](https://travis-ci.org/SalmonDE/StatsPE.svg?branch=master)](https://travis-ci.org/SalmonDE/StatsPE)
+# StatsPE - Advanced Stats Plugin
 
 ## Information
-
-**Want to test the features before using them? Test them on this server: salmonde.de:19132**
 
 **_Installation_** | **_StatsPE_**
 ------------------ | -------------------------------------------------------------------------------------------------------------------
