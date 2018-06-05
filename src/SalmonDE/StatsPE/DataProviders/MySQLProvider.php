@@ -38,14 +38,14 @@ class MySQLProvider extends DataProvider {
         @$this->db = new \mysqli($data['host'], $data['username'], $data['pw'], $data['db'], $data['port']);
 
         if($this->db->connect_error){
-            Base::getInstance()->getLogger()->critical('Error while connecting to the MySQL server: ('.$this->db->connect_errno.')');
-            Base::getInstance()->getLogger()->critical(trim($this->db->connect_error));
+            $this->owner->getLogger()->critical('Error while connecting to the MySQL server: ('.$this->db->connect_errno.')');
+            $this->owner->getLogger()->critical(trim($this->db->connect_error));
 
-            Base::getInstance()->getServer()->getPluginManager()->disablePlugin(Base::getInstance());
+            $this->owner->getServer()->getPluginManager()->disablePlugin($this->owner);
             return false;
         }
 
-        Base::getInstance()->getLogger()->notice('Successfully connected to the MySQL server!');
+        $this->owner->getLogger()->notice('Successfully connected to the MySQL server!');
 
         $this->prepareTable();
         return true;
@@ -93,14 +93,13 @@ class MySQLProvider extends DataProvider {
             if(!$entry->storesData()){
                 return;
             }
-            $value = $this->queryDb('SELECT '.$this->db->real_escape_string($entry->getName()).' FROM StatsPE WHERE Username=?', [
-                        $playerName])->fetch_assoc()[$entry->getName()];
+            $value = $this->queryDb('SELECT '.$this->db->real_escape_string($entry->getName()).' FROM StatsPE WHERE Username=?', [$playerName])->fetch_assoc()[$entry->getName()];
             $value = Utils::convertValueGet($entry, $value);
 
             $this->applyChanges($playerName, $entry, $value);
 
-            $event = new DataReceiveEvent(Base::getInstance(), $value, $playerName, $entry);
-            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+            $event = new DataReceiveEvent($this->owner, $value, $playerName, $entry);
+            $this->owner->getServer()->getPluginManager()->callEvent($event);
             return $event->getData();
         }
     }
@@ -172,8 +171,8 @@ class MySQLProvider extends DataProvider {
                 }
                 unset($data[$name]);
 
-                $event = new DataReceiveEvent(Base::getInstance(), $data);
-                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+                $event = new DataReceiveEvent($this->owner, $data);
+                $this->owner->getServer()->getPluginManager()->callEvent($event);
                 return $event->getData();
             }
         }
@@ -195,8 +194,8 @@ class MySQLProvider extends DataProvider {
             }
         }
 
-        $event = new DataReceiveEvent(Base::getInstance(), $data);
-        Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+        $event = new DataReceiveEvent($this->owner, $data);
+        $this->owner->getServer()->getPluginManager()->callEvent($event);
         return $event->getData();
     }
 
@@ -217,14 +216,14 @@ class MySQLProvider extends DataProvider {
     public function saveData(string $playerName, Entry $entry, $value){
         if($this->entryExists($entry->getName()) && $entry->storesData()){
             if($entry->isValidType($value)){
-                $event = new DataSaveEvent(Base::getInstance(), $value, $playerName, $entry);
-                Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+                $event = new DataSaveEvent($this->owner, $value, $playerName, $entry);
+                $this->owner->getServer()->getPluginManager()->callEvent($event);
 
                 if(!$event->isCancelled()){
                     $this->addChange($playerName, $entry, $value, false);
                 }
             }else{
-                Base::getInstance()->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
+                $this->owner->getLogger()->error($msg = 'Unexpected datatype "'.gettype($value).'" given for entry "'.$entry->getName().'" in "'.self::class.'" by "'.__FUNCTION__.'"!');
             }
         }
     }
@@ -232,8 +231,8 @@ class MySQLProvider extends DataProvider {
     public function incrementValue(string $playerName, Entry $entry, int $int = 1){
         if($this->entryExists($entry->getName()) && $entry->storesData() && $entry->getExpectedType() === Entry::TYPE_INT){
 
-            $event = new DataSaveEvent(Base::getInstance(), $int, $playerName, $entry);
-            Base::getInstance()->getServer()->getPluginManager()->callEvent($event);
+            $event = new DataSaveEvent($this->owner, $int, $playerName, $entry);
+            $this->owner->getServer()->getPluginManager()->callEvent($event);
 
             if(!$event->isCancelled()){
                 $this->addChange($playerName, $entry, $int, true);
@@ -274,7 +273,7 @@ class MySQLProvider extends DataProvider {
             }
         }
 
-        Base::getInstance()->getServer()->getScheduler()->scheduleAsyncTask(new SaveToDbTask(Base::getInstance()->getConfig()->get('MySQL'), $this->changes['data'], $this));
+        $this->owner->getServer()->getScheduler()->scheduleAsyncTask(new SaveToDbTask($this->owner->getConfig()->get('MySQL'), $this->changes['data'], $this));
 
         $this->changes['amount'] = 0;
         $this->changes['data'] = [];
@@ -289,14 +288,14 @@ class MySQLProvider extends DataProvider {
         @$statement = $this->db->prepare($query);
         if($statement === false){
             if(!@$this->db->ping()){
-                if(!$this->initialize(Base::getInstance()->getConfig()->get('MySQL'))){
-                    Base::getInstance()->getServer()->getPluginManager()->disablePlugin(Base::getInstance());
+                if(!$this->initialize($this->owner->getConfig()->get('MySQL'))){
+                    $this->owner->getServer()->getPluginManager()->disablePlugin($this->owner);
                 }else{
                     $statement = $this->db->prepare($query);
                 }
                 return false;
             }else{
-                Base::getInstance()->getLogger()->error('Syntax error in query to database: "'.$query.'"');
+                $this->owner->getLogger()->error('Syntax error in query to database: "'.$query.'"');
                 return false;
             }
         }
@@ -308,9 +307,9 @@ class MySQLProvider extends DataProvider {
         if($statement->execute()){
             return $statement->get_result();
         }else{
-            Base::getInstance()->getLogger()->debug('Query: "'.$query.'"');
-            Base::getInstance()->getLogger()->error('Query to the database failed: ('.$this->db->errno.')');
-            Base::getInstance()->getLogger()->error($this->db->error);
+            $this->owner->getLogger()->debug('Query: "'.$query.'"');
+            $this->owner->getLogger()->error('Query to the database failed: ('.$this->db->errno.')');
+            $this->owner->getLogger()->error($this->db->error);
             return false;
         }
     }

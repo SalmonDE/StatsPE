@@ -7,12 +7,14 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\lang\TranslationContainer;
 use pocketmine\Player;
+use pocketmine\utils\TextFormat as TF;
 use SalmonDE\StatsPE\FloatingTexts\FloatingText;
 use SalmonDE\StatsPE\FloatingTexts\FloatingTextManager;
+use SalmonDE\StatsPE\StatsBase;
 
 class StatsPECmd extends PluginCommand implements CommandExecutor {
 
-    public function __construct(\SalmonDE\StatsPE\StatsBase $owner){
+    public function __construct(StatsBase $owner){
         parent::__construct('statspe', $owner);
         $this->setPermission('statspe.cmd.statspe');
         $this->setDescription($owner->getMessage('commands.statspe.description'));

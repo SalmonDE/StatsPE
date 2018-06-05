@@ -65,7 +65,7 @@ class StatsBase extends PluginBase {
 
             $this->floatingTextManager = $this->floatingTextManager ?? new FloatingTextManager($this);
 
-            $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener(), $this);
+            $this->getServer()->getPluginManager()->registerEvents($this->listener = new EventListener($this), $this);
         }
     }
 
@@ -105,7 +105,7 @@ class StatsBase extends PluginBase {
                 $this->getLogger()->info('Selecting MySQL data provider ...');
 
                 $c = $this->getConfig();
-                $this->provider = new MySQLProvider($c->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'), $c->getNested('MySQL.cacheLimit'));
+                $this->provider = new MySQLProvider($this, $c->getNested('MySQL.host'), $c->getNested('MySQL.username'), $c->getNested('MySQL.password'), $c->getNested('MySQL.database'), $c->getNested('MySQL.cacheLimit'));
                 break;
 
             default:
@@ -123,7 +123,7 @@ class StatsBase extends PluginBase {
      * @return void
      */
     private function registerEntries(): void{
-        $this->provider->addEntry(new Entry('Username', 'undefined', Entry::STRING, true));
+        self::getEntryManager()->addEntry(new Entry('Username', 'undefined', Entry::TYPE_STRING, true));
         foreach($this->getConfig()->get('Stats') as $statistic => $enabled){
             if($enabled){
                 $unsigned = false;
@@ -246,13 +246,13 @@ class StatsBase extends PluginBase {
                         $save = true;
                         $unsigned = true;
                 }
-                $this->provider->addEntry(new Entry($statistic, $default, $expectedType, $save, $unsigned));
+                self::getEntryManager()->addEntry(new Entry($statistic, $default, $expectedType, $save, $unsigned));
             }
         }
-        if($this->getDataProvider()->entryExists('K/D')){
-            if(!$this->getDataProvider()->entryExists('KillCount') || !$this->getDataProvider()->entryExists('DeathCount')){
+        if(self::getEntryManager()->entryExists('K/D')){
+            if(!self::getEntryManager()->entryExists('KillCount') || !self::getEntryManager()->entryExists('DeathCount')){
                 $this->getLogger()->warning('Disabled K/D entry due to error prevention! Did you enable KillCount and DeathCount in the config?');
-                $this->getDataProvider()->removeEntry($this->getDataProvider()->getEntry('K/D'));
+                self::getEntryManager()->removeEntry(self::getEntryManager()->getEntry('K/D'));
             }
         }
     }
@@ -302,8 +302,6 @@ class StatsBase extends PluginBase {
         foreach($keys as $k){
             $message = $message[$k];
         }
-
         return $message;
     }
-
 }

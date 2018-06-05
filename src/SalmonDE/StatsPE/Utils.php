@@ -7,6 +7,13 @@ use SalmonDE\StatsPE\Entries\Entry;
 
 class Utils {
 
+    /**
+     * @return StatsBase
+     */
+    public static function getOwner(): StatsBase{
+        return self::getOwner();
+    }
+
     public static function getPeriodFromSeconds(int $seconds): string{
         $ref = new \DateTime(date('Y-m-d H:i:s', 0));
         $time = $ref->diff(new \DateTime(date('Y-m-d H:i:s', $seconds)));
@@ -14,12 +21,12 @@ class Utils {
         $time = ($time->y !== 0 ? $time->y.'y ' : '').($time->m !== 0 ? $time->m.'m ' : '').($time->d !== 0 ? $time->d.'d ' : '').$time->h.'h '.$time->i.'i '.$time->s.'s';
 
         $units = [
-            Base::getInstance()->getMessage('general.onlinetime.years'),
-            Base::getInstance()->getMessage('general.onlinetime.months'),
-            Base::getInstance()->getMessage('general.onlinetime.days'),
-            Base::getInstance()->getMessage('general.onlinetime.hours'),
-            Base::getInstance()->getMessage('general.onlinetime.minutes'),
-            Base::getInstance()->getMessage('general.onlinetime.seconds')
+            self::getOwner()->getMessage('general.onlinetime.years'),
+            self::getOwner()->getMessage('general.onlinetime.months'),
+            self::getOwner()->getMessage('general.onlinetime.days'),
+            self::getOwner()->getMessage('general.onlinetime.hours'),
+            self::getOwner()->getMessage('general.onlinetime.minutes'),
+            self::getOwner()->getMessage('general.onlinetime.seconds')
         ];
         return str_replace(['y', 'm', 'd', 'h', 'i', 's'], $units, $time);
     }

@@ -4,6 +4,7 @@ namespace SalmonDE\StatsPE\Tasks;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use SalmonDE\StatsPE\DataProviders\MySQLProvider;
+use SalmonDE\StatsPE\StatsBase;
 use SalmonDE\StatsPE\Utils;
 
 class SaveToDbTask extends AsyncTask {
@@ -31,7 +32,7 @@ class SaveToDbTask extends AsyncTask {
                 if($data['isIncrement']){
                     $query .= 'UPDATE StatsPE SET '.$entryName.' = '.$entryName.' + '.$data['value'].' WHERE Username='."'".$playerName."'".'; ';
                 }else{
-                    $data['value'] = Utils::convertValueSave($this->provider->getEntry($entryName), $data['value']);
+                    $data['value'] = StatsBase::getEntryManager()->getEntry($entryName);
                     $query .= 'UPDATE StatsPE SET '.$entryName.' = '.(is_string($data['value']) ? "'".$db->real_escape_string($data['value'])."'" : $data['value']).' WHERE Username='."'".$playerName."'".'; ';
                 }
             }

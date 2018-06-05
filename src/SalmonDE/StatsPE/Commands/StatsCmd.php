@@ -6,11 +6,13 @@ use pocketmine\command\CommandExecutor;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\Player;
+use pocketmine\utils\TextFormat as TF;
+use SalmonDE\StatsPE\StatsBase;
 use SalmonDE\StatsPE\Utils;
 
 class StatsCmd extends PluginCommand implements CommandExecutor {
 
-    public function __construct(\SalmonDE\StatsPE\StatsBase $owner){
+    public function __construct(StatsBase $owner){
         parent::__construct('stats', $owner);
         $this->setPermission('statspe.cmd.stats');
         $this->setDescription($owner->getMessage('commands.stats.description'));
@@ -29,7 +31,7 @@ class StatsCmd extends PluginCommand implements CommandExecutor {
         if(is_array($data = $this->getPlugin()->getDataProvider()->getAllData($args[0]))){
             $text = str_replace('{value}', $data['Username'], $this->getPlugin()->getMessage('general.header'));
 
-            foreach($this->getPlugin()->getDataProvider()->getEntries() as $entry){
+            foreach(StatsBase::getEntryManager()->getAllEntries() as $entry){
                 if($sender->hasPermission('statspe.entry.'.$entry->getName())){
 
                     switch($entry->getName()){

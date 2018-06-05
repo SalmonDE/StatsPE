@@ -3,6 +3,7 @@ namespace SalmonDE\StatsPE;
 
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\inventory\CraftItemEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
@@ -16,82 +17,88 @@ use SalmonDE\StatsPE\Events\EntryEvent;
 
 class EventListener implements Listener
 {
+    private $owner;
+
+    public function __construct(StatsBase $owner){
+        $this->owner = $owner;
+    }
+
     /**
     * @priority HIGHEST
     */
     public function onEntryEvent(EntryEvent $event): void{
-        if($event->getType() === EntryEvent::REMOVE && $event->getEntry()->getName() === 'Username'){
+        if($event->getEventType() === EntryEvent::REMOVE && $event->getEntry()->getName() === 'Username'){
             $event->setCancelled();
         }
     }
 
     public function onJoin(PlayerJoinEvent $event){
-        if(!is_array($data = Base::getInstance()->getDataProvider()->getAllData($event->getPlayer()->getName()))){
-            Base::getInstance()->getDataProvider()->addPlayer($event->getPlayer());
+        if(!is_array($data = $this->owner->getDataProvider()->getAllData($event->getPlayer()->getName()))){
+            $this->owner->getDataProvider()->addPlayer($event->getPlayer());
 
         }else{ // Prevent setting the join counter to 2 on first join
-            if(Base::getInstance()->getDataProvider()->entryExists('JoinCount')){
-                Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('JoinCount'), ++$data['JoinCount']);
+            if(StatsBase::getEntryManager()->entryExists('JoinCount')){
+                $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('JoinCount'), ++$data['JoinCount']);
             }
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('Online')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('Online'), true);
+        if(StatsBase::getEntryManager()->entryExists('Online')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('Online'), true);
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('FirstJoin')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('FirstJoin'), $event->getPlayer()->getFirstPlayed() / 1000);
+        if(StatsBase::getEntryManager()->entryExists('FirstJoin')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('FirstJoin'), $event->getPlayer()->getFirstPlayed() / 1000);
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('LastJoin')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('LastJoin'), $event->getPlayer()->getLastPlayed() / 1000);
+        if(StatsBase::getEntryManager()->entryExists('LastJoin')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('LastJoin'), $event->getPlayer()->getLastPlayed() / 1000);
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('ClientID')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ClientID'), (string) $event->getPlayer()->getClientId());
+        if(StatsBase::getEntryManager()->entryExists('ClientID')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('ClientID'), (string) $event->getPlayer()->getClientId());
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('LastIP')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('LastIP'), (string) $event->getPlayer()->getAddress());
+        if(StatsBase::getEntryManager()->entryExists('LastIP')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('LastIP'), (string) $event->getPlayer()->getAddress());
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('UUID')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('UUID'), $event->getPlayer()->getUniqueId()->toString());
+        if(StatsBase::getEntryManager()->entryExists('UUID')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('UUID'), $event->getPlayer()->getUniqueId()->toString());
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('XBoxAuthenticated')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('XBoxAuthenticated'), false);
+        if(StatsBase::getEntryManager()->entryExists('XBoxAuthenticated')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('XBoxAuthenticated'), false);
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('Username')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('Username'), $event->getPlayer()->getName());
+        if(StatsBase::getEntryManager()->entryExists('Username')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('Username'), $event->getPlayer()->getName());
         }
     }
 
     public function onQuit(PlayerQuitEvent $event){
-        if(Base::getInstance()->getDataProvider()->entryExists('OnlineTime')){
+        if(StatsBase::getEntryManager()->entryExists('OnlineTime')){
             if(\pocketmine\START_TIME < ($event->getPlayer()->getLastPlayed() / 1000)){
                 $time = ceil(microtime(true) - ($event->getPlayer()->getLastPlayed() / 1000)); // Onlinetime in seconds
-                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('OnlineTime'), $time);
+                $this->owner->getDataProvider()->incrementValue($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('OnlineTime'), $time);
             }else{
-                Base::getInstance()->getLogger()->warning('Couldn\'t save online time for player "'.$event->getPlayer()->getName().'" because it exceeds the server running time!');
+                $this->owner->getLogger()->warning('Couldn\'t save online time for player "'.$event->getPlayer()->getName().'" because it exceeds the server running time!');
             }
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('Online')){
-            Base::getInstance()->getDataProvider()->saveData($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('Online'), false);
+        if(StatsBase::getEntryManager()->entryExists('Online')){
+            $this->owner->getDataProvider()->saveData($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('Online'), false);
         }
     }
 
     public function onPlayerDeath(PlayerDeathEvent $event){
-        if(Base::getInstance()->getDataProvider()->entryExists('DeathCount')){
-            Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('DeathCount'));
+        if(StatsBase::getEntryManager()->entryExists('DeathCount')){
+            $this->owner->getDataProvider()->incrementValue($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('DeathCount'));
         }
 
-        if(Base::getInstance()->getDataProvider()->entryExists('KillCount')){
-            if(($cause = $event->getPlayer()->getLastDamageCause()) instanceof \pocketmine\event\entity\EntityDamageByEntityEvent){
+        if(StatsBase::getEntryManager()->entryExists('KillCount')){
+            if(($cause = $event->getPlayer()->getLastDamageCause()) instanceof EntityDamageByEntityEvent){
                 if(($dmgr = $cause->getDamager()) instanceof Player){
-                    Base::getInstance()->getDataProvider()->incrementValue($dmgr->getName(), Base::getInstance()->getDataProvider()->getEntry('KillCount'));
+                    $this->owner->getDataProvider()->incrementValue($dmgr->getName(), StatsBase::getEntryManager()->getEntry('KillCount'));
                 }
             }
         }
@@ -103,8 +110,8 @@ class EventListener implements Listener
     */
     public function onBlockBreak(BlockBreakEvent $event){
         if(!$event->isCancelled()){
-            if(Base::getInstance()->getDataProvider()->entryExists('BlockBreakCount')){
-                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('BlockBreakCount'));
+            if(StatsBase::getEntryManager()->entryExists('BlockBreakCount')){
+                $this->owner->getDataProvider()->incrementValue($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('BlockBreakCount'));
             }
         }
     }
@@ -114,8 +121,8 @@ class EventListener implements Listener
     */
     public function onBlockPlace(BlockPlaceEvent $event){
         if(!$event->isCancelled()){
-            if(Base::getInstance()->getDataProvider()->entryExists('BlockPlaceCount')){
-                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('BlockPlaceCount'));
+            if(StatsBase::getEntryManager()->entryExists('BlockPlaceCount')){
+                $this->owner->getDataProvider()->incrementValue($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('BlockPlaceCount'));
             }
         }
     }
@@ -125,8 +132,8 @@ class EventListener implements Listener
     */
     public function onChat(PlayerChatEvent $event){
         if(!$event->isCancelled()){
-            if(Base::getInstance()->getDataProvider()->entryExists('ChatCount')){
-                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ChatCount'));
+            if(StatsBase::getEntryManager()->entryExists('ChatCount')){
+                $this->owner->getDataProvider()->incrementValue($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('ChatCount'));
             }
         }
     }
@@ -136,8 +143,8 @@ class EventListener implements Listener
     */
     public function onItemConsume(PlayerItemConsumeEvent $event){
         if(!$event->isCancelled()){
-            if(Base::getInstance()->getDataProvider()->entryExists('ItemConsumeCount')){
-                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ItemConsumeCount'));
+            if(StatsBase::getEntryManager()->entryExists('ItemConsumeCount')){
+                $this->owner->getDataProvider()->incrementValue($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('ItemConsumeCount'));
             }
         }
     }
@@ -147,8 +154,8 @@ class EventListener implements Listener
     */
     public function onCraftItem(CraftItemEvent $event){
         if(!$event->isCancelled()){
-            if(Base::getInstance()->getDataProvider()->entryExists('ItemCraftCount')){
-                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ItemCraftCount'));
+            if(StatsBase::getEntryManager()->entryExists('ItemCraftCount')){
+                $this->owner->getDataProvider()->incrementValue($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('ItemCraftCount'));
             }
         }
     }
@@ -158,8 +165,8 @@ class EventListener implements Listener
     */
     public function onDropItem(PlayerDropItemEvent $event){
         if(!$event->isCancelled()){
-            if(Base::getInstance()->getDataProvider()->entryExists('ItemDropCount')){
-                Base::getInstance()->getDataProvider()->incrementValue($event->getPlayer()->getName(), Base::getInstance()->getDataProvider()->getEntry('ItemDropCount'));
+            if(StatsBase::getEntryManager()->entryExists('ItemDropCount')){
+                $this->owner->getDataProvider()->incrementValue($event->getPlayer()->getName(), StatsBase::getEntryManager()->getEntry('ItemDropCount'));
             }
         }
     }

@@ -21,7 +21,7 @@ class JSONProvider extends DataProvider {
     }
 
     public function addPlayer(Player $player){
-        foreach($this->getEntries() as $entry){ // Run through all entries and save the default values
+        foreach($this->entries as $entry){ // Run through all entries and save the default values
             $this->saveData($player->getName(), $entry, $entry->getDefaultValue());
         }
     }

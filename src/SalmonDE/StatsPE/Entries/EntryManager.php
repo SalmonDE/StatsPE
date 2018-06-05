@@ -43,7 +43,7 @@ class EntryManager {
             $this->owner->getServer()->getPluginManager()->callEvent($event);
 
             if(!$event->isCancelled()){
-                unset($this->entries[strtolower($entry->getName())]);
+                unset(self::$entries[strtolower($entry->getName())]);
             }
         }
     }
@@ -57,6 +57,6 @@ class EntryManager {
     }
 
     public function entryExists(string $entryName): bool{
-        return isset($this->entries[strtolower($entryName)]);
+        return isset(self::$entries[strtolower($entryName)]);
     }
 }

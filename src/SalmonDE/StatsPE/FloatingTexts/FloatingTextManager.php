@@ -19,9 +19,9 @@ class FloatingTextManager {
 
         foreach($this->floatingTextConfig->getAll(true) as $key){
             $data = $this->floatingTextConfig->get($key);
-            $this->floatingTexts[$data['Position']['Level']][$key] = new FloatingText($key, $data['Position']['X'], $data['Position']['Y'], $data['Position']['Z'], $data['Position']['Level'], $data['Text']);
+            $this->floatingTexts[$data['Position']['Level']][$key] = new FloatingText($owner, $key, $data['Position']['X'], $data['Position']['Y'], $data['Position']['Z'], $data['Position']['Level'], $data['Text']);
         }
-        $owner->getServer()->getPluginManager()->registerEvents(new EventListener(), $owner);
+        $owner->getServer()->getPluginManager()->registerEvents(new EventListener($owner), $owner);
     }
 
     public function getFloatingText(string $name){
@@ -43,12 +43,12 @@ class FloatingTextManager {
         $y = round($y);
         $z = round($z);
 
-        foreach($this->owner->getDataProvider()->getEntries() as $entry){
+        foreach(StatsBase::getEntryManager()->getAllEntries() as $entry){
             $text[$entry->getName()] = TF::AQUA.$entry->getName().': '.TF::GOLD.'{value}';
         }
         $text['Username'] = $this->owner->getMessage('general.header');
 
-        $event = new FloatingTextEvent($this->owner, new FloatingText($name, $x, $y, $z, $level->getFolderName(), $text), FloatingTextEvent::ADD);
+        $event = new FloatingTextEvent($this->owner, new FloatingText($this->owner, $name, $x, $y, $z, $level->getFolderName(), $text), FloatingTextEvent::ADD);
         $this->owner->getServer()->getPluginManager()->callEvent($event);
 
         if(!$event->isCancelled()){

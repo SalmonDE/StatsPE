@@ -5,16 +5,19 @@ use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat as TF;
+use SalmonDE\StatsPE\StatsBase;
 use SalmonDE\StatsPE\Utils;
 
 class FloatingText extends FloatingTextParticle {
 
+    private $owner;
     private $name;
     private $floatingText = [];
     private $levelName;
 
-    public function __construct(string $name, int $x, int $y, int $z, string $levelName, array $text){
+    public function __construct(StatsBase $owner, string $name, int $x, int $y, int $z, string $levelName, array $text){
         parent::__construct(new Vector3($x, $y, $z), '');
+        $this->owner = $owner;
         $this->name = $name;
         $this->floatingText = $text;
         $this->levelName = $levelName;
@@ -33,17 +36,17 @@ class FloatingText extends FloatingTextParticle {
     }
 
     public function sendTextToPlayer(Player $player){
-        $data = Base::getInstance()->getDataProvider()->getAllData($player->getName());
+        $data = $this->owner->getDataProvider()->getAllData($player->getName());
         $text = [];
         foreach(array_keys($this->floatingText) as $key){
-            if(Base::getInstance()->getDataProvider()->entryExists($key)){
+            if(StatsBase::getEntryManager()->entryExists($key)){
                 switch($key){
                     case 'FirstJoin':
-                        $value = date(Base::getInstance()->getConfig()->get('dateFormat'), $player->getFirstPlayed() / 1000);
+                        $value = date($this->owner->getConfig()->get('dateFormat'), $player->getFirstPlayed() / 1000);
                         break;
 
                     case 'LastJoin':
-                        $value = date(Base::getInstance()->getConfig()->get('dateFormat'), $player->getLastPlayed() / 1000);
+                        $value = date($this->owner->getConfig()->get('dateFormat'), $player->getLastPlayed() / 1000);
                         break;
 
                     case 'OnlineTime':
@@ -58,7 +61,7 @@ class FloatingText extends FloatingTextParticle {
                         break;
 
                     case 'Online':
-                        $value = $data['Online'] ? Base::getInstance()->getMessage('commands.stats.true') : Base::getInstance()->getMessage('commands.stats.false');
+                        $value = $data['Online'] ? $this->owner->getMessage('commands.stats.true') : $this->owner->getMessage('commands.stats.false');
                         break;
 
                     default:
