@@ -26,7 +26,7 @@ class FloatingTextEvent extends StatsPE_Event implements Cancellable {
         return $this->floatingText;
     }
 
-    public function getType(){
+    public function getType(): int{
         return $this->type;
     }
 
